@@ -19,7 +19,7 @@ class SessionCookieMiddleware(BaseHTTPMiddleware):
 			response.set_cookie(
 				key=self.COOKIE_NAME,
 				value=session_id,
-				http_only=True,
+				httponly=True,
 				secure=False,
 				samesite="lax",
 			)

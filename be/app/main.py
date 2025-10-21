@@ -17,7 +17,7 @@ from app.models import list as _m_list  # noqa: F401
 
 
 setup_logging()
-app = FastAPI(title="ITU Travel Backend", default_response_class=None)
+app = FastAPI(title="ITU Travel Backend")
 
 # CORS
 app.add_middleware(
