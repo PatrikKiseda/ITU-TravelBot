@@ -1,19 +1,20 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from sqlmodel import SQLModel
+from sqlmodel import SQLModel, Session, text
 from app.api.v1.routes import router as api_v1_router
 from app.core.config import settings
 from app.core.logging import setup_logging
 from app.core.middleware import SessionCookieMiddleware, SimpleRateLimiter
 from app.core.request_id import RequestIdMiddleware
 from app.core.errors import add_exception_handlers
-from app.core.deps import get_engine
+from app.core.deps import get_engine, get_db
 
 # Ensure models are imported so metadata is registered
 from app.models import session as _m_session  # noqa: F401
-from app.models import proposal as _m_proposal  # noqa: F401
-from app.models import destination as _m_destination  # noqa: F401
-from app.models import list as _m_list  # noqa: F401
+from app.models import agency_offer as _m_agency_offer  # noqa: F401
+from app.models import customer_response as _m_customer_response  # noqa: F401
+from app.models import customer_order as _m_customer_order  # noqa: F401
+from app.models import customer_note as _m_customer_note  # noqa: F401
 
 
 setup_logging()
@@ -49,5 +50,18 @@ async def on_startup():
 
 
 @app.get("/health")
-async def health():
-	return {"data": {"status": "ok"}, "error": None}
+async def health(db: Session = Depends(get_db)):
+	from sqlmodel import text
+	try:
+		db.exec(text("SELECT 1"))
+		db_status = "ok"
+	except Exception:
+		db_status = "error"
+	
+	return {
+		"data": {
+			"status": "ok",
+			"database": db_status,
+		},
+		"error": None
+	}

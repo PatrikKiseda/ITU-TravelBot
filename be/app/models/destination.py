@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from sqlmodel import SQLModel, Field
 
@@ -28,4 +28,4 @@ class Destination(SQLModel, table=True):
 	why_visit: Optional[str] = None   # JSON array string
 	things_to_consider: Optional[str] = None  # JSON array string
 	starred: bool = Field(default=False)
-	created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
+	created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)

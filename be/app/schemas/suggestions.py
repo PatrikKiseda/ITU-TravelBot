@@ -42,3 +42,17 @@ class ProposalDTO(BaseModel):
 	image_credit_link: Optional[str] = None
 	tags: Optional[str] = None
 	status: str
+
+
+class ExplorationSuggestionDTO(BaseModel):
+	title: str
+	country: str
+	shortDescription: str
+	approxPriceEUR: int
+	priceNote: str
+	tags: List[str]
+	price: PriceBreakdown
+	image_url: Optional[str] = None
+	image_credit_source: Optional[str] = None
+	image_credit_author: Optional[str] = None
+	image_credit_link: Optional[str] = None

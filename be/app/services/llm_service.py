@@ -1,10 +1,19 @@
 from typing import Any, Dict, List
-from app.clients.openai_client import OpenAIClientStub
+from app.clients.openai_client import OpenAIClientStub, OpenAIClient
+from app.core.config import settings
 
 
 class LLMService:
-	def __init__(self, client: OpenAIClientStub | None = None) -> None:
-		self.client = client or OpenAIClientStub()
+	def __init__(self, client=None):
+		if client:
+			self.client = client
+		elif settings.OPENAI_API_KEY:
+			try:
+				self.client = OpenAIClient(model=settings.OPENAI_MODEL)
+			except ValueError:
+				self.client = OpenAIClientStub()
+		else:
+			self.client = OpenAIClientStub()
 
 	def suggest_destinations(self, filters: Dict[str, Any]) -> List[Dict[str, Any]]:
 		res = self.client.suggest_destinations(filters)

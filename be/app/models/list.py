@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlmodel import SQLModel, Field
 
 
@@ -7,7 +7,7 @@ class ListModel(SQLModel, table=True):
 	id: str = Field(primary_key=True, index=True)
 	session_id: str = Field(index=True, nullable=False)
 	name: str
-	created_at: datetime = Field(default_factory=lambda: datetime.utcnow())
+	created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class ListItem(SQLModel, table=True):

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from sqlmodel import SQLModel, Field
 
@@ -29,4 +29,4 @@ class Proposal(SQLModel, table=True):
 	image_credit_link: Optional[str] = None
 	tags: Optional[str] = None  # JSON string or comma-separated
 	status: str = Field(default=ProposalStatus.PROPOSAL)
-	created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
+	created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)

@@ -1,0 +1,17 @@
+[Unit]
+Description=ITU Travel Backend API
+After=network.target
+
+[Service]
+Type=simple
+User=travelbot
+WorkingDirectory=/opt/travelbot/be
+Environment="PYTHONPATH=/opt/travelbot/be"
+EnvironmentFile=/opt/travelbot/.env
+ExecStart=/opt/travelbot/be/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+

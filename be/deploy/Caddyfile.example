@@ -1,0 +1,19 @@
+travelbot.yourdomain.com {
+    # API endpoints - proxy to FastAPI
+    reverse_proxy /api/* localhost:8000 {
+        header_up Host {host}
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_addr}
+        header_up X-Forwarded-Proto {scheme}
+        timeout 60s
+    }
+    
+    # Serve React frontend (static files)
+    root * /var/www/travelbot-frontend
+    try_files {path} /index.html
+    file_server
+    
+    # Auto HTTPS via Let's Encrypt
+    encode zstd gzip
+}
+

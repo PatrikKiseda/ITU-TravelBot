@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from sqlmodel import Session
 from app.models.session import SessionModel
@@ -9,7 +9,7 @@ class SessionRepository:
 		obj = db.get(SessionModel, session_id)
 		if obj:
 			return obj
-		obj = SessionModel(id=session_id, created_at=datetime.utcnow())
+		obj = SessionModel(id=session_id, created_at=datetime.now(timezone.utc))
 		db.add(obj)
 		db.commit()
 		db.refresh(obj)

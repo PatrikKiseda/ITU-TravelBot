@@ -40,23 +40,27 @@ class SimpleRateLimiter(BaseHTTPMiddleware):
 		self.bucket: dict[str, list[float]] = {}
 
 	def _key(self, request: Request) -> str:
-		path_key = "rl:suggest" if request.url.path.endswith("/suggest") else (
-			"rl:expand" if request.url.path.endswith("/expand") else (
-				"rl:customize" if request.url.path.endswith("/customize") else ""
-			)
-		)
+		path = request.url.path
+		path_key = ""
+		if path.endswith("/suggest") or path.endswith("/explore"):
+			path_key = "rl:suggest"
+		elif path.endswith("/expand"):
+			path_key = "rl:expand"
+		elif path.endswith("/customize"):
+			path_key = "rl:customize"
 		sid = request.cookies.get("sessionId") or getattr(request.state, "session_id", None) or "anon"
 		return f"{sid}:{path_key}"
 
 	async def dispatch(self, request: Request, call_next: Callable):
 		path = request.url.path
-		if not (path.endswith("/suggest") or path.endswith("/expand") or path.endswith("/customize")):
+		if not (path.endswith("/suggest") or path.endswith("/explore") or path.endswith("/expand") or path.endswith("/customize")):
 			return await call_next(request)
 		now = time.time()
 		key = self._key(request)
 		window_start = now - self.WINDOW
 		entries = [ts for ts in self.bucket.get(key, []) if ts > window_start]
-		if len(entries) >= self.limit:
+		limit = settings.RATE_LIMIT_EXPLORE_PER_MINUTE if path.endswith("/explore") else settings.RATE_LIMIT_PER_MINUTE
+		if len(entries) >= limit:
 			from fastapi.responses import JSONResponse
 			return JSONResponse(status_code=429, content={"data": None, "error": {"code": "RATE_LIMIT", "message": "Too many requests"}})
 		entries.append(now)
