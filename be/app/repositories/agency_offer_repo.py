@@ -2,6 +2,7 @@ from datetime import date
 from typing import List, Optional
 from sqlmodel import Session, select, and_, or_, func
 from app.models.agency_offer import AgencyOffer
+from app.models.tag import OfferTag
 
 
 class AgencyOfferRepository:
@@ -48,6 +49,7 @@ class AgencyOfferRepository:
 		price_min: Optional[int] = None,
 		price_max: Optional[int] = None,
 		transport_mode: Optional[str] = None,
+		tag_ids: Optional[List[int]] = None,
 	) -> List[AgencyOffer]:
 		conditions = [AgencyOffer.agent_session_id == agent_session_id]
 
@@ -79,6 +81,11 @@ class AgencyOfferRepository:
 			conditions.append(AgencyOffer.price_transport_mode == transport_mode)
 
 		stmt = select(AgencyOffer).where(and_(*conditions))
+		
+		# Filter by tags if provided
+		if tag_ids:
+			stmt = stmt.join(OfferTag).where(OfferTag.tag_id.in_(tag_ids))
+		
 		results = list(db.exec(stmt))
 		
 		# Filter by price_housing only in Python (align with tests and simpler for SQLite)

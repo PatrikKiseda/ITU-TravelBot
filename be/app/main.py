@@ -15,6 +15,7 @@ from app.models import agency_offer as _m_agency_offer  # noqa: F401
 from app.models import customer_response as _m_customer_response  # noqa: F401
 from app.models import customer_order as _m_customer_order  # noqa: F401
 from app.models import customer_note as _m_customer_note  # noqa: F401
+from app.models import tag as _m_tag  # noqa: F401
 
 
 setup_logging()

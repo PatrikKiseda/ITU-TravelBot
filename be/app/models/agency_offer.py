@@ -31,14 +31,12 @@ class AgencyOffer(SQLModel, table=True):
 	price_transport_amount: Optional[int] = None  # nullable if car_own or none
 	short_description: str
 	extended_description: Optional[str] = None
-	highlights: Optional[str] = None  # JSON array string
-	why_visit: Optional[str] = None  # JSON array string
-	things_to_consider: Optional[str] = None  # JSON array string
+	# Note: highlights, why_visit, things_to_consider are now stored as Tags with many-to-many relationship
 	image_url: Optional[str] = None
 	image_credit_source: Optional[str] = None
 	image_credit_author: Optional[str] = None
 	image_credit_link: Optional[str] = None
-	tags: Optional[str] = None  # JSON array string
+	# Note: Tags are now stored in separate Tag table with many-to-many via OfferTag
 	created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
 	updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
 

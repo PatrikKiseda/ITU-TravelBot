@@ -73,6 +73,20 @@ PYTHONPATH=. pytest -v tests/
 
 - `POST /api/v1/customer/explore` - Generate 5 destination suggestions
 
+### Tag Management
+
+- `GET /api/v1/tags` - List all tags (sorted by popularity)
+- `GET /api/v1/tags?type=highlight` - Filter tags by type
+- `POST /api/v1/tags` - Create new tag
+- `GET /api/v1/tags/{id}` - Get tag details
+- `PUT /api/v1/tags/{id}` - Update tag
+- `DELETE /api/v1/tags/{id}` - Delete tag
+- `POST /api/v1/offers/{offer_id}/tags/{tag_id}` - Add tag to offer
+- `DELETE /api/v1/offers/{offer_id}/tags/{tag_id}` - Remove tag from offer
+- `GET /api/v1/offers/{offer_id}/tags` - Get all tags for an offer
+
+**Note**: The old `highlights`, `why_visit`, and `things_to_consider` JSON fields from AgencyOffer have been replaced with a reusable Tag system. Tags are now stored separately with automatic usage tracking (quantity) and can be shared across multiple offers.
+
 ### Legacy Endpoints (Backward Compatibility)
 
 - `POST /api/v1/suggest` - LLM suggestions (legacy)
