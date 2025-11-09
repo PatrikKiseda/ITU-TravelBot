@@ -15,7 +15,7 @@ class CustomerOrderService:
 		if not order:
 			return None
 
-		offer = self.offer_repo.get_by_id(db, "agent", order.offer_id)
+		offer = self.offer_repo.get_by_id(db, None, order.offer_id)
 		if not offer:
 			return None
 
@@ -39,7 +39,7 @@ class CustomerOrderService:
 			return None
 
 		if number_of_people is not None:
-			offer = self.offer_repo.get_by_id(db, "agent", order.offer_id)
+			offer = self.offer_repo.get_by_id(db, None, order.offer_id)
 			if offer:
 				confirmed_capacity = self.order_repo.calculate_confirmed_capacity(db, order.offer_id)
 				current_order_people = order.number_of_people if order.order_status == OrderStatus.CONFIRMED else 0
@@ -58,7 +58,7 @@ class CustomerOrderService:
 		if not order or order.order_status != OrderStatus.PENDING:
 			return None
 
-		offer = self.offer_repo.get_by_id(db, "agent", order.offer_id)
+		offer = self.offer_repo.get_by_id(db, None, order.offer_id)
 		if not offer:
 			return None
 
@@ -81,7 +81,7 @@ class CustomerOrderService:
 			return None
 
 		if order.order_status == OrderStatus.CONFIRMED:
-			offer = self.offer_repo.get_by_id(db, "agent", order.offer_id)
+			offer = self.offer_repo.get_by_id(db, None, order.offer_id)
 			if offer:
 				offer.capacity_available += order.number_of_people
 				self.offer_repo.update(db, offer)

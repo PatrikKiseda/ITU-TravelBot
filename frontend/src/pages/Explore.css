@@ -1,0 +1,44 @@
+.explore-page {
+  min-height: calc(100vh - 200px);
+  padding: 20px;
+}
+
+.explore-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.offers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: 40px 20px;
+  color: #ffffff;
+  font-size: 18px;
+}
+
+.error {
+  color: #ef4444;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #ffffff;
+}
+
+.empty-state h2 {
+  font-size: 28px;
+  margin-bottom: 12px;
+}
+
+.empty-state p {
+  color: #cccccc;
+  font-size: 16px;
+}
+

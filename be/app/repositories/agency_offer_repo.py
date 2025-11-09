@@ -12,11 +12,9 @@ class AgencyOfferRepository:
 		db.refresh(offer)
 		return offer
 
-	def get_by_id(self, db: Session, agent_session_id: str, offer_id: str) -> Optional[AgencyOffer]:
-		stmt = select(AgencyOffer).where(
-			AgencyOffer.agent_session_id == agent_session_id,
-			AgencyOffer.id == offer_id
-		)
+	def get_by_id(self, db: Session, agent_session_id: Optional[str], offer_id: str) -> Optional[AgencyOffer]:
+		# Since there's only one agent, we don't need to filter by agent_session_id
+		stmt = select(AgencyOffer).where(AgencyOffer.id == offer_id)
 		return db.exec(stmt).first()
 
 	def update(self, db: Session, offer: AgencyOffer) -> AgencyOffer:
@@ -27,7 +25,7 @@ class AgencyOfferRepository:
 		db.refresh(offer)
 		return offer
 
-	def delete(self, db: Session, agent_session_id: str, offer_id: str) -> None:
+	def delete(self, db: Session, agent_session_id: Optional[str], offer_id: str) -> None:
 		offer = self.get_by_id(db, agent_session_id, offer_id)
 		if not offer:
 			return
@@ -37,7 +35,7 @@ class AgencyOfferRepository:
 	def list_filtered(
 		self,
 		db: Session,
-		agent_session_id: str,
+		agent_session_id: Optional[str] = None,
 		origin: Optional[str] = None,
 		destination: Optional[str] = None,
 		capacity_min: Optional[int] = None,
@@ -51,7 +49,9 @@ class AgencyOfferRepository:
 		transport_mode: Optional[str] = None,
 		tag_ids: Optional[List[int]] = None,
 	) -> List[AgencyOffer]:
-		conditions = [AgencyOffer.agent_session_id == agent_session_id]
+		conditions = []
+		if agent_session_id:
+			conditions.append(AgencyOffer.agent_session_id == agent_session_id)
 
 		if origin:
 			conditions.append(AgencyOffer.origin.ilike(f"%{origin}%"))
@@ -80,7 +80,10 @@ class AgencyOfferRepository:
 		if transport_mode:
 			conditions.append(AgencyOffer.price_transport_mode == transport_mode)
 
-		stmt = select(AgencyOffer).where(and_(*conditions))
+		if conditions:
+			stmt = select(AgencyOffer).where(and_(*conditions))
+		else:
+			stmt = select(AgencyOffer)
 		
 		# Filter by tags if provided
 		if tag_ids:

@@ -49,3 +49,9 @@ logs/
 # Project-specific
 travelbot.db
 
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/*.local
+

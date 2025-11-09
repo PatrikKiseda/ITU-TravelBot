@@ -85,7 +85,8 @@ class AgencyOfferService:
 		return self.repo.create(db, offer)
 
 	def update(self, db: Session, agent_session_id: str, offer_id: str, data: Dict[str, Any]) -> Optional[AgencyOffer]:
-		offer = self.repo.get_by_id(db, agent_session_id, offer_id)
+		# agent_session_id is kept for API consistency but not used in lookup (single agent)
+		offer = self.repo.get_by_id(db, None, offer_id)
 		if not offer:
 			return None
 
@@ -150,8 +151,10 @@ class AgencyOfferService:
 		return self.repo.update(db, offer)
 
 	def delete(self, db: Session, agent_session_id: str, offer_id: str) -> None:
-		self.repo.delete(db, agent_session_id, offer_id)
+		# agent_session_id is kept for API consistency but not used (single agent)
+		self.repo.delete(db, None, offer_id)
 
 	def get_by_id(self, db: Session, agent_session_id: str, offer_id: str) -> Optional[AgencyOffer]:
-		return self.repo.get_by_id(db, agent_session_id, offer_id)
+		# agent_session_id is kept for API consistency but not used in lookup (single agent)
+		return self.repo.get_by_id(db, None, offer_id)
 

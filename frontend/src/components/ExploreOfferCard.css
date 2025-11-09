@@ -1,0 +1,207 @@
+.explore-offer-card {
+  background-color: #2a2a2a;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 20px;
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.explore-offer-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.explore-offer-card.expanded {
+  flex-direction: column;
+}
+
+.card-content {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+}
+
+.card-image {
+  width: 200px;
+  height: 150px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 14px;
+}
+
+.card-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.destination-name {
+  color: #ffffff;
+  font-size: 24px;
+  margin: 0;
+  font-weight: bold;
+}
+
+.price-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.price-range {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.price-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.price-item {
+  color: #cccccc;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.price-icon {
+  font-size: 16px;
+}
+
+.description {
+  color: #cccccc;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.expanded-content {
+  margin-top: 8px;
+}
+
+.image-credit {
+  font-size: 12px;
+  color: #888;
+  margin-top: 8px;
+  font-style: italic;
+}
+
+.card-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding-left: 10px;
+}
+
+.expand-button {
+  background-color: #3a3a3a;
+  border: none;
+  color: #ffffff;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.expand-button:hover {
+  background-color: #4a4a4a;
+}
+
+.expand-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.accept-button,
+.reject-button {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.accept-button {
+  background-color: #4ade80;
+  color: #ffffff;
+}
+
+.accept-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(74, 222, 128, 0.6);
+}
+
+.reject-button {
+  background-color: #ef4444;
+  color: #ffffff;
+}
+
+.reject-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
+}
+
+@media (max-width: 768px) {
+  .explore-offer-card {
+    flex-direction: column;
+  }
+
+  .card-content {
+    flex-direction: column;
+  }
+
+  .card-image {
+    width: 100%;
+    height: 200px;
+  }
+
+  .card-actions {
+    flex-direction: row;
+    justify-content: space-between;
+    padding-left: 0;
+    padding-top: 10px;
+  }
+}
+

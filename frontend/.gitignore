@@ -1,0 +1,12 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.vite/
+
+# Environment
+*.local
+.env.local
+
+# Note: package-lock.json SHOULD be committed (ensures consistent dependency versions)

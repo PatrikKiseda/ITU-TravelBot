@@ -1,0 +1,22 @@
+.destination-list {
+  width: 100%;
+}
+
+.cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.loading,
+.error,
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #cccccc;
+  font-size: 18px;
+}
+
+.error {
+  color: #ef4444;
+}

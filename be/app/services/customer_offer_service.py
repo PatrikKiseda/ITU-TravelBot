@@ -31,7 +31,7 @@ class CustomerOfferService:
 		rejected_ids = self.response_repo.get_rejected_offer_ids(db, customer_session_id)
 		all_offers = self.offer_repo.list_filtered(
 			db,
-			agent_session_id="agent",  # Single agent for school project
+			agent_session_id=None,  # Show all offers to customers (not filtered by agent)
 			origin=origin,
 			destination=destination,
 			capacity_min=capacity_min,

@@ -25,7 +25,7 @@ class CustomerAcceptedService:
 
 		offers = []
 		for offer_id in offer_ids:
-			offer = self.offer_repo.get_by_id(db, "agent", offer_id)
+			offer = self.offer_repo.get_by_id(db, None, offer_id)
 			if offer:
 				offers.append(offer)
 
@@ -42,7 +42,7 @@ class CustomerAcceptedService:
 		response = self.response_repo.get_by_offer(db, customer_session_id, offer_id)
 		if not response or response.response_status != "ACCEPTED":
 			return None
-		return self.offer_repo.get_by_id(db, "agent", offer_id)
+		return self.offer_repo.get_by_id(db, None, offer_id)
 
 	def add_note(self, db: Session, customer_session_id: str, offer_id: str, note_text: str) -> CustomerNote:
 		import uuid
@@ -58,7 +58,7 @@ class CustomerAcceptedService:
 		return self.note_repo.get_by_offer(db, customer_session_id, offer_id)
 
 	def confirm_travel(self, db: Session, customer_session_id: str, offer_id: str, number_of_people: int, selected_transport_mode: str) -> Optional[CustomerOrder]:
-		offer = self.offer_repo.get_by_id(db, "agent", offer_id)
+		offer = self.offer_repo.get_by_id(db, None, offer_id)
 		if not offer:
 			return None
 
