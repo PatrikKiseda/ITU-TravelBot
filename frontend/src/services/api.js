@@ -84,14 +84,21 @@ export async function rejectOffer(offerId) {
 }
 
 export async function addNote(offerId, noteText) {
-  return apiRequest(`/customer/accepted/${offerId}/note`, {
+  const res = await fetch(`/api/v1/customer/accepted/${offerId}/note`, {
     method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ note_text: noteText }),
-  })
+  });
+  if (!res.ok) throw new Error(`Failed to save note: ${res.status}`);
+  const data = await res.json();
+  return data?.data || data;
 }
 
-export async function getNote(offerId) {
-  return apiRequest(`/customer/accepted/${offerId}/note`)
+export async function getNote(offerId) {  // renamed
+  const res = await fetch(`/api/v1/customer/accepted/${offerId}/note`);
+  if (!res.ok) throw new Error(`Failed to load note: ${res.status}`);
+  const data = await res.json();
+  return data?.data?.note_text || data?.note_text || '';
 }
 
 export async function confirmTravel(offerId, numberOfPeople, transportMode) {

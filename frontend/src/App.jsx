@@ -9,6 +9,7 @@ import './App.css'
 function App() {
   return (
     <div className="app">
+      <link href="https://fonts.googleapis.com/css2?family=Gurajada&display=swap" rel="stylesheet"></link>
       <Header />
       <Routes>
         <Route path="/" element={<Navigate to="/explore" replace />} />

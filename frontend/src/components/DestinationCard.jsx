@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { fetchExpandedOffer, confirmTravel } from '../services/api'
+import { fetchExpandedOffer, confirmTravel, addNote, getNote } from '../services/api'
 import './DestinationCard.css'
 
 function DestinationCard({ offer, onDelete, onAddNote }) {
@@ -9,6 +9,18 @@ function DestinationCard({ offer, onDelete, onAddNote }) {
   const [expandedData, setExpandedData] = useState(null)
   const [loadingExpand, setLoadingExpand] = useState(false)
   const [loadingConfirm, setLoadingConfirm] = useState(false)
+
+  const [note, setNote] = useState('')       // content of the note
+  const [noteVisible, setNoteVisible] = useState(false) // whether the textarea is shown
+  const [savingNote, setSavingNote] = useState(false)
+
+  useEffect(() => {
+    if (expanded) {
+      getNote(offer.id)
+        .then(text => setNote(text))
+        .catch(err => console.error('Failed to load note:', err));
+    }
+  }, [expanded, offer.id]);
 
   const calculatePriceRange = () => {
     const housing = offer.price_housing || 0
@@ -58,10 +70,22 @@ function DestinationCard({ offer, onDelete, onAddNote }) {
   }
 
   const handleAddNote = () => {
-    if (onAddNote) {
-      onAddNote(offer.id)
+    setNoteVisible(true)
+  }
+
+  const handleSaveNote = async () => {
+    try {
+      setSavingNote(true)
+      const result = await addNote(offer.id, note)
+      console.log('Saved note:', result)
+    } catch (err) {
+      console.error('Error saving note:', err)
+      alert('Failed to save note: ' + (err.message || 'Unknown error'))
+    } finally {
+      setSavingNote(false)
     }
   }
+
 
   const priceRange = calculatePriceRange()
   const housing = offer.price_housing || 0
@@ -125,21 +149,50 @@ function DestinationCard({ offer, onDelete, onAddNote }) {
       </div>
 
       {expanded && (
+        // on expand
         <div className="expanded-actions">
-          <button 
-            className="add-note-button"
-            onClick={handleAddNote}
-          >
-            Add a note
-          </button>
-          <button 
-            className="confirm-travel-button"
-            onClick={handleConfirmTravel}
-            disabled={loadingConfirm}
-          >
-            {loadingConfirm ? '...' : 'Confirm travel'}
-          </button>
+          <div className="button-row">
+            <button 
+              className="add-note-button"
+              onClick={handleAddNote}
+            >
+              Add a note
+            </button>
+
+            <button 
+              className="confirm-travel-button"
+              onClick={handleConfirmTravel}
+              disabled={loadingConfirm}
+            >
+              {loadingConfirm ? '...' : 'Confirm travel'}
+            </button>
+          </div>
+
+        {noteVisible && (
+          <div className="note-block">
+            <label htmlFor={`note-${offer.id}`} className="note-label">
+              Your note
+            </label>
+            <textarea
+              id={`note-${offer.id}`}
+              className="note-textarea"
+              placeholder="Type your note..."
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+            />
+            <button
+              className="save-note-button"
+              onClick={handleSaveNote}
+              disabled={savingNote || !note.trim()}
+            >
+              {savingNote ? 'Saving...' : 'Save Note'}
+            </button>
+          </div>
+        )}
+
         </div>
+        // end of expanded part
+
       )}
 
       <button 

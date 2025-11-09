@@ -14,6 +14,10 @@ function Order() {
   const [updating, setUpdating] = useState(false)
   const [confirming, setConfirming] = useState(false)
 
+  const [note, setNote] = useState('');
+  const [isEditingNote, setIsEditingNote] = useState(false);
+
+
   useEffect(() => {
     loadOrder()
   }, [orderId])
@@ -206,6 +210,36 @@ function Order() {
               {confirming ? 'Confirming...' : order.order_status === 'CONFIRMED' ? 'Already Confirmed' : 'Confirm and order'}
             </button>
           </div>
+
+          <div className="form-section note-section">
+          <label className="form-label">Add a note</label>
+
+          {isEditingNote ? (
+            <textarea
+              className="note-textarea"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="Type your note here..."
+            />
+          ) : (
+            <div
+              className="note-display"
+              onClick={() => setIsEditingNote(true)}
+            >
+              {note ? note : <span className="note-placeholder">Click to add a note...</span>}
+            </div>
+          )}
+
+          {isEditingNote && (
+            <button
+              className="save-note-button"
+              onClick={() => setIsEditingNote(false)}
+            >
+              Done
+            </button>
+          )}
+        </div>
+
         </div>
       </div>
     </div>
