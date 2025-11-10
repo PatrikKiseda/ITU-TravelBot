@@ -18,6 +18,9 @@ function Header() {
   const handleExploreClick = () => {
     navigate('/explore')
   }
+  const handleAdminClick = () => {
+    navigate('/admin')
+  }
 
   return (
     <header className="header">
@@ -38,16 +41,22 @@ function Header() {
           </button>
           <div className="nav-buttons">
             <button
-              className={`nav-button nav-button-plan ${currentPath === '/plan' ? 'active' : ''}`}
-              onClick={handlePlanClick}
+                className={`nav-button nav-button-plan ${currentPath === '/plan' ? 'active' : ''}`}
+                onClick={handlePlanClick}
             >
               Plan
             </button>
             <button
-              className={`nav-button nav-button-explore ${currentPath === '/explore' ? 'active' : ''}`}
-              onClick={handleExploreClick}
+                className={`nav-button nav-button-explore ${currentPath === '/explore' ? 'active' : ''}`}
+                onClick={handleExploreClick}
             >
               Explore
+            </button>
+            <button
+                className={`nav-button nav-button-admin ${currentPath === '/admin' ? 'active' : ''}`}
+                onClick={handleAdminClick}
+            >
+              Admin
             </button>
           </div>
         </div>

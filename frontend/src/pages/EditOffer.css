@@ -1,0 +1,35 @@
+.edit-offer-page {
+    width: 80%;
+    max-width: 800px;
+    margin: 40px auto;
+    font-family: sans-serif;
+}
+
+.edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.edit-form input,
+.edit-form textarea {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.save-button {
+    margin-top: 20px;
+    padding: 10px;
+    background: #3b6aff;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.save-button:hover {
+    background: #2f54d4;
+}

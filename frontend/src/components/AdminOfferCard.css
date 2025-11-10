@@ -1,0 +1,149 @@
+.admin-offer-card {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    padding: 16px;
+    margin: 16px 0;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card-content {
+    display: flex;
+    gap: 16px;
+}
+
+/* Картинка */
+.card-image {
+    width: 140px;
+    height: 120px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #f3f3f3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-placeholder {
+    font-size: 14px;
+    color: #888;
+}
+
+/* Информация */
+.card-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.destination-name {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: #333;
+}
+
+/* Цена */
+.price-section {
+    margin: 6px 0 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.price-component {
+    background: #eef4ff;
+    color: #3a6ad8;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    width: fit-content;
+    font-weight: 500;
+}
+
+/* Описание */
+.description p {
+    margin: 0;
+    color: #555;
+    line-height: 1.4;
+    font-size: 14px;
+}
+.admin-offer-card-actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-left: auto; /* прижимает кнопки вправо */
+}
+
+/* Общий стиль кнопок */
+.admin-offer-card-actions button {
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease;
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+    width: 100%;
+}
+
+/* Кнопка Edit */
+.edit-button {
+    background: #e8efff;
+    color: #2c57d1;
+    border: 1px solid #b8c8ff;
+}
+
+.edit-button:hover {
+    background: #d8e4ff;
+    transform: translateY(-2px);
+}
+
+/* Кнопка Delete */
+.delete-button {
+    background: #ffe8e8;
+    color: #d12c2c;
+    border: 1px solid #ffb8b8;
+    position: relative;
+    height: 36px;
+    width: auto;
+}
+
+.delete-button:hover {
+    background: #ffd6d6;
+    transform: translateY(-2px);
+}
+
+/* Эффект нажатия */
+.admin-offer-card-actions button:active {
+    transform: scale(0.97);
+}
+.deleteB
+/* Адаптив */
+@media (max-width: 600px) {
+    .card-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .card-image {
+        width: 100%;
+        height: 180px;
+    }
+
+    .price-range {
+        margin: 0 auto;
+    }
+}
