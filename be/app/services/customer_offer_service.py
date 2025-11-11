@@ -29,6 +29,8 @@ class CustomerOfferService:
 		transport_mode: Optional[str] = None,
 	) -> List[AgencyOffer]:
 		rejected_ids = self.response_repo.get_rejected_offer_ids(db, customer_session_id)
+		accepted_responses = self.response_repo.list_accepted(db, customer_session_id)
+		accepted_ids = {resp.offer_id for resp in accepted_responses}
 		all_offers = self.offer_repo.list_filtered(
 			db,
 			agent_session_id=None,  # Show all offers to customers (not filtered by agent)
@@ -44,7 +46,7 @@ class CustomerOfferService:
 			price_max=price_max,
 			transport_mode=transport_mode,
 		)
-		return [o for o in all_offers if o.id not in rejected_ids]
+		return [o for o in all_offers if o.id not in rejected_ids and o.id not in accepted_ids]
 
 	def accept(self, db: Session, customer_session_id: str, offer_id: str) -> CustomerResponse:
 		import uuid

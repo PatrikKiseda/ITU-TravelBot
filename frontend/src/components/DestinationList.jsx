@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import DestinationCard from './DestinationCard'
-import { fetchAcceptedOffers } from '../services/api'
+import { fetchAcceptedOffers, rejectOffer } from '../services/api'
 import './DestinationList.css'
 
 function DestinationList({ sortBy, sortOrder, onSortChange }) {
@@ -29,18 +29,12 @@ function DestinationList({ sortBy, sortOrder, onSortChange }) {
   }
 
   const handleDelete = async (offerId) => {
-    // TODO: Implement delete functionality
-    console.log('Delete offer:', offerId)
-    // After delete, reload offers
-    loadOffers()
-  }
-
-  const handleAddNote = (offerId) => {
-    // TODO: Implement note modal/input
-    const noteText = prompt('Enter your note:')
-    if (noteText) {
-      console.log('Adding note to offer:', offerId, noteText)
-      // TODO: Call addNote API
+    try {
+      await rejectOffer(offerId)
+      setOffers((prev) => prev.filter((offer) => offer.id !== offerId))
+    } catch (err) {
+      console.error('[DestinationList] Error removing offer:', err)
+      alert('Failed to remove destination: ' + (err.message || 'Unknown error'))
     }
   }
 
@@ -63,7 +57,6 @@ function DestinationList({ sortBy, sortOrder, onSortChange }) {
               key={offer.id}
               offer={offer}
               onDelete={handleDelete}
-              onAddNote={handleAddNote}
             />
           ))
         )}

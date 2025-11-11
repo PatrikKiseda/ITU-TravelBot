@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import DestinationList from '../components/DestinationList'
 import './Plan.css'
 
 function Plan() {
   const [sortBy, setSortBy] = useState('price')
   const [sortOrder, setSortOrder] = useState('asc')
+  const navigate = useNavigate()
 
   const handleSortChange = (newSort) => {
     if (sortBy === newSort) {
@@ -41,6 +43,12 @@ function Plan() {
             </div>
           </div>
         </div>
+        <button
+          className="plan-orders-button"
+          onClick={() => navigate('/orders')}
+        >
+          View upcoming travels
+        </button>
       </div>
       <main className="plan-content">
         <DestinationList 

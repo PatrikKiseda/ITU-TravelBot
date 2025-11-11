@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getOrder, updateOrder, confirmOrder } from '../services/api'
 import './Order.css'
 
-function Order() {
+function OrderDetailPage() {
   const { orderId } = useParams()
   const navigate = useNavigate()
+
   const [orderData, setOrderData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -13,10 +14,6 @@ function Order() {
   const [transportMode, setTransportMode] = useState('plane')
   const [updating, setUpdating] = useState(false)
   const [confirming, setConfirming] = useState(false)
-
-  const [note, setNote] = useState('');
-  const [isEditingNote, setIsEditingNote] = useState(false);
-
 
   useEffect(() => {
     loadOrder()
@@ -31,22 +28,37 @@ function Order() {
       setTransportMode(data.order.selected_transport_mode)
       setError(null)
     } catch (err) {
-      console.error('[Order] Error loading order:', err)
+      console.error('[OrderDetail] Error loading order:', err)
       setError('Failed to load order: ' + (err.message || 'Unknown error'))
     } finally {
       setLoading(false)
     }
   }
 
+  const handlePeopleChange = (delta) => {
+    if (!orderData) return
+    const { order, remaining_capacity } = orderData
+
+    // Remaining capacity excludes the current pending order,
+    // so allow increasing up to current people + remaining when pending.
+    const availableSlots =
+      order.order_status === 'PENDING'
+        ? remaining_capacity + order.number_of_people
+        : remaining_capacity
+
+    const maxPeople = Math.max(1, availableSlots || order.number_of_people)
+    const newValue = Math.max(1, Math.min(numberOfPeople + delta, maxPeople))
+    setNumberOfPeople(newValue)
+  }
+
   const handleUpdateOrder = async () => {
     try {
       setUpdating(true)
       await updateOrder(orderId, numberOfPeople, transportMode)
-      // Reload order to get updated data
       await loadOrder()
       alert('Order updated successfully!')
     } catch (err) {
-      console.error('[Order] Error updating order:', err)
+      console.error('[OrderDetail] Error updating order:', err)
       alert('Failed to update order: ' + (err.message || 'Unknown error'))
     } finally {
       setUpdating(false)
@@ -58,19 +70,13 @@ function Order() {
       setConfirming(true)
       await confirmOrder(orderId)
       alert('Order confirmed successfully!')
-      // Navigate back to plan page
-      navigate('/plan')
+      navigate('/orders', { state: { highlightOrderId: orderId } })
     } catch (err) {
-      console.error('[Order] Error confirming order:', err)
+      console.error('[OrderDetail] Error confirming order:', err)
       alert('Failed to confirm order: ' + (err.message || 'Unknown error'))
     } finally {
       setConfirming(false)
     }
-  }
-
-  const handlePeopleChange = (delta) => {
-    const newValue = Math.max(1, Math.min(numberOfPeople + delta, orderData?.remaining_capacity || 1))
-    setNumberOfPeople(newValue)
   }
 
   if (loading) {
@@ -82,13 +88,21 @@ function Order() {
   }
 
   const { order, offer, remaining_capacity, total_price } = orderData
+  const availableSlots =
+    order.order_status === 'PENDING'
+      ? remaining_capacity + order.number_of_people
+      : remaining_capacity
 
   return (
     <div className="order-page">
       <div className="order-content">
+        <button className="orders-back-button" onClick={() => navigate('/orders')}>
+          ← Back to upcoming travels
+        </button>
+
         <div className="order-destination-card">
           <h1 className="destination-title">{offer.destination_name}</h1>
-          
+
           <div className="destination-details">
             <div className="destination-image-section">
               {offer.image_url && (
@@ -98,7 +112,7 @@ function Order() {
 
             <div className="destination-info">
               <div className="price-info">
-                <div className="price-range">Price: ${total_price || 'N/A'}</div>
+                <div className="price-range">Price per traveller: ${total_price || 'N/A'}</div>
                 <div className="price-breakdown">
                   <div className="price-item">
                     <span className="price-icon">✈️</span>
@@ -129,7 +143,7 @@ function Order() {
             <div className="form-group">
               <label className="form-label">how many of us?</label>
               <div className="people-picker">
-                <button 
+                <button
                   className="picker-button"
                   onClick={() => handlePeopleChange(-1)}
                   disabled={numberOfPeople <= 1}
@@ -140,14 +154,11 @@ function Order() {
                   {Array.from({ length: numberOfPeople }, (_, i) => (
                     <span key={i} className="person-icon">👤</span>
                   ))}
-                  {numberOfPeople < (remaining_capacity || 1) && (
-                    <span className="person-icon add-icon" onClick={() => handlePeopleChange(1)}>+</span>
-                  )}
                 </div>
-                <button 
+                <button
                   className="picker-button"
                   onClick={() => handlePeopleChange(1)}
-                  disabled={numberOfPeople >= (remaining_capacity || 1)}
+                  disabled={availableSlots !== undefined && numberOfPeople >= availableSlots}
                 >
                   +
                 </button>
@@ -155,9 +166,9 @@ function Order() {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Amount available</label>
+              <label className="form-label">Capacity remaining</label>
               <div className="capacity-display">
-                <span className="capacity-value">{remaining_capacity || 0}</span>
+                <span className="capacity-value">{availableSlots || 0}</span>
                 <span className="capacity-icon">👤</span>
               </div>
             </div>
@@ -179,17 +190,15 @@ function Order() {
                   onClick={() => setTransportMode('train_bus')}
                 >
                   <span className="transport-icon">🚌</span>
-                  <span>45€/person</span>
+                  <span>train or bus</span>
                 </button>
-                {offer.price_transport_mode === 'plane' && (
-                  <button
-                    className={`transport-option ${transportMode === 'plane' ? 'active' : ''}`}
-                    onClick={() => setTransportMode('plane')}
-                  >
-                    <span className="transport-icon">✈️</span>
-                    <span>Plane</span>
-                  </button>
-                )}
+                <button
+                  className={`transport-option ${transportMode === 'plane' ? 'active' : ''}`}
+                  onClick={() => setTransportMode('plane')}
+                >
+                  <span className="transport-icon">✈️</span>
+                  <span>plane</span>
+                </button>
               </div>
             </div>
           </div>
@@ -198,7 +207,10 @@ function Order() {
             <button
               className="update-button"
               onClick={handleUpdateOrder}
-              disabled={updating || (numberOfPeople === order.number_of_people && transportMode === order.selected_transport_mode)}
+              disabled={
+                updating ||
+                (numberOfPeople === order.number_of_people && transportMode === order.selected_transport_mode)
+              }
             >
               {updating ? 'Updating...' : 'Update Order'}
             </button>
@@ -207,44 +219,17 @@ function Order() {
               onClick={handleConfirmOrder}
               disabled={confirming || order.order_status === 'CONFIRMED'}
             >
-              {confirming ? 'Confirming...' : order.order_status === 'CONFIRMED' ? 'Already Confirmed' : 'Confirm and order'}
+              {confirming
+                ? 'Confirming...'
+                : order.order_status === 'CONFIRMED'
+                  ? 'Already Confirmed'
+                  : 'Confirm and order'}
             </button>
           </div>
-
-          <div className="form-section note-section">
-          <label className="form-label">Add a note</label>
-
-          {isEditingNote ? (
-            <textarea
-              className="note-textarea"
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              placeholder="Type your note here..."
-            />
-          ) : (
-            <div
-              className="note-display"
-              onClick={() => setIsEditingNote(true)}
-            >
-              {note ? note : <span className="note-placeholder">Click to add a note...</span>}
-            </div>
-          )}
-
-          {isEditingNote && (
-            <button
-              className="save-note-button"
-              onClick={() => setIsEditingNote(false)}
-            >
-              Done
-            </button>
-          )}
-        </div>
-
         </div>
       </div>
     </div>
   )
 }
 
-export default Order
-
+export default OrderDetailPage

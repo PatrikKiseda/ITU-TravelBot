@@ -95,10 +95,17 @@ export async function addNote(offerId, noteText) {
 }
 
 export async function getNote(offerId) {  // renamed
-  const res = await fetch(`/api/v1/customer/accepted/${offerId}/note`);
-  if (!res.ok) throw new Error(`Failed to load note: ${res.status}`);
-  const data = await res.json();
-  return data?.data?.note_text || data?.note_text || '';
+  const res = await fetch(`/api/v1/customer/accepted/${offerId}/note`, {
+    credentials: 'include',
+  })
+  if (res.status === 404) {
+    return ''
+  }
+  if (!res.ok) {
+    throw new Error(`Failed to load note: ${res.status}`)
+  }
+  const data = await res.json()
+  return data?.data?.note_text || data?.note_text || ''
 }
 
 export async function confirmTravel(offerId, numberOfPeople, transportMode) {
@@ -127,6 +134,18 @@ export async function updateOrder(orderId, numberOfPeople, transportMode) {
 
 export async function confirmOrder(orderId) {
   return apiRequest(`/customer/orders/${orderId}/confirm`, {
+    method: 'POST',
+    body: JSON.stringify({}),
+  })
+}
+
+export async function listOrders(status) {
+  const params = status ? `?status=${encodeURIComponent(status)}` : ''
+  return apiRequest(`/customer/orders${params}`)
+}
+
+export async function cancelOrder(orderId) {
+  return apiRequest(`/customer/orders/${orderId}/cancel`, {
     method: 'POST',
     body: JSON.stringify({}),
   })

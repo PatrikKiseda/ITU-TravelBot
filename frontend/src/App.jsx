@@ -3,7 +3,8 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import Header from './components/Header'
 import Plan from './pages/Plan'
 import Explore from './pages/Explore'
-import Order from './pages/Order'
+import Orders from './pages/Orders'
+import OrderDetail from './pages/Order'
 import './App.css'
 
 function App() {
@@ -15,7 +16,8 @@ function App() {
         <Route path="/" element={<Navigate to="/explore" replace />} />
         <Route path="/explore" element={<Explore />} />
         <Route path="/plan" element={<Plan />} />
-        <Route path="/orders/:orderId" element={<Order />} />
+        <Route path="/orders" element={<Orders />} />
+        <Route path="/orders/:orderId" element={<OrderDetail />} />
       </Routes>
     </div>
   )

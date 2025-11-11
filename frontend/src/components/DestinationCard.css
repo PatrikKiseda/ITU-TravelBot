@@ -114,6 +114,31 @@
   margin-top: 8px;
 }
 
+.note-preview {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  color: #e0f2fe;
+}
+
+.note-label {
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #93c5fd;
+}
+
+.note-text {
+  font-size: 13px;
+  color: #f8fafc;
+  word-break: break-word;
+}
+
 .expanded-content {
   display: flex;
   flex-direction: column;
@@ -161,26 +186,28 @@
 .confirm-travel-button {
   flex: 1;
   padding: 12px 24px;
-  background-color: #fbbf24;
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.85) 0%, rgba(10, 10, 10, 0.95) 100%);
   border: none;
-  border-radius: 8px;
-  color: #000000;
+  border-radius: 999px;
+  color: #f8fafc;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+  box-shadow: 0 8px 18px rgba(59, 130, 246, 0.25);
 }
 
 .confirm-travel-button:hover {
-  background-color: #f59e0b;
+  filter: brightness(1.1);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+  box-shadow: 0 10px 22px rgba(59, 130, 246, 0.35);
 }
 
 .confirm-travel-button:disabled {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: not-allowed;
   transform: none;
+  box-shadow: none;
 }
 
 .expand-button {
