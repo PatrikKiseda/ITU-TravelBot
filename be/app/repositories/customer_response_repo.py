@@ -42,3 +42,16 @@ class CustomerResponseRepository:
 		rejected = self.list_rejected(db, customer_session_id)
 		return [r.offer_id for r in rejected]
 
+	def list_all(self, db: Session, customer_session_id: str) -> List[CustomerResponse]:
+		stmt = select(CustomerResponse).where(
+			CustomerResponse.customer_session_id == customer_session_id
+		)
+		return list(db.exec(stmt))
+
+	def get_by_status(self, db: Session, customer_session_id: str, status: str) -> List[CustomerResponse]:
+		stmt = select(CustomerResponse).where(
+			CustomerResponse.customer_session_id == customer_session_id,
+			CustomerResponse.response_status == status
+		)
+		return list(db.exec(stmt))
+

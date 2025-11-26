@@ -46,6 +46,18 @@ async def add_note(
 	return ResponseEnvelope.ok(note.model_dump())
 
 
+@router.put("/accepted/{offer_id}/note")
+async def update_note(
+	offer_id: str,
+	body: CreateNoteBody,
+	db: Session = Depends(get_db),
+	customer_session_id: str = Depends(get_session_id),
+):
+	service = CustomerAcceptedService()
+	note = service.add_note(db, customer_session_id, offer_id, body.note_text)  # Uses create_or_update internally
+	return ResponseEnvelope.ok(note.model_dump())
+
+
 @router.get("/accepted/{offer_id}/note")
 async def get_note(
 	offer_id: str,

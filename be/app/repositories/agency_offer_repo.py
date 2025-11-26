@@ -91,14 +91,14 @@ class AgencyOfferRepository:
 		
 		results = list(db.exec(stmt))
 		
-		# Filter by price_housing only in Python (align with tests and simpler for SQLite)
+		# Filter by total price (housing + food + transport) in Python
 		if price_min is not None or price_max is not None:
 			filtered = []
 			for offer in results:
-				price = offer.price_housing
-				if price_min is not None and price < price_min:
+				total_price = offer.price_housing + offer.price_food + (offer.price_transport_amount or 0)
+				if price_min is not None and total_price < price_min:
 					continue
-				if price_max is not None and price > price_max:
+				if price_max is not None and total_price > price_max:
 					continue
 				filtered.append(offer)
 			return filtered

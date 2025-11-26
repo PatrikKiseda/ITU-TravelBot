@@ -58,3 +58,6 @@ class OrderDetailsDTO(BaseModel):
 	remaining_capacity: int
 	total_price: int
 
+
+class UpdateStatusBody(BaseModel):
+	status: str  # "ACCEPTED", "UNDECIDED", or "REJECTED"
