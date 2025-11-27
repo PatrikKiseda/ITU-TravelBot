@@ -39,9 +39,7 @@ class CustomerAcceptedService:
 		return offers
 
 	def get_with_details(self, db: Session, customer_session_id: str, offer_id: str) -> Optional[AgencyOffer]:
-		response = self.response_repo.get_by_offer(db, customer_session_id, offer_id)
-		if not response or response.response_status != "ACCEPTED":
-			return None
+		# Allow expansion for any offer, not just accepted ones
 		return self.offer_repo.get_by_id(db, None, offer_id)
 
 	def add_note(self, db: Session, customer_session_id: str, offer_id: str, note_text: str) -> CustomerNote:

@@ -83,13 +83,48 @@ export async function rejectOffer(offerId) {
   })
 }
 
+export async function fetchAllOffersWithStatus(filters = {}) {
+  const params = new URLSearchParams()
+  if (filters.origin) params.append('origin', filters.origin)
+  if (filters.destination) params.append('destination', filters.destination)
+  if (filters.season) params.append('season', filters.season)
+  if (filters.typeOfStay) params.append('type_of_stay', filters.typeOfStay)
+  if (filters.priceMin !== undefined) params.append('price_min', filters.priceMin)
+  if (filters.priceMax !== undefined) params.append('price_max', filters.priceMax)
+  if (filters.statusFilter) params.append('status_filter', filters.statusFilter)
+  if (filters.sort) params.append('sort', filters.sort)
+  if (filters.order) params.append('order', filters.order)
+  const queryString = params.toString()
+  return apiRequest(`/customer/offers/all${queryString ? '?' + queryString : ''}`)
+}
+
+export async function updateOfferStatus(offerId, status) {
+  return apiRequest(`/customer/offers/${offerId}/status`, {
+    method: 'PUT',
+    body: JSON.stringify({ status }),
+  })
+}
+
 export async function addNote(offerId, noteText) {
   const res = await fetch(`/api/v1/customer/accepted/${offerId}/note`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
     body: JSON.stringify({ note_text: noteText }),
   });
   if (!res.ok) throw new Error(`Failed to save note: ${res.status}`);
+  const data = await res.json();
+  return data?.data || data;
+}
+
+export async function updateNote(offerId, noteText) {
+  const res = await fetch(`/api/v1/customer/accepted/${offerId}/note`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ note_text: noteText }),
+  });
+  if (!res.ok) throw new Error(`Failed to update note: ${res.status}`);
   const data = await res.json();
   return data?.data || data;
 }
