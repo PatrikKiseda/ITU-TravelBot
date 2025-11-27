@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import Header from '../components/Header'
 import { cancelOrder, getOrder, listOrders } from '../services/api'
 import './Orders.css'
 
@@ -241,14 +242,26 @@ function OrdersPage() {
   }
 
   return (
-    <div className="orders-page">
-      <div className="orders-container">
-        <div className="orders-header">
-          <div className="orders-title">your upcoming travels</div>
-          <button className="orders-back-button" onClick={() => navigate('/plan')}>
-            Go back
-          </button>
-        </div>
+    <>
+      <Header 
+        filters={null}
+        onFiltersChange={null}
+        minPrice={0}
+        maxPrice={10000}
+        comparingOffers={null}
+        onEnterComparison={null}
+        sortBy={null}
+        sortOrder={null}
+        onSortChange={null}
+      />
+      <div className="orders-page">
+        <div className="orders-container">
+          <div className="orders-header">
+            <div className="orders-title">your upcoming travels</div>
+            <button className="orders-back-button" onClick={() => navigate('/explore')}>
+              Go back
+            </button>
+          </div>
 
         {loading ? (
           <div className="orders-state">Loading upcoming travels...</div>
@@ -263,8 +276,9 @@ function OrdersPage() {
             {orders.map(renderOrderCard)}
           </div>
         )}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 

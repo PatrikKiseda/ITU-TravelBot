@@ -4,9 +4,19 @@
   padding: 20px;
   margin-bottom: 20px;
   display: flex;
+  flex-direction: column;
   gap: 20px;
   position: relative;
   transition: transform 0.2s, box-shadow 0.2s;
+  touch-action: pan-y;
+  user-select: none;
+  cursor: pointer;
+  overflow: visible;
+}
+
+.explore-offer-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .explore-offer-card:hover {
@@ -16,6 +26,12 @@
 
 .explore-offer-card.expanded {
   flex-direction: column;
+}
+
+.explore-offer-card.expanded .card-content {
+  display: flex;
+  gap: 20px;
+  flex: 1;
 }
 
 .card-content {
@@ -58,7 +74,7 @@
 
 .destination-name {
   color: #ffffff;
-  font-size: 24px;
+  font-size: 28.8px;
   margin: 0;
   font-weight: bold;
 }
@@ -71,7 +87,7 @@
 
 .price-range {
   color: #ffffff;
-  font-size: 18px;
+  font-size: 21.6px;
   font-weight: 600;
 }
 
@@ -83,7 +99,7 @@
 
 .price-item {
   color: #cccccc;
-  font-size: 14px;
+  font-size: 16.8px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -95,7 +111,7 @@
 
 .description {
   color: #cccccc;
-  font-size: 14px;
+  font-size: 16.8px;
   line-height: 1.6;
 }
 
@@ -110,77 +126,109 @@
   font-style: italic;
 }
 
-.card-actions {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  padding-left: 10px;
+.card-compare-checkbox {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 10;
 }
 
-.expand-button {
+.compare-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background-color: #d4a017;
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s;
+}
+
+.compare-checkbox-label:hover {
+  background-color: #b89015;
+  transform: scale(1.05);
+}
+
+.compare-checkbox-input {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #000000;
+}
+
+.compare-checkbox-text {
+  color: #000000;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.card-expand-bar {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid #3a3a3a;
+}
+
+.expand-button-bar {
+  flex: 1;
+  padding: 12px;
   background-color: #3a3a3a;
   border: none;
+  border-radius: 8px;
   color: #ffffff;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
-  font-size: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   transition: background-color 0.2s;
 }
 
-.expand-button:hover {
+.expand-button-bar:hover {
   background-color: #4a4a4a;
 }
 
-.expand-button:disabled {
+.expand-button-bar:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.action-buttons {
+.expanded-actions {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+  margin-top: 16px;
+  width: 100%;
 }
 
-.accept-button,
-.reject-button {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
+.confirm-travel-button {
+  width: 100%;
+  padding: 12px 24px;
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.85) 0%, rgba(10, 10, 10, 0.95) 100%);
   border: none;
-  cursor: pointer;
-  font-size: 24px;
+  border-radius: 999px;
+  color: #f8fafc;
+  font-size: 16px;
   font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+  box-shadow: 0 8px 18px rgba(59, 130, 246, 0.25);
 }
 
-.accept-button {
-  background-color: #4ade80;
-  color: #ffffff;
+.confirm-travel-button:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(59, 130, 246, 0.35);
 }
 
-.accept-button:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 20px rgba(74, 222, 128, 0.6);
-}
-
-.reject-button {
-  background-color: #ef4444;
-  color: #ffffff;
-}
-
-.reject-button:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
+.confirm-travel-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 @media (max-width: 768px) {
@@ -197,11 +245,8 @@
     height: 200px;
   }
 
-  .card-actions {
-    flex-direction: row;
-    justify-content: space-between;
-    padding-left: 0;
-    padding-top: 10px;
+  .card-expand-bar {
+    margin-top: 12px;
   }
 }
 

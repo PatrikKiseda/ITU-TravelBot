@@ -8,6 +8,36 @@
   margin: 0 auto;
 }
 
+.offers-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.offer-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 100px;
+  padding: 10px;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.offer-group.dragging-over {
+  background-color: rgba(74, 222, 128, 0.1);
+  border: 2px dashed rgba(74, 222, 128, 0.5);
+}
+
+.group-header {
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #3a3a3a;
+}
+
 .offers-list {
   display: flex;
   flex-direction: column;
@@ -40,5 +70,20 @@
 .empty-state p {
   color: #cccccc;
   font-size: 16px;
+}
+
+.filtering-indicator {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  background-color: rgba(74, 222, 128, 0.9);
+  color: #000000;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 8px;
+  z-index: 1000;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
