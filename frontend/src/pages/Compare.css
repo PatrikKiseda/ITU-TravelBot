@@ -1,0 +1,12 @@
+.compare-page {
+  min-height: calc(100vh - 200px);
+  padding: 20px;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px 20px;
+  color: #ffffff;
+  font-size: 18px;
+}
+
