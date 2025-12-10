@@ -82,8 +82,12 @@ async def cancel_order(
 	customer_session_id: str = Depends(get_session_id),
 ):
 	service = CustomerOrderService()
+	print("Cancel attempt:", customer_session_id, order_id)
 	order = service.cancel_order(db, customer_session_id, order_id)
 	if not order:
+		print("Order not found or not cancellable")
 		return ResponseEnvelope.err("NOT_FOUND", "Order not found")
+	print("Order cancelled:", order.order_status)
 	return ResponseEnvelope.ok(order.model_dump())
+
 

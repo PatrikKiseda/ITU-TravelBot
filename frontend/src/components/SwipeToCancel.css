@@ -1,0 +1,51 @@
+/* SwipeToCancel.css */
+.swipe-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.cancel-back-button {
+  align-self: flex-end;
+  margin-bottom: 8px;
+  z-index: 10;
+}
+
+.swipe-track {
+  position: relative;
+  background: #eee;
+  border-radius: 40px;
+  height: 70px;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  user-select: none;
+  overflow: hidden;
+}
+
+.swipe-text {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  font-size: 16px;
+  color: #666;
+  pointer-events: none;
+}
+
+.swipe-thumb {
+  width: 60px;
+  height: 60px;
+  background: #ff4c4c;
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  cursor: pointer;
+  touch-action: none;
+  transition: transform 0.2s ease;
+}

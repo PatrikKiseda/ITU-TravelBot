@@ -304,6 +304,9 @@
 }
 
 .cancel-back-button {
+  align-self: flex-end; /* ensures button is above track */
+  margin-bottom: 8px;
+  z-index: 10;
   padding: 8px 18px;
   border-radius: 999px;
   border: none;

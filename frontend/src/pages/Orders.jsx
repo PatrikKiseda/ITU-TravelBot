@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import { cancelOrder, getOrder, listOrders } from '../services/api'
 import './Orders.css'
+import SwipeToCancel from "../components/SwipeToCancel";
 
 function OrdersPage() {
   const navigate = useNavigate()
@@ -14,15 +15,16 @@ function OrdersPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [cancelTarget, setCancelTarget] = useState(null)
-  const [cancelSliderValue, setCancelSliderValue] = useState({})
   const [highlightId, setHighlightId] = useState(location.state?.highlightOrderId || null)
 
   useEffect(() => {
-    if (location.state?.highlightOrderId) {
-      setHighlightId(location.state.highlightOrderId)
-      navigate(location.pathname, { replace: true, state: {} })
-    }
-  }, [location.pathname, location.state, navigate])
+  if (location.state?.highlightOrderId) {
+    setHighlightId(location.state.highlightOrderId)
+    // replace state so this effect doesn't fire again
+    navigate(location.pathname, { replace: true, state: {} })
+  }
+}, []); // only on mount
+
 
   useEffect(() => {
     if (highlightId) {
@@ -101,34 +103,26 @@ function OrdersPage() {
 
   const openCancelPanel = (orderId) => {
     setCancelTarget(orderId)
-    setCancelSliderValue((prev) => ({ ...prev, [orderId]: 0 }))
   }
 
   const handleCancelPanelClose = (orderId) => {
     setCancelTarget(null)
-    setCancelSliderValue((prev) => ({ ...prev, [orderId]: 0 }))
   }
 
-  const handleCancelSliderChange = (orderId, value) => {
-    const numericValue = Number(value)
-    setCancelSliderValue((prev) => ({ ...prev, [orderId]: numericValue }))
-    if (numericValue >= 95) {
-      performCancelOrder(orderId)
-    }
-  }
 
-  const performCancelOrder = async (orderId) => {
-    try {
-      await cancelOrder(orderId)
-      await loadOrders()
-    } catch (err) {
-      console.error('[Orders] Error cancelling order:', err)
-      alert('Failed to cancel order: ' + (err.message || 'Unknown error'))
-    } finally {
-      setCancelTarget(null)
-      setCancelSliderValue((prev) => ({ ...prev, [orderId]: 0 }))
-    }
-  }
+
+const performCancelOrder = async (orderId) => {
+  try {
+    await cancelOrder(orderId);   // delete order on the backend
+    await loadOrders();           // reload orders
+  } catch (err) {
+    console.error('[Orders] Error cancelling order:', err);
+    alert('Failed to cancel order: ' + (err.message || 'Unknown error'));
+  } 
+  // Only reset cancelTarget if you want to hide swipe panel after successful cancel
+  setCancelTarget(null);
+}
+
 
   const renderOrderCard = (order) => {
     const detail = orderDetails[order.id]
@@ -138,7 +132,6 @@ function OrdersPage() {
     const pricePerPerson = detail?.total_price || 0
     const totalPrice = pricePerPerson * order.number_of_people
     const expanded = expandedOrderId === order.id
-    const sliderValue = cancelSliderValue[order.id] || 0
 
     return (
       <div
@@ -211,30 +204,19 @@ function OrdersPage() {
               </button>
             </div>
 
-            <div className="order-actions" onClick={(event) => event.stopPropagation()}>
-              {cancelTarget === order.id ? (
-                <div className="order-cancel-panel">
-                  <button className="cancel-back-button" onClick={() => handleCancelPanelClose(order.id)}>
-                    Go back
-                  </button>
-                  <div className="cancel-slider">
-                    <label htmlFor={`cancel-slider-${order.id}`}>slide to cancel</label>
-                    <input
-                      id={`cancel-slider-${order.id}`}
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={sliderValue}
-                      onChange={(event) => handleCancelSliderChange(order.id, event.target.value)}
-                    />
-                  </div>
-                </div>
-              ) : (
-                <button className="order-delete-button" onClick={() => openCancelPanel(order.id)}>
-                  Delete
-                </button>
-              )}
-            </div>
+<div className="order-actions" onClick={(event) => event.stopPropagation()}>
+  {cancelTarget === order.id ? (
+    <SwipeToCancel
+      onCancel={() => performCancelOrder(order.id)}
+      onBack={handleCancelPanelClose}
+    />
+  ) : (
+    <button className="order-delete-button" onClick={() => openCancelPanel(order.id)}>
+      Delete
+    </button>
+  )}
+</div>
+
           </div>
         )}
       </div>
