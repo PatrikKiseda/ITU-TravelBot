@@ -45,6 +45,7 @@ logs/
 **/.mypy_cache/
 **/.pytest_cache/
 .pytest_cache/
+package-lock.json
 
 # Project-specific
 travelbot.db
