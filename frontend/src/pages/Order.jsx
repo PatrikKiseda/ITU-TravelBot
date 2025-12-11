@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getOrder, updateOrder, confirmOrder } from '../services/api'
+import GiftEmail from '../components/GiftEmail'
 import './Order.css'
 
 function OrderDetailPage() {
@@ -12,6 +13,15 @@ function OrderDetailPage() {
   const [error, setError] = useState(null)
   const [numberOfPeople, setNumberOfPeople] = useState(1)
   const [transportMode, setTransportMode] = useState('plane')
+  const [specialRequirements, setSpecialRequirements] = useState([])
+  const [isGift, setIsGift] = useState(false)
+  const [giftData, setGiftData] = useState({
+    recipientEmail: '',
+    recipientName: '',
+    senderName: '',
+    note: '',
+    subject: "You've been gifted a trip!"
+  })
   const [updating, setUpdating] = useState(false)
   const [confirming, setConfirming] = useState(false)
 
@@ -26,6 +36,15 @@ function OrderDetailPage() {
       setOrderData(data)
       setNumberOfPeople(data.order.number_of_people)
       setTransportMode(data.order.selected_transport_mode)
+      setSpecialRequirements(data.order.special_requirements || [])
+      setIsGift(data.order.is_gift || false)
+      setGiftData({
+        recipientEmail: data.order.gift_recipient_email || '',
+        recipientName: data.order.gift_recipient_name || '',
+        senderName: data.order.gift_sender_name || '',
+        note: data.order.gift_note || '',
+        subject: data.order.gift_subject || "You've been gifted a trip!"
+      })
       setError(null)
     } catch (err) {
       console.error('[OrderDetail] Error loading order:', err)
@@ -54,7 +73,13 @@ function OrderDetailPage() {
   const handleUpdateOrder = async () => {
     try {
       setUpdating(true)
-      await updateOrder(orderId, numberOfPeople, transportMode)
+      const giftDataToSend = isGift ? {
+        isGift: true,
+        ...giftData
+      } : {
+        isGift: false
+      }
+      await updateOrder(orderId, numberOfPeople, transportMode, specialRequirements, giftDataToSend)
       await loadOrder()
       alert('Order updated successfully!')
     } catch (err) {
@@ -63,6 +88,16 @@ function OrderDetailPage() {
     } finally {
       setUpdating(false)
     }
+  }
+
+  const toggleRequirement = (requirement) => {
+    setSpecialRequirements(prev => {
+      if (prev.includes(requirement)) {
+        return prev.filter(r => r !== requirement)
+      } else {
+        return [...prev, requirement]
+      }
+    })
   }
 
   const handleConfirmOrder = async () => {
@@ -101,7 +136,21 @@ function OrderDetailPage() {
         </button>
 
         <div className="order-destination-card">
-          <h1 className="destination-title">{offer.destination_name}</h1>
+          <div className="destination-header">
+            <h1 className="destination-title">{offer.destination_name}</h1>
+            <div className="destination-header-divider"></div>
+            <div className="gift-toggle-header">
+              <label className="gift-toggle-header-label">
+                <input
+                  type="checkbox"
+                  checked={isGift}
+                  onChange={(e) => setIsGift(e.target.checked)}
+                  className="gift-toggle-header-checkbox"
+                />
+                <span className="gift-toggle-header-text">Mark as gift</span>
+              </label>
+            </div>
+          </div>
 
           <div className="destination-details">
             <div className="destination-image-section">
@@ -140,28 +189,70 @@ function OrderDetailPage() {
 
         <div className="order-form">
           <div className="form-section">
-            <div className="form-group">
-              <label className="form-label">how many of us?</label>
-              <div className="people-picker">
-                <button
-                  className="picker-button"
-                  onClick={() => handlePeopleChange(-1)}
-                  disabled={numberOfPeople <= 1}
-                >
-                  −
-                </button>
-                <div className="people-count">
-                  {Array.from({ length: numberOfPeople }, (_, i) => (
-                    <span key={i} className="person-icon">👤</span>
-                  ))}
+            <div className="form-group people-section">
+              <div className="people-group-left">
+                <label className="form-label">how many of us?</label>
+                <div className="people-picker">
+                  <button
+                    className="picker-button"
+                    onClick={() => handlePeopleChange(-1)}
+                    disabled={numberOfPeople <= 1}
+                  >
+                    −
+                  </button>
+                  <div className="people-count">
+                    {Array.from({ length: numberOfPeople }, (_, i) => (
+                      <span key={i} className="person-icon">👤</span>
+                    ))}
+                  </div>
+                  <button
+                    className="picker-button"
+                    onClick={() => handlePeopleChange(1)}
+                    disabled={availableSlots !== undefined && numberOfPeople >= availableSlots}
+                  >
+                    +
+                  </button>
                 </div>
-                <button
-                  className="picker-button"
-                  onClick={() => handlePeopleChange(1)}
-                  disabled={availableSlots !== undefined && numberOfPeople >= availableSlots}
-                >
-                  +
-                </button>
+              </div>
+              <div className="special-requirements-group">
+                <label className="form-label">Special requirements</label>
+                <div className="requirement-buttons">
+                  <button
+                    className={`requirement-button ${specialRequirements.includes('allergies') ? 'active' : ''}`}
+                    onClick={() => toggleRequirement('allergies')}
+                  >
+                    <span className="requirement-icon">⚠️</span>
+                    <span>Allergies</span>
+                  </button>
+                  <button
+                    className={`requirement-button ${specialRequirements.includes('disability') ? 'active' : ''}`}
+                    onClick={() => toggleRequirement('disability')}
+                  >
+                    <span className="requirement-icon">♿</span>
+                    <span>Disability</span>
+                  </button>
+                  <button
+                    className={`requirement-button ${specialRequirements.includes('elderly') ? 'active' : ''}`}
+                    onClick={() => toggleRequirement('elderly')}
+                  >
+                    <span className="requirement-icon">👴</span>
+                    <span>Elderly</span>
+                  </button>
+                  <button
+                    className={`requirement-button ${specialRequirements.includes('wheelchair_access') ? 'active' : ''}`}
+                    onClick={() => toggleRequirement('wheelchair_access')}
+                  >
+                    <span className="requirement-icon">♿</span>
+                    <span>Wheelchair</span>
+                  </button>
+                  <button
+                    className={`requirement-button ${specialRequirements.includes('dietary_restrictions') ? 'active' : ''}`}
+                    onClick={() => toggleRequirement('dietary_restrictions')}
+                  >
+                    <span className="requirement-icon">🥗</span>
+                    <span>Dietary</span>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -203,13 +294,32 @@ function OrderDetailPage() {
             </div>
           </div>
 
+          {isGift && (
+            <div className="form-section">
+              <GiftEmail
+                offer={offer}
+                giftData={giftData}
+                onChange={setGiftData}
+              />
+            </div>
+          )}
+
           <div className="form-actions">
             <button
               className="update-button"
               onClick={handleUpdateOrder}
               disabled={
                 updating ||
-                (numberOfPeople === order.number_of_people && transportMode === order.selected_transport_mode)
+                (numberOfPeople === order.number_of_people && 
+                 transportMode === order.selected_transport_mode &&
+                 JSON.stringify(specialRequirements.sort()) === JSON.stringify((order.special_requirements || []).sort()) &&
+                 isGift === (order.is_gift || false) &&
+                 (!isGift || (
+                   giftData.recipientEmail === (order.gift_recipient_email || '') &&
+                   giftData.recipientName === (order.gift_recipient_name || '') &&
+                   giftData.senderName === (order.gift_sender_name || '') &&
+                   giftData.note === (order.gift_note || '')
+                 )))
               }
             >
               {updating ? 'Updating...' : 'Update Order'}

@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel
 
 
@@ -39,6 +39,13 @@ class CreateOrderBody(BaseModel):
 class UpdateOrderBody(BaseModel):
 	number_of_people: Optional[int] = None
 	selected_transport_mode: Optional[str] = None
+	special_requirements: Optional[List[str]] = None
+	is_gift: Optional[bool] = None
+	gift_recipient_email: Optional[str] = None
+	gift_recipient_name: Optional[str] = None
+	gift_sender_name: Optional[str] = None
+	gift_note: Optional[str] = None
+	gift_subject: Optional[str] = None
 
 
 class CustomerOrderDTO(BaseModel):
@@ -47,6 +54,13 @@ class CustomerOrderDTO(BaseModel):
 	offer_id: str
 	number_of_people: int
 	selected_transport_mode: str
+	special_requirements: Optional[List[str]] = None
+	is_gift: bool = False
+	gift_recipient_email: Optional[str] = None
+	gift_recipient_name: Optional[str] = None
+	gift_sender_name: Optional[str] = None
+	gift_note: Optional[str] = None
+	gift_subject: Optional[str] = None
 	order_status: str
 	created_at: str
 	confirmed_at: Optional[str] = None

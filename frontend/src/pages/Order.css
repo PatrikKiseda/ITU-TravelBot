@@ -48,11 +48,55 @@
   padding: 30px;
 }
 
+.destination-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 20px;
+}
+
 .destination-title {
   font-size: 32px;
   font-weight: bold;
   color: #ffffff;
-  margin: 0 0 20px 0;
+  margin: 0;
+  flex: 1;
+}
+
+.destination-header-divider {
+  width: 1px;
+  height: 40px;
+  background-color: #444;
+  flex-shrink: 0;
+}
+
+.gift-toggle-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.gift-toggle-header-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  color: #ffffff;
+}
+
+.gift-toggle-header-checkbox {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  accent-color: #4ade80;
+}
+
+.gift-toggle-header-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  user-select: none;
 }
 
 .destination-details {
@@ -127,6 +171,62 @@
 
 .form-group {
   margin-bottom: 25px;
+}
+
+.people-section {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+}
+
+.people-group-left {
+  flex: 1;
+}
+
+.special-requirements-group {
+  flex: 1;
+}
+
+.requirement-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.requirement-button {
+  padding: 8px 16px;
+  background-color: #1a1a1a;
+  border: 2px solid #333;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.requirement-icon {
+  font-size: 18px;
+  display: inline-block;
+}
+
+.requirement-button:hover {
+  border-color: #4ade80;
+  background-color: #2a2a2a;
+}
+
+.requirement-button.active {
+  border-color: #4ade80;
+  background-color: #1e3a1e;
+  color: #4ade80;
+}
+
+
+.gift-section {
+  margin-top: 20px;
 }
 
 .form-label {
@@ -357,5 +457,24 @@
 
   .form-actions {
     flex-direction: column;
+  }
+
+  .people-section {
+    flex-direction: column;
+  }
+
+  .destination-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .destination-header-divider {
+    width: 100%;
+    height: 1px;
+  }
+
+  .gift-toggle-header {
+    width: 100%;
   }
 }

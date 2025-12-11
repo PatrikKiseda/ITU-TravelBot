@@ -157,13 +157,27 @@ export async function getOrder(orderId) {
   return apiRequest(`/customer/orders/${orderId}`)
 }
 
-export async function updateOrder(orderId, numberOfPeople, transportMode) {
+export async function updateOrder(orderId, numberOfPeople, transportMode, specialRequirements = null, giftData = null) {
+  const body = {
+    number_of_people: numberOfPeople,
+    selected_transport_mode: transportMode,
+  }
+  if (specialRequirements !== null) {
+    body.special_requirements = specialRequirements
+  }
+  if (giftData !== null) {
+    body.is_gift = giftData.isGift || false
+    if (giftData.isGift) {
+      body.gift_recipient_email = giftData.recipientEmail || null
+      body.gift_recipient_name = giftData.recipientName || null
+      body.gift_sender_name = giftData.senderName || null
+      body.gift_note = giftData.note || null
+      body.gift_subject = giftData.subject || "You've been gifted a trip!"
+    }
+  }
   return apiRequest(`/customer/orders/${orderId}`, {
     method: 'PUT',
-    body: JSON.stringify({
-      number_of_people: numberOfPeople,
-      selected_transport_mode: transportMode,
-    }),
+    body: JSON.stringify(body),
   })
 }
 

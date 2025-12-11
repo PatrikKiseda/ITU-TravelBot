@@ -33,7 +33,7 @@ class CustomerOrderService:
 			"total_price": total_price,
 		}
 
-	def update_order(self, db: Session, customer_session_id: str, order_id: str, number_of_people: Optional[int], selected_transport_mode: Optional[str]) -> Optional[CustomerOrder]:
+	def update_order(self, db: Session, customer_session_id: str, order_id: str, number_of_people: Optional[int], selected_transport_mode: Optional[str], special_requirements: Optional[List[str]] = None, is_gift: Optional[bool] = None, gift_recipient_email: Optional[str] = None, gift_recipient_name: Optional[str] = None, gift_sender_name: Optional[str] = None, gift_note: Optional[str] = None, gift_subject: Optional[str] = None) -> Optional[CustomerOrder]:
 		order = self.order_repo.get_by_id(db, customer_session_id, order_id)
 		if not order or order.order_status != OrderStatus.PENDING:
 			return None
@@ -50,6 +50,36 @@ class CustomerOrderService:
 
 		if selected_transport_mode is not None:
 			order.selected_transport_mode = selected_transport_mode
+
+		if special_requirements is not None:
+			# Convert list to comma-separated string for storage
+			order.special_requirements = ",".join(special_requirements) if special_requirements else None
+
+		# Handle gift fields
+		if is_gift is not None:
+			order.is_gift = is_gift
+			# If disabling gift, clear gift fields
+			if not is_gift:
+				order.gift_recipient_email = None
+				order.gift_recipient_name = None
+				order.gift_sender_name = None
+				order.gift_note = None
+				order.gift_subject = None
+			else:
+				# If enabling gift, validate required fields
+				if not gift_recipient_email or not gift_recipient_name or not gift_sender_name:
+					raise ValueError("Gift requires recipient email, recipient name, and sender name")
+
+		if gift_recipient_email is not None:
+			order.gift_recipient_email = gift_recipient_email
+		if gift_recipient_name is not None:
+			order.gift_recipient_name = gift_recipient_name
+		if gift_sender_name is not None:
+			order.gift_sender_name = gift_sender_name
+		if gift_note is not None:
+			order.gift_note = gift_note
+		if gift_subject is not None:
+			order.gift_subject = gift_subject
 
 		return self.order_repo.update(db, order)
 
