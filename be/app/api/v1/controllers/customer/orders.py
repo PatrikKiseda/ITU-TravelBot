@@ -119,9 +119,12 @@ async def cancel_order(
 	customer_session_id: str = Depends(get_session_id),
 ):
 	service = CustomerOrderService()
+	print("Cancel attempt:", customer_session_id, order_id)
 	order = service.cancel_order(db, customer_session_id, order_id)
 	if not order:
+		print("Order not found or not cancellable")
 		return ResponseEnvelope.err("NOT_FOUND", "Order not found")
+	print("Order cancelled:", order.order_status)
 	# Convert special_requirements from comma-separated string to list
 	order_dict = order.model_dump()
 	if order_dict.get("special_requirements"):
@@ -129,4 +132,5 @@ async def cancel_order(
 	else:
 		order_dict["special_requirements"] = []
 	return ResponseEnvelope.ok(order_dict)
+
 
