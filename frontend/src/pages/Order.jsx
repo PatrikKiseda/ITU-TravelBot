@@ -123,10 +123,24 @@ function OrderDetailPage() {
   }
 
   const { order, offer, remaining_capacity, total_price } = orderData
-  const availableSlots =
+/*   const availableSlots =
     order.order_status === 'PENDING'
       ? remaining_capacity + order.number_of_people
       : remaining_capacity
+      // recompute dynamically based on selected number of people */
+  const computedRemaining =
+    order.order_status === 'PENDING'
+      ? remaining_capacity + (order.number_of_people - numberOfPeople)
+      : remaining_capacity - (numberOfPeople - order.number_of_people)
+
+  const transportPrice =
+    transportMode === "car_own" ? 0 : (offer.price_transport_amount || 0)
+
+  const computedTotalPrice =
+    offer.price_housing +
+    offer.price_food +
+    transportPrice
+
 
   return (
     <div className="order-page">
@@ -147,7 +161,7 @@ function OrderDetailPage() {
                   onChange={(e) => setIsGift(e.target.checked)}
                   className="gift-toggle-header-checkbox"
                 />
-                <span className="gift-toggle-header-text">Mark as gift</span>
+                <span className="gift-toggle-header-text">🎁 Give this trip 🎁</span>
               </label>
             </div>
           </div>
@@ -161,12 +175,16 @@ function OrderDetailPage() {
 
             <div className="destination-info">
               <div className="price-info">
-                <div className="price-range">Price per traveller: ${total_price || 'N/A'}</div>
+              <div className="price-range">
+                Price per traveller: ${computedTotalPrice}
+              </div>
                 <div className="price-breakdown">
-                  <div className="price-item">
-                    <span className="price-icon">✈️</span>
-                    <span>Transport: ${offer.price_transport_amount || 0}</span>
-                  </div>
+                <div className="price-item">
+                  <span className="price-icon">
+                    {transportMode === "car_own" ? "🚗" : transportMode === "train_bus" ? "🚌" : "✈️"}
+                  </span>
+                  <span>Transport: ${transportPrice}</span>
+                </div>
                   <div className="price-item">
                     <span className="price-icon">🏠</span>
                     <span>Housing: ${offer.price_housing || 0}</span>
@@ -208,7 +226,7 @@ function OrderDetailPage() {
                   <button
                     className="picker-button"
                     onClick={() => handlePeopleChange(1)}
-                    disabled={availableSlots !== undefined && numberOfPeople >= availableSlots}
+                    disabled={computedRemaining <= 0}
                   >
                     +
                   </button>
@@ -259,7 +277,7 @@ function OrderDetailPage() {
             <div className="form-group">
               <label className="form-label">Capacity remaining</label>
               <div className="capacity-display">
-                <span className="capacity-value">{availableSlots || 0}</span>
+                <span className="capacity-value">{Math.max(0, computedRemaining)}</span>
                 <span className="capacity-icon">👤</span>
               </div>
             </div>
