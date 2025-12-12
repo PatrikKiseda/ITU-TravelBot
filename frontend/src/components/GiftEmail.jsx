@@ -9,6 +9,8 @@ function GiftEmail({ offer, giftData, onChange }) {
     })
   }
 
+  const isEditable = !!onChange;
+
   return (
     <div className="gift-email-container">
       <div className="gift-email-header">
@@ -20,6 +22,7 @@ function GiftEmail({ offer, giftData, onChange }) {
             value={giftData.recipientEmail || ''}
             onChange={(e) => handleChange('recipientEmail', e.target.value)}
             placeholder="recipient@example.com"
+            disabled={!isEditable}
           />
         </div>
         <div className="gift-email-field">
@@ -40,6 +43,7 @@ function GiftEmail({ offer, giftData, onChange }) {
               onChange={(e) => handleChange('recipientName', e.target.value)}
               placeholder="[Recipient Name]"
               required
+              disabled={!isEditable}
             />
             ,
           </div>
@@ -66,6 +70,7 @@ function GiftEmail({ offer, giftData, onChange }) {
               onChange={(e) => handleChange('note', e.target.value)}
               placeholder="Add your personal message here..."
               rows="4"
+              disabled={!isEditable}
             />
           </div>
 
@@ -79,6 +84,7 @@ function GiftEmail({ offer, giftData, onChange }) {
                 onChange={(e) => handleChange('senderName', e.target.value)}
                 placeholder="[Your Name]"
                 required
+                disabled={!isEditable}
               />
             </div>
           </div>

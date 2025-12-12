@@ -1,0 +1,16 @@
+.notify {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  color: white;
+  z-index: 1000;
+  opacity: 0.9;
+  transition: opacity 0.3s;
+  font-weight: bold;
+}
+
+.notify.success { background-color: #4caf50; }
+.notify.error   { background-color: #f44336; }
+.notify.info    { background-color: #2196f3; }

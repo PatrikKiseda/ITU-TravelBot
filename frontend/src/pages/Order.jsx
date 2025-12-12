@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getOrder, updateOrder, confirmOrder } from '../services/api'
 import GiftEmail from '../components/GiftEmail'
+import Notify from '../components/Notify';
 import './Order.css'
 
 function OrderDetailPage() {
@@ -24,6 +25,12 @@ function OrderDetailPage() {
   })
   const [updating, setUpdating] = useState(false)
   const [confirming, setConfirming] = useState(false)
+  const [notify, setNotify] = useState({ message: '', type: '' })
+
+  const showNotification = (message, type = 'info') => {
+    setNotify({ message, type })
+    setTimeout(() => setNotify({ message: '', type: '' }), 3000)
+  }
 
   useEffect(() => {
     loadOrder()
@@ -81,10 +88,10 @@ function OrderDetailPage() {
       }
       await updateOrder(orderId, numberOfPeople, transportMode, specialRequirements, giftDataToSend)
       await loadOrder()
-      alert('Order updated successfully!')
+      showNotification('Order updated successfully!', 'success')
     } catch (err) {
       console.error('[OrderDetail] Error updating order:', err)
-      alert('Failed to update order: ' + (err.message || 'Unknown error'))
+      showNotification('Failed to update order', 'error')
     } finally {
       setUpdating(false)
     }
@@ -104,11 +111,11 @@ function OrderDetailPage() {
     try {
       setConfirming(true)
       await confirmOrder(orderId)
-      alert('Order confirmed successfully!')
+      showNotification('Order confirmed successfully!', 'success')
       navigate('/orders', { state: { highlightOrderId: orderId } })
     } catch (err) {
       console.error('[OrderDetail] Error confirming order:', err)
-      alert('Failed to confirm order: ' + (err.message || 'Unknown error'))
+      showNotification('Failed to confirm order', 'error')
     } finally {
       setConfirming(false)
     }
@@ -141,9 +148,12 @@ function OrderDetailPage() {
     offer.price_food +
     transportPrice
 
+  const isConfirmed = order.order_status === 'CONFIRMED'
+
 
   return (
     <div className="order-page">
+      <Notify message={notify.message} type={notify.type} />
       <div className="order-content">
         <button className="orders-back-button" onClick={() => navigate('/orders')}>
           ← Back to upcoming travels
@@ -214,7 +224,7 @@ function OrderDetailPage() {
                   <button
                     className="picker-button"
                     onClick={() => handlePeopleChange(-1)}
-                    disabled={numberOfPeople <= 1}
+                    disabled={numberOfPeople <= 1 || isConfirmed}
                   >
                     −
                   </button>
@@ -226,7 +236,7 @@ function OrderDetailPage() {
                   <button
                     className="picker-button"
                     onClick={() => handlePeopleChange(1)}
-                    disabled={computedRemaining <= 0}
+                    disabled={computedRemaining <= 0 || isConfirmed}
                   >
                     +
                   </button>
@@ -289,21 +299,21 @@ function OrderDetailPage() {
               <div className="transport-options">
                 <button
                   className={`transport-option ${transportMode === 'car_own' ? 'active' : ''}`}
-                  onClick={() => setTransportMode('car_own')}
+                  onClick={() => !isConfirmed && setTransportMode('car_own')}
                 >
                   <span className="transport-icon">🚗</span>
                   <span>own mode of transportation</span>
                 </button>
                 <button
                   className={`transport-option ${transportMode === 'train_bus' ? 'active' : ''}`}
-                  onClick={() => setTransportMode('train_bus')}
+                  onClick={() => !isConfirmed && setTransportMode('train_bus')}
                 >
                   <span className="transport-icon">🚌</span>
                   <span>train or bus</span>
                 </button>
                 <button
                   className={`transport-option ${transportMode === 'plane' ? 'active' : ''}`}
-                  onClick={() => setTransportMode('plane')}
+                  onClick={() => !isConfirmed && setTransportMode('plane')}
                 >
                   <span className="transport-icon">✈️</span>
                   <span>plane</span>
@@ -317,7 +327,7 @@ function OrderDetailPage() {
               <GiftEmail
                 offer={offer}
                 giftData={giftData}
-                onChange={setGiftData}
+                onChange={isConfirmed ? null : setGiftData}
               />
             </div>
           )}

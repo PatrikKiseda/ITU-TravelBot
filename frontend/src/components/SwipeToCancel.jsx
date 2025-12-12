@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import "./SwipeToCancel.css";
 
-export default function SwipeToCancel({ onCancel, onBack }) {
+export default function SwipeToCancel({ onCancel, onBack, stopSwipePropagation = false }) {
   const trackRef = useRef(null);
   const [dragX, setDragX] = useState(0);
   const draggingRef = useRef(false);
@@ -10,6 +10,7 @@ export default function SwipeToCancel({ onCancel, onBack }) {
 
   const startDrag = (e) => {
     e.preventDefault();
+    if (stopSwipePropagation) e.stopPropagation();
     draggingRef.current = true;
 
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
