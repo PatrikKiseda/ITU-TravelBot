@@ -1,6 +1,6 @@
 import "./Admin.css"
 import React, { useState, useEffect } from 'react'
-import {fetchAvailableOffers} from "../services/api.js";
+import {fetchAvailableOffers, fetchTags} from "../services/api.js";
 import AdminOfferCard from "../components/AdminOfferCard.jsx";
 function Admin() {
     const [offers, setOffers] = useState([])
@@ -19,8 +19,8 @@ function Admin() {
             setLoading(true)
             console.log('[Explore] Loading available offers')
             const data = await fetchAvailableOffers()
-            console.log('[Explore] Received offers:', data)
             setOffers(data || [])
+            console.log('[Explore] Received offers:', data)
             setError(null)
         } catch (err) {
             console.error('[Explore] Error loading offers:', err)
@@ -29,6 +29,8 @@ function Admin() {
             setLoading(false)
         }
     }
+
+
 
 
     return (

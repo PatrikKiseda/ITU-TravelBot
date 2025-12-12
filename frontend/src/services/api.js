@@ -71,29 +71,36 @@ export async function deleteOfferPermanent(offerId) {
   })
 }
 
-export async function updateOffer(offerId,offer) {
-  console.log(offer)
+// export async function updateOffer(offerId,offer) {
+//   console.log(offer)
+//   return apiRequest(`/agent/offers/${offerId}`, {
+//     method: 'PUT',
+//     body: JSON.stringify({
+//       date_from: offer.date_from,
+//       date_to: offer.date_to,
+//       price_transport_mode: offer.price_transport_mode,
+//       destination_name: offer.destination_name,
+//       capacity_total: offer.capacity_total,
+//       season: offer.season,
+//       country: offer.country,
+//       city: offer.city,
+//       origin: offer.origin,
+//       destination_where_to: offer.destination_where_to,
+//       // type_of_stay: JSON.stringify(offer.type_of_stay),
+//       price_housing: offer.price_housing,
+//       price_food: offer.price_food,
+//       price_transport_amount: offer.price_transport_amount,
+//       short_description: offer.short_description,
+//       extended_description: offer.extended_description,
+//       image_url: offer.image_url,
+//     }),
+//   })
+// }
+
+export async function updateOffer(offerId, updates) {
   return apiRequest(`/agent/offers/${offerId}`, {
     method: 'PUT',
-    body: JSON.stringify({
-      date_from: offer.date_from,
-      date_to: offer.date_to,
-      price_transport_mode: offer.price_transport_mode,
-      destination_name: offer.destination_name,
-      capacity_total: offer.capacity_total,
-      season: offer.season,
-      country: offer.country,
-      city: offer.city,
-      origin: offer.origin,
-      destination_where_to: offer.destination_where_to,
-      // type_of_stay: JSON.stringify(offer.type_of_stay),
-      price_housing: offer.price_housing,
-      price_food: offer.price_food,
-      price_transport_amount: offer.price_transport_amount,
-      short_description: offer.short_description,
-      extended_description: offer.extended_description,
-      image_url: offer.image_url,
-    }),
+    body: JSON.stringify(updates)
   })
 }
 
@@ -103,6 +110,35 @@ export async function fetchOfferById(offerId) {
 
 export async function fetchAvailableOffers() {
   return apiRequest(`/customer/offers`)
+}
+
+
+export async function fetchAllAvailableTags() {
+  return apiRequest('/tags')
+}
+
+export async function fetchTags(offerId) {
+  return apiRequest(`/offers/${offerId}/tags`)
+}
+
+export async function addTagToOffer(offerId, tagId) {
+  return apiRequest(`/offers/${offerId}/tags/${tagId}`, {
+    method: 'POST',
+    body: JSON.stringify({})
+  })
+}
+
+export async function createTag(tagBody) {
+  return apiRequest(`/tags`, {
+    method: 'POST',
+    body: JSON.stringify(tagBody)
+  })
+}
+
+export async function removeTagFromOffer(offerId, tagId) {
+  return apiRequest(`/offers/${offerId}/tags/${tagId}`, {
+    method: 'DELETE'
+  })
 }
 
 export async function acceptOffer(offerId) {
