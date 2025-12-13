@@ -15,6 +15,8 @@ function OrderDetailPage() {
   const [numberOfPeople, setNumberOfPeople] = useState(1)
   const [transportMode, setTransportMode] = useState('plane')
   const [specialRequirements, setSpecialRequirements] = useState([])
+  const [selectedAllergies, setSelectedAllergies] = useState([])
+  const [selectedDietary, setSelectedDietary] = useState([])
   const [isGift, setIsGift] = useState(false)
   const [giftData, setGiftData] = useState({
     recipientEmail: '',
@@ -43,7 +45,16 @@ function OrderDetailPage() {
       setOrderData(data)
       setNumberOfPeople(data.order.number_of_people)
       setTransportMode(data.order.selected_transport_mode)
-      setSpecialRequirements(data.order.special_requirements || [])
+      const requirements = data.order.special_requirements || []
+      setSpecialRequirements(requirements)
+      // Parse allergies and dietary from special_requirements
+      // Non-food allergies (8 items)
+      const nonFoodAllergies = ['pollen', 'dust_mites', 'pet_dander', 'mold', 'latex', 'insect_stings', 'medications', 'sunlight']
+      setSelectedAllergies(requirements.filter(r => nonFoodAllergies.includes(r)))
+      // Dietary: 12 main food allergies + lactose, gluten, vegetarianism
+      const dietaryItems = ['peanuts', 'tree_nuts', 'shellfish', 'fish', 'eggs', 'milk', 'soy', 'wheat', 'sesame', 'mustard', 'celery', 'lupin', 'lactose_intolerance', 'gluten', 'vegetarianism']
+      // Only get dietary items (food-related, not overlapping with non-food allergies)
+      setSelectedDietary(requirements.filter(r => dietaryItems.includes(r)))
       setIsGift(data.order.is_gift || false)
       setGiftData({
         recipientEmail: data.order.gift_recipient_email || '',
@@ -99,11 +110,86 @@ function OrderDetailPage() {
 
   const toggleRequirement = (requirement) => {
     setSpecialRequirements(prev => {
+      const nonFoodAllergies = ['pollen', 'dust_mites', 'pet_dander', 'mold', 'latex', 'insect_stings', 'medications', 'sunlight']
+      const allDietaryItems = ['peanuts', 'tree_nuts', 'shellfish', 'fish', 'eggs', 'milk', 'soy', 'wheat', 'sesame', 'mustard', 'celery', 'lupin', 'lactose_intolerance', 'gluten', 'vegetarianism']
+      
       if (prev.includes(requirement)) {
-        return prev.filter(r => r !== requirement)
+        // Removing requirement - also remove related items
+        const newRequirements = prev.filter(r => r !== requirement)
+        if (requirement === 'allergies') {
+          // Remove all non-food allergy items
+          const cleaned = newRequirements.filter(r => !nonFoodAllergies.includes(r))
+          setSelectedAllergies([])
+          return cleaned
+        } else if (requirement === 'dietary_restrictions') {
+          // Remove all dietary items
+          const cleaned = newRequirements.filter(r => !allDietaryItems.includes(r))
+          setSelectedDietary([])
+          return cleaned
+        }
+        return newRequirements
       } else {
+        // Adding requirement - just add the flag
         return [...prev, requirement]
       }
+    })
+  }
+
+  const toggleAllergy = (allergy) => {
+    setSelectedAllergies(prev => {
+      const newAllergies = prev.includes(allergy)
+        ? prev.filter(a => a !== allergy)
+        : [...prev, allergy]
+      
+      // Update special requirements
+      const nonFoodAllergies = ['pollen', 'dust_mites', 'pet_dander', 'mold', 'latex', 'insect_stings', 'medications', 'sunlight']
+      const allDietaryItems = ['peanuts', 'tree_nuts', 'shellfish', 'fish', 'eggs', 'milk', 'soy', 'wheat', 'sesame', 'mustard', 'celery', 'lupin', 'lactose_intolerance', 'gluten', 'vegetarianism']
+      const baseRequirements = specialRequirements.filter(r => 
+        !nonFoodAllergies.includes(r) && 
+        !allDietaryItems.includes(r) && 
+        r !== 'allergies' && 
+        r !== 'dietary_restrictions'
+      )
+      
+      const newRequirements = [
+        ...baseRequirements,
+        ...(newAllergies.length > 0 ? ['allergies'] : []),
+        ...(selectedDietary.length > 0 ? ['dietary_restrictions'] : []),
+        ...newAllergies,
+        ...selectedDietary
+      ]
+      
+      setSpecialRequirements(newRequirements)
+      return newAllergies
+    })
+  }
+
+  const toggleDietary = (dietary) => {
+    setSelectedDietary(prev => {
+      const newDietary = prev.includes(dietary)
+        ? prev.filter(d => d !== dietary)
+        : [...prev, dietary]
+      
+      // Update special requirements
+      const nonFoodAllergies = ['pollen', 'dust_mites', 'pet_dander', 'mold', 'latex', 'insect_stings', 'medications', 'sunlight']
+      const allDietaryItems = ['peanuts', 'tree_nuts', 'shellfish', 'fish', 'eggs', 'milk', 'soy', 'wheat', 'sesame', 'mustard', 'celery', 'lupin', 'lactose_intolerance', 'gluten', 'vegetarianism']
+      const baseRequirements = specialRequirements.filter(r => 
+        !nonFoodAllergies.includes(r) && 
+        !allDietaryItems.includes(r) && 
+        r !== 'allergies' && 
+        r !== 'dietary_restrictions'
+      )
+      
+      const newRequirements = [
+        ...baseRequirements,
+        ...(selectedAllergies.length > 0 ? ['allergies'] : []),
+        ...(newDietary.length > 0 ? ['dietary_restrictions'] : []),
+        ...selectedAllergies,
+        ...newDietary
+      ]
+      
+      setSpecialRequirements(newRequirements)
+      return newDietary
     })
   }
 
@@ -150,6 +236,23 @@ function OrderDetailPage() {
 
   const isConfirmed = order.order_status === 'CONFIRMED'
 
+  const formatDate = (dateString) => {
+    if (!dateString) return ''
+    try {
+      const date = new Date(dateString)
+      return date.toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric'
+      })
+    } catch {
+      return dateString
+    }
+  }
+
+  const travelDates = offer.date_from && offer.date_to
+    ? `${formatDate(offer.date_from)} - ${formatDate(offer.date_to)}`
+    : ''
 
   return (
     <div className="order-page">
@@ -184,6 +287,12 @@ function OrderDetailPage() {
             </div>
 
             <div className="destination-info">
+              {travelDates && (
+                <div className="travel-dates">
+                  <span className="travel-dates-label">📅 Travel dates:</span>
+                  <span className="travel-dates-value">{travelDates}</span>
+                </div>
+              )}
               <div className="price-info">
               <div className="price-range">
                 Price per traveller: ${computedTotalPrice}
@@ -267,13 +376,6 @@ function OrderDetailPage() {
                     <span>Elderly</span>
                   </button>
                   <button
-                    className={`requirement-button ${specialRequirements.includes('wheelchair_access') ? 'active' : ''}`}
-                    onClick={() => toggleRequirement('wheelchair_access')}
-                  >
-                    <span className="requirement-icon">♿</span>
-                    <span>Wheelchair</span>
-                  </button>
-                  <button
                     className={`requirement-button ${specialRequirements.includes('dietary_restrictions') ? 'active' : ''}`}
                     onClick={() => toggleRequirement('dietary_restrictions')}
                   >
@@ -281,6 +383,42 @@ function OrderDetailPage() {
                     <span>Dietary</span>
                   </button>
                 </div>
+                
+                {specialRequirements.includes('allergies') && (
+                  <div className="allergy-list">
+                    <label className="allergy-list-label">Select allergies:</label>
+                    <div className="allergy-items">
+                      {['pollen', 'dust_mites', 'pet_dander', 'mold', 'latex', 'insect_stings', 'medications', 'sunlight'].map(allergy => (
+                        <button
+                          key={allergy}
+                          className={`allergy-item ${selectedAllergies.includes(allergy) ? 'active' : ''}`}
+                          onClick={() => toggleAllergy(allergy)}
+                          disabled={isConfirmed}
+                        >
+                          {allergy.replace('_', ' ')}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {specialRequirements.includes('dietary_restrictions') && (
+                  <div className="dietary-list">
+                    <label className="dietary-list-label">Select dietary restrictions:</label>
+                    <div className="dietary-items">
+                      {['peanuts', 'tree_nuts', 'shellfish', 'fish', 'eggs', 'milk', 'soy', 'wheat', 'sesame', 'mustard', 'celery', 'lupin', 'lactose_intolerance', 'gluten', 'vegetarianism'].map(dietary => (
+                        <button
+                          key={dietary}
+                          className={`dietary-item ${selectedDietary.includes(dietary) ? 'active' : ''}`}
+                          onClick={() => toggleDietary(dietary)}
+                          disabled={isConfirmed}
+                        >
+                          {dietary.replace('_', ' ')}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

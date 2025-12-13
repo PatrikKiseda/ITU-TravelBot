@@ -24,7 +24,10 @@ class CustomerOrderService:
 		if order.order_status == OrderStatus.PENDING:
 			remaining_capacity -= order.number_of_people
 
-		total_price = offer.price_housing + offer.price_food + (offer.price_transport_amount or 0)
+		# Calculate total price based on selected transport mode
+		# If car_own is selected, exclude transport price
+		transport_price = 0 if order.selected_transport_mode == "car_own" else (offer.price_transport_amount or 0)
+		total_price = offer.price_housing + offer.price_food + transport_price
 
 		return {
 			"order": order,
