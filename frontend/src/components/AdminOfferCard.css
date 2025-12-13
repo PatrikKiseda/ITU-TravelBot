@@ -1,3 +1,4 @@
+/*Created by Shaposhnik Bogdan (xshapo04)*/
 /* Карточка */
 .admin-offer-card {
     background: #1e1e1e;
@@ -211,6 +212,7 @@
     display: flex;
     gap: 8px;
 }
+
 
 .image-url-actions button {
     flex: 1;

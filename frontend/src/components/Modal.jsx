@@ -1,4 +1,4 @@
-// components/Modal.jsx
+// Created by Shaposhnik Bogdan (xshapo04)
 import React, {useEffect} from 'react'
 import './Modal.css'
 

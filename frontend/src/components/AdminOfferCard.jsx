@@ -1,3 +1,4 @@
+// Created by Shaposhnik Bogdan (xshapo04)
 import React from 'react'
 import { useAdminOfferCard } from '../controllers/AdminOfferCardController.js'
 import EditableField from './EditableField'

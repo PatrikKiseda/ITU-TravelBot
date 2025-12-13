@@ -1,3 +1,4 @@
+// Created by Shaposhnik Bogdan (xshapo04)
 import React from 'react'
 import { useCreateOffer } from '../controllers/CreateOfferCardController.js'
 import EditableField from './EditableField'

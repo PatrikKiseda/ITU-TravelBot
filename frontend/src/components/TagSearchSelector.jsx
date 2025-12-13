@@ -1,4 +1,4 @@
-
+// Created by Shaposhnik Bogdan (xshapo04)
 import React, { useState, useEffect, useRef } from 'react'
 import './TagSearchSelector.css'
 import {createTag} from "../services/api.js";
