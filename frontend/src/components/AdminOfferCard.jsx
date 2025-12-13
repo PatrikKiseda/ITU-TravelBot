@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {
     deleteOfferPermanent,
-    fetchAvailableOffers,
     fetchExpandedOffer,
     fetchTags, updateOffer,
     addTagToOffer,
@@ -14,10 +13,6 @@ import EditableField from "./EditableField.jsx"
 import TagSearchSelector from "./TagSearchSelector"
 function AdminOfferCard({offer,setOnDelete}) {
     const navigate = useNavigate()
-    const location = useLocation()
-
-
-
     const [data, setData] = useState(null)
     const [loading, setLoading] = useState(false)
     const [expanded, setExpanded] = useState(false)
@@ -65,7 +60,6 @@ function AdminOfferCard({offer,setOnDelete}) {
             console.log('Tagi:',tagData)
             setTags(tagData)
             console.log('Tags:',tags)
-            console.log('Dictionary:',dict)
         } catch (err) {
             console.error('[Explore] Error loading tags:', err)
         }
@@ -142,11 +136,22 @@ function AdminOfferCard({offer,setOnDelete}) {
     }
 
     const handleDeleteClick = async () => {
+        // Показываем окно подтверждения
+        const confirmDelete = window.confirm(
+            `Are you sure you want to delete "${localOffer.destination_name}"?\n\nThis action cannot be undone.`
+        )
+
+        // Если пользователь отменил - выходим
+        if (!confirmDelete) {
+            return
+        }
+
         try {
             await deleteOfferPermanent(offer.id)
             setOnDelete(true)
         } catch (err) {
             console.error("Failed to delete:", err)
+            alert('Failed to delete offer. Please try again.')
         }
     }
 
@@ -257,7 +262,7 @@ function AdminOfferCard({offer,setOnDelete}) {
                 <div className={"admin-offer-card-actions"}>
                     <div className="delete-button">
                         <button onClick={handleDeleteClick}>
-                            🗑️
+                            Delete Offer
                         </button>
                     </div>
                 </div>

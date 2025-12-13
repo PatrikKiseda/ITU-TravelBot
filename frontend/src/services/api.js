@@ -141,6 +141,13 @@ export async function removeTagFromOffer(offerId, tagId) {
   })
 }
 
+export async function createOffer(offerData) {
+  return apiRequest('/agent/offers', {
+    method: 'POST',
+    body: JSON.stringify(offerData)
+  })
+}
+
 export async function acceptOffer(offerId) {
   return apiRequest(`/customer/offers/${offerId}/accept`, {
     method: 'POST',

@@ -70,6 +70,13 @@
     user-select: none;
 }
 
+.delete-button button {
+    border-radius: 4px;
+    padding: 8px;
+    background-color: #ff375d;
+    color: white;
+}
+
 .expand-container {
     padding: 30px 0 0 0;
 }
@@ -223,3 +230,50 @@
     width: 200px;
 
 }
+
+/* Кнопки создания */
+.create-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.cancel-create-btn,
+.save-create-btn {
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cancel-create-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+.cancel-create-btn:hover {
+    background-color: #da190b;
+    transform: scale(1.1);
+}
+
+.save-create-btn {
+    background-color: #4caf50;
+    color: white;
+}
+
+.save-create-btn:hover:not(:disabled) {
+    background-color: #45a049;
+    transform: scale(1.1);
+}
+
+.save-create-btn:disabled {
+    background-color: #9e9e9e;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
