@@ -196,8 +196,22 @@ function OrderDetailPage() {
   const handleConfirmOrder = async () => {
     try {
       setConfirming(true)
+
+      const giftDataToSend = isGift
+        ? { isGift: true, ...giftData }
+        : { isGift: false }
+
+      await updateOrder(
+        orderId,
+        numberOfPeople,
+        transportMode,
+        specialRequirements,
+        giftDataToSend
+      )
+
       await confirmOrder(orderId)
-      showNotification('Order confirmed successfully!', 'success')
+
+      showNotification('Order updated and confirmed successfully!', 'success')
       navigate('/orders', { state: { highlightOrderId: orderId } })
     } catch (err) {
       console.error('[OrderDetail] Error confirming order:', err)
@@ -206,6 +220,7 @@ function OrderDetailPage() {
       setConfirming(false)
     }
   }
+
 
   if (loading) {
     return <div className="order-page"><div className="loading">Loading order...</div></div>
