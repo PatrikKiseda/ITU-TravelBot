@@ -46,9 +46,9 @@ function Admin() {
 
     return (
         <div className="admin-page">
-            <div className="admin-page-header">
-                <h1>Manage Destinations</h1>
-            </div>
+            {/*<div className="admin-page-header">*/}
+            {/*    <h1>Manage Destinations</h1>*/}
+            {/*</div>*/}
 
             <div className="admin-page-content">
                 {/* Карточка создания */}

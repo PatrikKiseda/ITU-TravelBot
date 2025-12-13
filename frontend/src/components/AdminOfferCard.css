@@ -44,6 +44,7 @@
 /* Верхняя часть */
 .card-content {
     display: flex;
+    flex-direction: row;
     gap: 18px;
     align-items: center;
 }
@@ -70,11 +71,29 @@
     user-select: none;
 }
 
-.delete-button button {
+.upper-panel {
+    display: flex;
+    justify-content: space-between;
+}
+
+.delete-button-admin {
+    display: flex;
+    border:none;
+}
+
+.delete-button-admin button {
+    height: 40px;
+    width: 40px;
     border-radius: 4px;
     padding: 8px;
     background-color: #ff375d;
     color: white;
+    position: relative;
+    border:none;
+}
+
+.delete-button-admin button:hover {
+    background-color: #fa5070;
 }
 
 .expand-container {

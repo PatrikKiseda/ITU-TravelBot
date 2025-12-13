@@ -38,6 +38,8 @@
     font-size: inherit;
     font-family: inherit;
     outline: none;
+    max-width: 200px;
+    max-height: 35px;
 }
 
 .editable-field textarea {

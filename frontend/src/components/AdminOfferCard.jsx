@@ -1,188 +1,51 @@
-import React, {useEffect, useState} from 'react'
-import {
-    deleteOfferPermanent,
-    fetchExpandedOffer,
-    fetchTags, updateOffer,
-    addTagToOffer,
-    removeTagFromOffer, fetchAllAvailableTags
-} from '../services/api'
+// components/AdminOfferCard.jsx
+import React from 'react'
+import { useAdminOfferCard } from '../controllers/AdminOfferCardController.js'
+import EditableField from './EditableField'
+import TagSearchSelector from './TagSearchSelector'
 import './AdminOfferCard.css'
-import '../controllers/AdminOfferCardController.js'
-import { useNavigate, useLocation } from 'react-router-dom'
-import EditableField from "./EditableField.jsx"
-import TagSearchSelector from "./TagSearchSelector"
-function AdminOfferCard({offer,setOnDelete}) {
-    const navigate = useNavigate()
-    const [data, setData] = useState(null)
-    const [loading, setLoading] = useState(false)
-    const [expanded, setExpanded] = useState(false)
-    const [tags,setTags] = useState([])
-    const [highlightTags,setHighlightTags] = useState([])
-    const [whyVisitTags,setWhyVisitTags] = useState([])
-    const [considerTags,setConsiderTags] = useState([])
-    const [localOffer, setLocalOffer] = useState(offer)
-    const [availableTags, setAvailableTags] = useState([])
-    const [isEditingImage, setIsEditingImage] = useState(false)
-    const [imageUrl, setImageUrl] = useState(localOffer.image_url || '')
 
+function AdminOfferCard({ offer, setOnDelete }) {
+    const {
+        // State
+        loading,
+        expanded,
+        localOffer,
+        availableTags,
+        isEditingImage,
+        imageUrl,
+        setImageUrl,
+        highlightTags,
+        whyVisitTags,
+        considerTags,
+        priceRange,
 
+        // Handlers
+        handleUpdateField,
+        handleSaveImageUrl,
+        handleCancelImageEdit,
+        toggleImageEdit,
+        handleAddTag,
+        handleRemoveTag,
+        handleDelete,
+        toggleExpanded
 
-    useEffect(() =>  {
-        loadTags()
-        loadAvailableTags()
-        },[])
-
-    useEffect(() => {
-        loadAvailableTags()
-        setHighlightTags(tags.filter(t => t.type === "highlights"));
-        setWhyVisitTags(tags.filter(t => t.type === "why_visit"));
-        setConsiderTags(tags.filter(t => t.type === "things_to_consider"));
-    }, [tags])
-
-    const handleSaveImageUrl = async () => {
-        try {
-            await updateOffer(localOffer.id, { image_url: imageUrl })
-            setLocalOffer(prev => ({ ...prev, image_url: imageUrl }))
-            setIsEditingImage(false)
-        } catch (err) {
-            console.error('Failed to update image:', err)
-        }
-    }
-
-    const handleCancelImageEdit = () => {
-        setImageUrl(localOffer.image_url || '')
-        setIsEditingImage(false)
-    }
-
-    const loadTags = async () => {
-        try {
-            const tagData = await fetchTags(offer.id);
-            console.log('Tagi:',tagData)
-            setTags(tagData)
-            console.log('Tags:',tags)
-        } catch (err) {
-            console.error('[Explore] Error loading tags:', err)
-        }
-    }
-
-    const loadAvailableTags = async () => {
-        try {
-            const allTags = await fetchAllAvailableTags()
-            setAvailableTags(allTags)
-        } catch (err) {
-            console.error('Error loading available tags:', err)
-        }
-    }
-
-    const handleAddTag = async (tag) => {
-        try {
-            await addTagToOffer(localOffer.id, tag.id)
-            setTags(prev => [...prev, tag])
-        } catch (err) {
-            console.error('Failed to add tag:', err)
-        }
-    }
-
-    const handleRemoveTag = async (tagId) => {
-        try {
-            await removeTagFromOffer(localOffer.id, tagId)
-            setTags(prev => prev.filter(t => t.id !== tagId))
-        } catch (err) {
-            console.error('Failed to remove tag:', err)
-        }
-    }
-
-    const calculatePriceRange = () => {
-        const housing = localOffer.price_housing || 0
-        const food = localOffer.price_food || 0
-        const transport = localOffer.price_transport_amount || 0
-        const minPrice = housing + food + transport
-        const maxPrice = minPrice + 200 // Rough estimate for range
-        return { min: minPrice, max: maxPrice }
-    }
-
-    const handleCardExpand = async () => {
-        if (!expanded) {
-            setExpanded(true)
-        } else {
-            setExpanded(false)
-        }
-    }
-
-    const loadOffer = async () => {
-        try {
-            setLoading(true)
-            const data = await fetchExpandedOffer(offer.id)
-            setData(data)
-        } catch (err) {
-            console.error('Failed to expand offer:', err)
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    // Обработчики сохранения
-    const handleUpdateField = async (field, value) => {
-        const updates = { [field]: value }
-        await updateOffer(localOffer.id, updates)
-        setLocalOffer(prev => ({ ...prev, ...updates }))
-    }
-
-    const handleUpdateTag = async (tagId, newText) => {
-        await updateTag(tagId, { tag_name: newText })
-        setTags(prev => prev.map(t =>
-            t.id === tagId ? { ...t, tag_name: newText } : t
-        ))
-    }
-
-    const handleDeleteClick = async () => {
-        // Показываем окно подтверждения
-        const confirmDelete = window.confirm(
-            `Are you sure you want to delete "${localOffer.destination_name}"?\n\nThis action cannot be undone.`
-        )
-
-        // Если пользователь отменил - выходим
-        if (!confirmDelete) {
-            return
-        }
-
-        try {
-            await deleteOfferPermanent(offer.id)
-            setOnDelete(true)
-        } catch (err) {
-            console.error("Failed to delete:", err)
-            alert('Failed to delete offer. Please try again.')
-        }
-    }
-
-
-    const handleEditClick = () => {
-        navigate(`/editOffer/${offer.id}`)
-    }
-
-    useEffect(() =>  {
-        calculatePriceRange()
-    },[localOffer])
-
-    const priceRange = calculatePriceRange()
-    const housing = offer.price_housing || 0
-    const food = offer.price_food || 0
-    const transport = offer.price_transport_amount || 0
+    } = useAdminOfferCard(offer, setOnDelete)
 
     return (
         <div className="admin-offer-card">
             <div className="card-content">
-                {/* Картинка */}
+                {/* Image */}
                 <div className="card-image-container">
                     <div className="card-image">
                         {localOffer.image_url ? (
-                            <img src={localOffer.image_url} alt={localOffer.destination_name}/>
+                            <img src={localOffer.image_url} alt={localOffer.destination_name} />
                         ) : (
                             <div className="image-placeholder">No Image</div>
                         )}
                         <button
                             className="edit-image-btn"
-                            onClick={() => setIsEditingImage(!isEditingImage)}
+                            onClick={toggleImageEdit}
                             title="Edit image URL"
                         >
                             ✏️
@@ -190,86 +53,76 @@ function AdminOfferCard({offer,setOnDelete}) {
                     </div>
                 </div>
 
-                {/* Информация */}
+                {/* Info */}
                 <div className="card-info">
-                    <div className="places-list editable-thing">
-                        <div className="edit-section">
-                            <h2>
-                                Where:
-                            </h2>
-                            <h2 className="destination-name">
-                                <EditableField
-                                    value={localOffer.destination_name}
-                                    onSave={(val) => handleUpdateField('destination_name', val)}
-                                />
-                            </h2>
+                    <div className="upper-panel">
+                        <div className="places-list">
+
+                            <div className="edit-section">
+                                <h2>Where:</h2>
+                                <h2 className="destination-name">
+                                    <EditableField
+                                        value={localOffer.destination_name}
+                                        onSave={(val) => handleUpdateField('destination_name', val)}
+                                    />
+                                </h2>
+                            </div>
+                            <div className="edit-section">
+                                <h2>From:</h2>
+                                <h2 className="from-name">
+                                    <EditableField
+                                        value={localOffer.origin}
+                                        onSave={(val) => handleUpdateField('origin', val)}
+                                    />
+                                </h2>
+                            </div>
                         </div>
-                        <div className="edit-section">
-                            <h2>
-                                From:
-                            </h2>
-                            <h2 className="from-name">
-                                <EditableField
-                                    value={localOffer.origin}
-                                    onSave={(val) => handleUpdateField('origin', val)}
-                                />
-                            </h2>
+                        <div className="delete-button-admin">
+                            <button onClick={handleDelete}>
+                                ✗
+                            </button>
                         </div>
                     </div>
+
                     <div className="price-section">
                         <div className="price-component">
-                        Price: ${priceRange.min} - ${priceRange.max}
+                            Price: ${priceRange.min} - ${priceRange.max}
                         </div>
                         <div className="additional-prices">
                             <div className="price-component">
-                                <p>
-                                    🏠
-                                </p>
+                                <p>🏠</p>
                                 <EditableField
-                                value={localOffer.price_housing || 0}
-                                onSave={(val) => handleUpdateField('price_housing', Number(val))}
-                                type="number"
-                                prefix="$"
-                            />
+                                    value={localOffer.price_housing || 0}
+                                    onSave={(val) => handleUpdateField('price_housing', Number(val))}
+                                    type="number"
+                                    prefix="$"
+                                />
                             </div>
                             <div className="price-component">
-                                <p>
-                                    🍴
-                                </p>
-                                 <EditableField
-                                value={localOffer.price_food || 0}
-                                onSave={(val) => handleUpdateField('price_food', Number(val))}
-                                type="number"
-                                prefix="$"
-                            />
+                                <p>🍴</p>
+                                <EditableField
+                                    value={localOffer.price_food || 0}
+                                    onSave={(val) => handleUpdateField('price_food', Number(val))}
+                                    type="number"
+                                    prefix="$"
+                                />
                             </div>
                             <div className="price-component">
-                                <p>
-                                    ✈️
-                                </p>
+                                <p>✈️</p>
                                 <EditableField
-                                value={localOffer.price_transport_amount || 0}
-                                onSave={(val) => handleUpdateField('price_transport_amount', Number(val))}
-                                type="number"
-                                prefix="$"
-                            />
+                                    value={localOffer.price_transport_amount || 0}
+                                    onSave={(val) => handleUpdateField('price_transport_amount', Number(val))}
+                                    type="number"
+                                    prefix="$"
+                                />
                             </div>
                         </div>
                     </div>
-
-
                 </div>
-                <div className={"admin-offer-card-actions"}>
-                    <div className="delete-button">
-                        <button onClick={handleDeleteClick}>
-                            Delete Offer
-                        </button>
-                    </div>
-                </div>
-
 
             </div>
 
+            {/* Image URL Editor */}
             {isEditingImage && (
                 <div className="image-url-editor">
                     <input
@@ -292,24 +145,27 @@ function AdminOfferCard({offer,setOnDelete}) {
                     </div>
                 </div>
             )}
+
+            {/* Expand/Collapse */}
             <div className="expand-container">
-                <div className="expand-row" onClick={handleCardExpand}>
+                <div className="expand-row" onClick={toggleExpanded}>
                     {loading ? "…" : expanded ? "▲" : "▼"}
                 </div>
             </div>
-            <div className="card-expandable">
-                {expanded && (
+
+            {/* Expanded Content */}
+            {expanded && (
+                <div className="card-expandable">
                     <div className="expanded-content">
                         <div className="description">
-                            <h3>
-                                Decription:
-                            </h3>
+                            <h3>Description:</h3>
                             <EditableField
                                 value={localOffer.short_description}
                                 onSave={(val) => handleUpdateField('short_description', val)}
                                 type="textarea"
                             />
                         </div>
+
                         <div className="tags-lists">
                             {/* Highlights */}
                             <div className="tag-type">
@@ -357,9 +213,8 @@ function AdminOfferCard({offer,setOnDelete}) {
                             </div>
                         </div>
                     </div>
-                )}
-            </div>
-
+                </div>
+            )}
         </div>
     )
 }

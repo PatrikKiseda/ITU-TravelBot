@@ -5,7 +5,6 @@ import Plan from './pages/Plan'
 import Explore from './pages/Explore'
 import Order from './pages/Order'
 import Admin from './pages/Admin'
-import EditOffer from './pages/EditOffer'
 import './App.css'
 
 function App() {
@@ -19,7 +18,6 @@ function App() {
         <Route path="/plan" element={<Plan />} />
         <Route path="/orders/:orderId" element={<Order />} />
         <Route path="/admin" element={<Admin />} />
-        <Route path="/editOffer/:id" element={<EditOffer />} />
       </Routes>
     </div>
   )
