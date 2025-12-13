@@ -279,20 +279,30 @@ function OrderDetailPage() {
 
         <div className="order-destination-card">
           <div className="destination-header">
-            <h1 className="destination-title">{offer.destination_name}</h1>
+            <div className="destination-title-group">
+              <h1 className="destination-title">{offer.destination_name}</h1>
+
+              {travelDates && (
+                <span className="destination-dates">
+                  📅 {travelDates}
+                </span>
+              )}
+            </div>
+
             <div className="destination-header-divider"></div>
+
             <div className="gift-toggle-header">
-              <label className="gift-toggle-header-label">
-                <input
-                  type="checkbox"
-                  checked={isGift}
-                  onChange={(e) => setIsGift(e.target.checked)}
-                  className="gift-toggle-header-checkbox"
-                />
-                <span className="gift-toggle-header-text">🎁 Give this trip 🎁</span>
-              </label>
+              <button
+                className={`requirement-button ${isGift ? 'active' : ''}`}
+                onClick={() => setIsGift(prev => !prev)}
+                disabled={isConfirmed}
+              >
+                <span className="requirement-icon">🎁</span>
+                <span>Give this trip</span>
+              </button>
             </div>
           </div>
+
 
           <div className="destination-details">
             <div className="destination-image-section">
@@ -302,32 +312,32 @@ function OrderDetailPage() {
             </div>
 
             <div className="destination-info">
-              {travelDates && (
-                <div className="travel-dates">
-                  <span className="travel-dates-label">📅 Travel dates:</span>
-                  <span className="travel-dates-value">{travelDates}</span>
-                </div>
-              )}
               <div className="price-info">
               <div className="price-range">
                 Price per traveller: ${computedTotalPrice}
               </div>
                 <div className="price-breakdown">
-                <div className="price-item">
-                  <span className="price-icon">
-                    {transportMode === "car_own" ? "🚗" : transportMode === "train_bus" ? "🚌" : "✈️"}
-                  </span>
-                  <span>Transport: ${transportPrice}</span>
-                </div>
-                  <div className="price-item">
+                  <div className="price-row">
+                    <span className="price-icon">
+                      {transportMode === "car_own" ? "🚗" : transportMode === "train_bus" ? "🚌" : "✈️"}
+                    </span>
+                    <span className="price-label">Transport: </span>
+                    <span className="price-value">${transportPrice}</span>
+                  </div>
+
+                  <div className="price-row">
                     <span className="price-icon">🏠</span>
-                    <span>Housing: ${offer.price_housing || 0}</span>
+                    <span className="price-label">Housing: </span>
+                    <span className="price-value">${offer.price_housing || 0}</span>
                   </div>
-                  <div className="price-item">
+
+                  <div className="price-row">
                     <span className="price-icon">🍴</span>
-                    <span>Food: ${offer.price_food || 0}</span>
-                  </div>
+                    <span className="price-label">Food: </span>
+                    <span className="price-value">${offer.price_food || 0}</span>
+                  </div> 
                 </div>
+
               </div>
 
               {offer.extended_description && (
@@ -372,6 +382,7 @@ function OrderDetailPage() {
                   <button
                     className={`requirement-button ${specialRequirements.includes('allergies') ? 'active' : ''}`}
                     onClick={() => toggleRequirement('allergies')}
+                    disabled={isConfirmed}
                   >
                     <span className="requirement-icon">⚠️</span>
                     <span>Allergies</span>
@@ -379,6 +390,7 @@ function OrderDetailPage() {
                   <button
                     className={`requirement-button ${specialRequirements.includes('disability') ? 'active' : ''}`}
                     onClick={() => toggleRequirement('disability')}
+                    disabled={isConfirmed}
                   >
                     <span className="requirement-icon">♿</span>
                     <span>Disability</span>
@@ -386,6 +398,7 @@ function OrderDetailPage() {
                   <button
                     className={`requirement-button ${specialRequirements.includes('elderly') ? 'active' : ''}`}
                     onClick={() => toggleRequirement('elderly')}
+                    disabled={isConfirmed}
                   >
                     <span className="requirement-icon">👴</span>
                     <span>Elderly</span>
@@ -393,6 +406,7 @@ function OrderDetailPage() {
                   <button
                     className={`requirement-button ${specialRequirements.includes('dietary_restrictions') ? 'active' : ''}`}
                     onClick={() => toggleRequirement('dietary_restrictions')}
+                    disabled={isConfirmed}
                   >
                     <span className="requirement-icon">🥗</span>
                     <span>Dietary</span>

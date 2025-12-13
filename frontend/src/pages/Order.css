@@ -123,35 +123,53 @@
   gap: 20px;
 }
 
+
 .price-info {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
+.price-range,
+.price-row {
+  display: grid;
+  grid-template-columns: 28px 160px auto;
+  align-items: center;
+  column-gap: 8px;
+}
+
+/* Fake icon space for "Price per traveller" */
+.price-range::before {
+  content: "";
+  width: 28px;
+}
+
+/* Text styles */
 .price-range {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   color: #ffffff;
 }
 
-.price-breakdown {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.price-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #cccccc;
+.price-row {
   font-size: 14px;
+  color: #cccccc;
 }
 
 .price-icon {
   font-size: 18px;
+  text-align: center;
 }
+
+.price-label {
+  white-space: nowrap;
+}
+
+.price-value {
+  text-align: left;
+}
+
+
 
 .description {
   color: #cccccc;
@@ -556,4 +574,17 @@
   .gift-toggle-header {
     width: 100%;
   }
+
 }
+
+  .destination-title-group {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .destination-dates {
+    font-size: 0.95rem;
+    color: #777;
+  }
