@@ -38,14 +38,14 @@
     font-size: inherit;
     font-family: inherit;
     outline: none;
-    max-width: 200px;
-    max-height: 35px;
 }
+
 
 .editable-field textarea {
     min-height: 60px;
     resize: vertical;
 }
+
 
 .saving-indicator {
     position: absolute;
@@ -59,3 +59,4 @@
     0%, 100% { opacity: 1; }
     50% { opacity: 0.5; }
 }
+
