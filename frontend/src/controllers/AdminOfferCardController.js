@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import {useState, useEffect} from 'react'
 import {
     deleteOfferPermanent,
     fetchTags,
@@ -8,10 +8,10 @@ import {
     fetchAllAvailableTags
 } from '../services/api'
 
-export function useAdminOfferCard(offer, setOnDelete) {
+export function useAdminOfferCard(offer, setOnDelete, isExpanded, onToggleExpand, showConfirm) {
     // State
     const [loading, setLoading] = useState(false)
-    const [expanded, setExpanded] = useState(false)
+    // const [expanded, setExpanded] = useState(false)
     const [tags, setTags] = useState([])
     const [highlightTags, setHighlightTags] = useState([])
     const [whyVisitTags, setWhyVisitTags] = useState([])
@@ -106,11 +106,15 @@ export function useAdminOfferCard(offer, setOnDelete) {
 
     // Delete handler
     const handleDelete = async () => {
-        const confirmDelete = window.confirm(
-            `Are you sure you want to delete "${localOffer.destination_name}"?\n\nThis action cannot be undone.`
-        )
+        const confirmed = await showConfirm({
+            title: 'Delete Destination',
+            message: `Are you sure you want to delete "${localOffer.destination_name}"?\n\nThis action cannot be undone.`,
+            confirmButtonStyle: 'danger',
+            confirmText: 'Delete',
+            cancelText: 'Cancel'
+        })
 
-        if (!confirmDelete) {
+        if (!confirmed) {
             return
         }
 
@@ -119,13 +123,13 @@ export function useAdminOfferCard(offer, setOnDelete) {
             setOnDelete(true)
         } catch (err) {
             console.error('[AdminOfferCard] Failed to delete:', err)
-            alert('Failed to delete offer. Please try again.')
+            // Можно показать alert об ошибке
         }
     }
 
     // Expand/collapse handler
     const toggleExpanded = () => {
-        setExpanded(!expanded)
+        onToggleExpand()
     }
 
     // Calculate price range
@@ -143,7 +147,7 @@ export function useAdminOfferCard(offer, setOnDelete) {
     return {
         // State
         loading,
-        expanded,
+        expanded: isExpanded,
         localOffer,
         availableTags,
         isEditingImage,

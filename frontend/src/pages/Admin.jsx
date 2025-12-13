@@ -1,6 +1,6 @@
 import "./Admin.css"
 import React, { useState, useEffect } from 'react'
-import {createOffer, fetchAvailableOffers} from "../services/api.js";
+import {fetchAvailableOffers} from "../services/api.js";
 import AdminOfferCard from "../components/AdminOfferCard.jsx"
 import CreateOfferCard from "../components/CreateOfferCard.jsx"
 function Admin() {
@@ -8,6 +8,7 @@ function Admin() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
     const [onDelete, setOnDelete] = useState(false)
+    const [expandedOfferId, setExpandedOfferId] = useState(null)
 
     useEffect(() => {
         setOnDelete(false)
@@ -35,6 +36,10 @@ function Admin() {
         await loadOffers() // Перезагружаем список
     }
 
+    const handleToggleExpand = (offerId) => {
+        setExpandedOfferId(prevId => prevId === offerId ? null : offerId)
+    }
+
     if (loading) {
         return <div className="admin-page"><div className="loading-state">Loading...</div></div>
     }
@@ -46,9 +51,6 @@ function Admin() {
 
     return (
         <div className="admin-page">
-            {/*<div className="admin-page-header">*/}
-            {/*    <h1>Manage Destinations</h1>*/}
-            {/*</div>*/}
 
             <div className="admin-page-content">
                 {/* Карточка создания */}
@@ -68,6 +70,8 @@ function Admin() {
                                     key={offer.id}
                                     setOnDelete={setOnDelete}
                                     offer={offer}
+                                    isExpanded={expandedOfferId === offer.id}
+                                    onToggleExpand={() => handleToggleExpand(offer.id)}
                                 />
                             ))}
                         </div>

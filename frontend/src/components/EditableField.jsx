@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import './EditableField.css'
 
-function EditableField({ value, onSave, type = "text", prefix = "" }) {
+function EditableField({ value, onSave, type = "text", prefix = "", className = "" }) {
     const [isEditing, setIsEditing] = useState(false)
     const [editValue, setEditValue] = useState(value)
     const [isSaving, setIsSaving] = useState(false)
@@ -41,9 +41,10 @@ function EditableField({ value, onSave, type = "text", prefix = "" }) {
 
     if (isEditing) {
         return (
-            <div className="editable-field editing">
+            <div className={`editable-field editing ${className}`}>
                 {type === "textarea" ? (
                     <textarea
+                        className={className}
                         value={editValue}
                         onChange={(e) => setEditValue(e.target.value)}
                         onKeyDown={handleKeyDown}
@@ -53,6 +54,7 @@ function EditableField({ value, onSave, type = "text", prefix = "" }) {
                     />
                 ) : (
                     <input
+                        className={className}
                         type={type}
                         value={editValue}
                         onChange={(e) => setEditValue(e.target.value)}
@@ -69,7 +71,7 @@ function EditableField({ value, onSave, type = "text", prefix = "" }) {
 
     return (
         <div
-            className="editable-field"
+            className={`editable-field ${className}`}
             onClick={() => setIsEditing(true)}
             title="Click to edit"
         >

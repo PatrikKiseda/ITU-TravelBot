@@ -1,6 +1,5 @@
-// hooks/useCreateOffer.js
-import { useState, useEffect } from 'react'
-import { createOffer, fetchAllAvailableTags, addTagToOffer } from '../services/api'
+import {useState, useEffect} from 'react'
+import {createOffer, fetchAllAvailableTags, addTagToOffer} from '../services/api'
 
 // Вспомогательные функции
 const formatDate = (date) => {
@@ -41,7 +40,7 @@ const getInitialFormData = () => {
     }
 }
 
-export function useCreateOffer(onCreate) {
+export function useCreateOffer(onCreate, showConfirm, showAlert)  {
     // State
     const [isCreating, setIsCreating] = useState(false)
     const [expanded, setExpanded] = useState(true)
@@ -81,8 +80,16 @@ export function useCreateOffer(onCreate) {
     }
 
     // Cancel creating
-    const handleCancel = () => {
-        if (window.confirm('Discard this new destination?')) {
+    const handleCancel = async () => {
+        const confirmed = await showConfirm({
+            title: 'Discard Changes',
+            message: 'Are you sure you want to discard this new destination?',
+            confirmButtonStyle: 'danger',
+            confirmText: 'Discard',
+            cancelText: 'Keep Editing'
+        })
+
+        if (confirmed) {
             resetForm()
         }
     }
@@ -122,11 +129,23 @@ export function useCreateOffer(onCreate) {
     // Save offer
     const handleSave = async () => {
         if (!validateForm()) {
-            alert('Please fill in all required fields (highlighted in red)')
+            await showAlert({
+                title: 'Missing Information',
+                message: 'Please fill in all required fields',
+                confirmButtonStyle: 'primary'
+            })
             return
         }
 
-        if (!window.confirm('Create this destination?')) {
+        const confirmed = await showConfirm({
+            title: 'Create Destination',
+            message: 'Create this destination?',
+            confirmButtonStyle: 'success',
+            confirmText: 'Create',
+            cancelText: 'Cancel'
+        })
+
+        if (!confirmed) {
             return
         }
 
@@ -144,10 +163,19 @@ export function useCreateOffer(onCreate) {
             }
 
             resetForm()
-            alert('Destination created successfully!')
+
+            await showAlert({
+                title: 'Success',
+                message: 'Destination created successfully!',
+                confirmButtonStyle: 'success'
+            })
         } catch (err) {
             console.error('[CreateOffer] Failed to create offer:', err)
-            alert('Failed to create destination. Please try again.')
+            await showAlert({
+                title: 'Error',
+                message: 'Failed to create destination. Please try again.',
+                confirmButtonStyle: 'danger'
+            })
         } finally {
             setIsSaving(false)
         }
