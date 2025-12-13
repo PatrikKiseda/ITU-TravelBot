@@ -81,3 +81,12 @@ class CustomerOrderRepository:
 		result = db.exec(stmt).first()
 		return result or 0
 
+	def delete_order(self, db: Session, customer_session_id: str, order_id: str) -> bool:
+		order = self.get_by_id(db, customer_session_id, order_id)
+		if not order or order.order_status not in [OrderStatus.CANCELLED, OrderStatus.DELETED]:
+			return False
+		db.delete(order)
+		db.commit()
+		return True
+
+

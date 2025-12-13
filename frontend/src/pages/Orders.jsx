@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
-import { cancelOrder, getOrder, listOrders } from '../services/api'
+import { cancelOrder, getOrder, listOrders, emptyTrash } from '../services/api'
 import './Orders.css'
 import SwipeToCancel from "../components/SwipeToCancel";
 import Notify from '../components/Notify';
@@ -19,6 +19,31 @@ function OrdersPage() {
   const [highlightId, setHighlightId] = useState(location.state?.highlightOrderId || null)
   const [notify, setNotify] = useState({ message: '', type: '' });
 
+  const confirmedOrders = orders.filter(o => o.order_status === 'CONFIRMED')
+  const unconfirmedOrders = orders.filter(o => o.order_status === 'PENDING')
+  const cancelledOrders = orders.filter(o => o.order_status === 'CANCELLED')
+  const deletedOrders = orders.filter(o => o.order_status === 'DELETED')
+
+  const emptyTrashHandler = async () => {
+    try {
+      setLoading(true);
+      await emptyTrash();
+      const updatedOrders = await listOrders();
+      setOrders(updatedOrders || []);
+      showNotification('List of cancelled emptied successfully', 'success');
+    } catch (err) {
+      console.error(err);
+      showNotification('Failed to empty cancelled orders list', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+
+
+
+
   const showNotification = (message, type = 'info') => {
     setNotify({ message, type });
     setTimeout(() => setNotify({ message: '', type: '' }), 3000);
@@ -28,10 +53,9 @@ function OrdersPage() {
   useEffect(() => {
   if (location.state?.highlightOrderId) {
     setHighlightId(location.state.highlightOrderId)
-    // replace state so this effect doesn't fire again
     navigate(location.pathname, { replace: true, state: {} })
   }
-}, []); // only on mount
+  }, []);
 
 
   useEffect(() => {
@@ -50,6 +74,7 @@ const loadOrders = async () => {
   try {
     setLoading(true)
     const data = await listOrders()
+    console.log('Loaded orders:', data) // <--- check order_status values
     setOrders(data || [])
     setError(null)
 
@@ -161,8 +186,7 @@ const renderOrderCard = (order) => {
   >
 
       {/* Card main section */}
-      <div className="order-card-main" onClick={() => !isCancelled && handleExpand(order.id)} role="button">
-        <div className="order-card-info">
+      <div className="order-card-main" onClick={() => handleExpand(order.id)} role="button">        <div className="order-card-info">
           <span className="order-destination">{destinationName}</span>
           <span className="order-dates">{dateRange}</span>
           {/* Status tag outside date box */}
@@ -267,6 +291,9 @@ const renderOrderCard = (order) => {
 
 
 
+
+
+
   return (
     <>
       <Header 
@@ -316,12 +343,27 @@ const renderOrderCard = (order) => {
               </div>
             )}
 
-            {orders.some(o => o.order_status === 'CANCELLED') && (
-              <div className="orders-section">
-                <h3>Cancelled Travels</h3>
-                {orders.filter(o => o.order_status === 'CANCELLED').map(renderOrderCard)}
+            {cancelledOrders.length > 0 && (
+              <div className="orders-section cancelled-section">
+                <div className="orders-section-header">
+                  <span className="cancelled-title">Cancelled Travels</span>
+                  <button
+                    className="orders-trash-button"
+                    onClick={emptyTrashHandler}
+                    disabled={cancelledOrders.length === 0}
+                  >
+                    🗑 Empty
+                  </button>
+                </div>
+
+                {cancelledOrders.map(renderOrderCard)}
               </div>
             )}
+
+
+
+
+
 
             </div>
 

@@ -199,3 +199,15 @@ export async function cancelOrder(orderId) {
     body: JSON.stringify({}),
   })
 }
+
+export async function deleteOrder(orderId) {
+  return apiRequest(`/customer/orders/${orderId}`, {
+    method: 'DELETE',
+  })
+}
+
+export async function emptyTrash() {
+  return apiRequest(`/customer/orders/trash`, {
+    method: 'DELETE',
+  });
+}

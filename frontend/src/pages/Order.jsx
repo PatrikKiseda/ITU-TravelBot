@@ -504,7 +504,8 @@ function OrderDetailPage() {
               className="update-button"
               onClick={handleUpdateOrder}
               disabled={
-                updating ||
+                isConfirmed ||
+                updating &&
                 (numberOfPeople === order.number_of_people && 
                  transportMode === order.selected_transport_mode &&
                  JSON.stringify(specialRequirements.sort()) === JSON.stringify((order.special_requirements || []).sort()) &&

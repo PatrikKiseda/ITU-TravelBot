@@ -120,4 +120,24 @@ class CustomerOrderService:
 				self.offer_repo.update(db, offer)
 
 		return self.order_repo.cancel_order(db, order)
+	
+	def delete_order(self, db: Session, customer_session_id: str, order_id: str) -> bool:
+		order = self.order_repo.get_by_id(db, customer_session_id, order_id)
+		if not order or order.order_status not in [OrderStatus.CANCELLED, OrderStatus.DELETED]:
+			return False
+		return self.order_repo.delete_order(db, order_id)
+	
+	def delete_cancelled_orders(self, db: Session, customer_session_id: str) -> int:
+		orders = self.list_orders(db, customer_session_id)
+		deleted_count = 0
+		for order in orders:
+			if order.order_status == OrderStatus.CANCELLED:
+				order.order_status = OrderStatus.DELETED
+				db.add(order)
+				db.commit()
+				deleted_count += 1
+		return deleted_count
+
+
+
 

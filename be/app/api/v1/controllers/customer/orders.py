@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlmodel import Session
 from typing import Optional
 from app.core.deps import get_db, get_session_id
@@ -7,6 +7,7 @@ from app.schemas.customer import UpdateOrderBody
 from app.services.customer_order_service import CustomerOrderService
 
 router = APIRouter()
+order_service = CustomerOrderService()
 
 
 @router.get("/orders")
@@ -154,6 +155,20 @@ async def cancel_order(
             order_dict["special_requirements"] = []
 
         return ResponseEnvelope.ok(order_dict)
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return ResponseEnvelope.err("SERVER_ERROR", str(e))
+
+@router.delete("/orders/trash")
+async def empty_trash(
+    db: Session = Depends(get_db),
+    customer_session_id: str = Depends(get_session_id),
+):
+    service = CustomerOrderService()
+    try:
+        deleted_count = service.delete_cancelled_orders(db, customer_session_id)
+        return ResponseEnvelope.ok({"deleted_count": deleted_count})
     except Exception as e:
         import traceback
         traceback.print_exc()

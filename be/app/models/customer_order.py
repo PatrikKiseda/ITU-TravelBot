@@ -1,12 +1,13 @@
 from datetime import datetime, timezone
 from typing import Optional
 from sqlmodel import SQLModel, Field
+from enum import Enum
 
-
-class OrderStatus(str):
+class OrderStatus(str, Enum):
 	PENDING = "PENDING"
 	CONFIRMED = "CONFIRMED"
 	CANCELLED = "CANCELLED"
+	DELETED = "DELETED"
 
 
 class CustomerOrder(SQLModel, table=True):
@@ -23,7 +24,7 @@ class CustomerOrder(SQLModel, table=True):
 	gift_sender_name: Optional[str] = None
 	gift_note: Optional[str] = None
 	gift_subject: Optional[str] = Field(default="You've been gifted a trip!")
-	order_status: str = Field(default=OrderStatus.PENDING)
+	order_status: OrderStatus = Field(default=OrderStatus.PENDING)
 	created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
 	confirmed_at: Optional[datetime] = None
 

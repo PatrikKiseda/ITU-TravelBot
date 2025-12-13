@@ -151,6 +151,48 @@
 }
 
 
+.orders-section-header {
+  display: flex;
+  justify-content: space-between; /* text left, button right */
+  align-items: center;
+  background-color: #1e293b; /* blue panel */
+  border-radius: 12px;
+  padding: 12px 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  margin-bottom: 20px; /* ← add this to create gap below header */
+}
+
+
+.cancelled-title {
+  color: #f8fafc;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.orders-trash-button {
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: none;
+  background: #ef4444;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.orders-trash-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
+}
+
+.orders-trash-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+
 
 .order-toggle-button {
   width: 40px;
