@@ -5,6 +5,7 @@ from sqlmodel import SQLModel, Field, UniqueConstraint
 class ResponseStatus(str):
 	ACCEPTED = "ACCEPTED"
 	REJECTED = "REJECTED"
+	UNDECIDED = "UNDECIDED"  # New status for offers user has seen but not decided
 
 
 class CustomerResponse(SQLModel, table=True):

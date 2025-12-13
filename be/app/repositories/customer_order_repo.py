@@ -7,8 +7,27 @@ from app.models.agency_offer import AgencyOffer
 
 class CustomerOrderRepository:
 	def create(self, db: Session, order: CustomerOrder) -> CustomerOrder:
+		# #region agent log
+		import json
+		import os
+		log_path = r"c:\Users\Pato\Desktop\skola\7sem\ITU\.cursor\debug.log"
+		try:
+			order_dict = order.model_dump()
+			with open(log_path, "a", encoding="utf-8") as f:
+				f.write(json.dumps({"sessionId":"debug-session","runId":"create_order","hypothesisId":"A","location":"customer_order_repo.py:10","message":"Creating order - before db.add","data":{"order_fields":list(order_dict.keys()),"order_id":order.id},"timestamp":int(__import__("time").time()*1000)}) + "\n")
+		except: pass
+		# #endregion
 		db.add(order)
-		db.commit()
+		try:
+			db.commit()
+		except Exception as e:
+			# #region agent log
+			try:
+				with open(log_path, "a", encoding="utf-8") as f:
+					f.write(json.dumps({"sessionId":"debug-session","runId":"create_order","hypothesisId":"A","location":"customer_order_repo.py:20","message":"Commit failed","data":{"error":str(e),"error_type":type(e).__name__},"timestamp":int(__import__("time").time()*1000)}) + "\n")
+			except: pass
+			# #endregion
+			raise
 		db.refresh(order)
 		return order
 
@@ -61,4 +80,13 @@ class CustomerOrderRepository:
 		)
 		result = db.exec(stmt).first()
 		return result or 0
+
+	def delete_order(self, db: Session, customer_session_id: str, order_id: str) -> bool:
+		order = self.get_by_id(db, customer_session_id, order_id)
+		if not order or order.order_status not in [OrderStatus.CANCELLED, OrderStatus.DELETED]:
+			return False
+		db.delete(order)
+		db.commit()
+		return True
+
 

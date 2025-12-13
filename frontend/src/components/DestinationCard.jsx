@@ -3,24 +3,34 @@ import { useNavigate } from 'react-router-dom'
 import { fetchExpandedOffer, confirmTravel, addNote, getNote } from '../services/api'
 import './DestinationCard.css'
 
-function DestinationCard({ offer, onDelete, onAddNote }) {
+function DestinationCard({ offer, onDelete }) {
   const navigate = useNavigate()
   const [expanded, setExpanded] = useState(false)
   const [expandedData, setExpandedData] = useState(null)
   const [loadingExpand, setLoadingExpand] = useState(false)
   const [loadingConfirm, setLoadingConfirm] = useState(false)
 
-  const [note, setNote] = useState('')       // content of the note
-  const [noteVisible, setNoteVisible] = useState(false) // whether the textarea is shown
+  const [note, setNote] = useState('')
+  const [noteVisible, setNoteVisible] = useState(false)
   const [savingNote, setSavingNote] = useState(false)
 
   useEffect(() => {
-    if (expanded) {
-      getNote(offer.id)
-        .then(text => setNote(text))
-        .catch(err => console.error('Failed to load note:', err));
+    let active = true
+    const loadNote = async () => {
+      try {
+        const existingNote = await getNote(offer.id)
+        if (active) {
+          setNote(existingNote || '')
+        }
+      } catch (err) {
+        console.warn('Failed to load note:', err)
+      }
     }
-  }, [expanded, offer.id]);
+    loadNote()
+    return () => {
+      active = false
+    }
+  }, [offer.id])
 
   const calculatePriceRange = () => {
     const housing = offer.price_housing || 0
@@ -59,7 +69,6 @@ function DestinationCard({ offer, onDelete, onAddNote }) {
       setLoadingConfirm(true)
       // Default values - user will set these in order view
       const order = await confirmTravel(offer.id, 1, offer.price_transport_mode || 'plane')
-      // Navigate to order view
       navigate(`/orders/${order.id}`)
     } catch (err) {
       console.error('Failed to confirm travel:', err)
@@ -78,6 +87,7 @@ function DestinationCard({ offer, onDelete, onAddNote }) {
       setSavingNote(true)
       const result = await addNote(offer.id, note)
       console.log('Saved note:', result)
+      setNoteVisible(false)
     } catch (err) {
       console.error('Error saving note:', err)
       alert('Failed to save note: ' + (err.message || 'Unknown error'))
@@ -145,6 +155,13 @@ function DestinationCard({ offer, onDelete, onAddNote }) {
               <p>{offer.short_description}</p>
             )}
           </div>
+
+          {note && (
+            <div className="note-preview">
+              <span className="note-label">my note:</span>
+              <span className="note-text">{note}</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -183,7 +200,7 @@ function DestinationCard({ offer, onDelete, onAddNote }) {
             <button
               className="save-note-button"
               onClick={handleSaveNote}
-              disabled={savingNote || !note.trim()}
+              disabled={savingNote}
             >
               {savingNote ? 'Saving...' : 'Save Note'}
             </button>

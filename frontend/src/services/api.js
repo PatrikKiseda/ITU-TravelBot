@@ -162,10 +162,33 @@ export async function rejectOffer(offerId) {
   })
 }
 
+export async function fetchAllOffersWithStatus(filters = {}) {
+  const params = new URLSearchParams()
+  if (filters.origin) params.append('origin', filters.origin)
+  if (filters.destination) params.append('destination', filters.destination)
+  if (filters.season) params.append('season', filters.season)
+  if (filters.typeOfStay) params.append('type_of_stay', filters.typeOfStay)
+  if (filters.priceMin !== undefined) params.append('price_min', filters.priceMin)
+  if (filters.priceMax !== undefined) params.append('price_max', filters.priceMax)
+  if (filters.statusFilter) params.append('status_filter', filters.statusFilter)
+  if (filters.sort) params.append('sort', filters.sort)
+  if (filters.order) params.append('order', filters.order)
+  const queryString = params.toString()
+  return apiRequest(`/customer/offers/all${queryString ? '?' + queryString : ''}`)
+}
+
+export async function updateOfferStatus(offerId, status) {
+  return apiRequest(`/customer/offers/${offerId}/status`, {
+    method: 'PUT',
+    body: JSON.stringify({ status }),
+  })
+}
+
 export async function addNote(offerId, noteText) {
   const res = await fetch(`/api/v1/customer/accepted/${offerId}/note`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
     body: JSON.stringify({ note_text: noteText }),
   });
   if (!res.ok) throw new Error(`Failed to save note: ${res.status}`);
@@ -173,11 +196,30 @@ export async function addNote(offerId, noteText) {
   return data?.data || data;
 }
 
-export async function getNote(offerId) {  // renamed
-  const res = await fetch(`/api/v1/customer/accepted/${offerId}/note`);
-  if (!res.ok) throw new Error(`Failed to load note: ${res.status}`);
+export async function updateNote(offerId, noteText) {
+  const res = await fetch(`/api/v1/customer/accepted/${offerId}/note`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ note_text: noteText }),
+  });
+  if (!res.ok) throw new Error(`Failed to update note: ${res.status}`);
   const data = await res.json();
-  return data?.data?.note_text || data?.note_text || '';
+  return data?.data || data;
+}
+
+export async function getNote(offerId) {  // renamed
+  const res = await fetch(`/api/v1/customer/accepted/${offerId}/note`, {
+    credentials: 'include',
+  })
+  if (res.status === 404) {
+    return ''
+  }
+  if (!res.ok) {
+    throw new Error(`Failed to load note: ${res.status}`)
+  }
+  const data = await res.json()
+  return data?.data?.note_text || data?.note_text || ''
 }
 
 export async function confirmTravel(offerId, numberOfPeople, transportMode) {
@@ -194,13 +236,27 @@ export async function getOrder(orderId) {
   return apiRequest(`/customer/orders/${orderId}`)
 }
 
-export async function updateOrder(orderId, numberOfPeople, transportMode) {
+export async function updateOrder(orderId, numberOfPeople, transportMode, specialRequirements = null, giftData = null) {
+  const body = {
+    number_of_people: numberOfPeople,
+    selected_transport_mode: transportMode,
+  }
+  if (specialRequirements !== null) {
+    body.special_requirements = specialRequirements
+  }
+  if (giftData !== null) {
+    body.is_gift = giftData.isGift || false
+    if (giftData.isGift) {
+      body.gift_recipient_email = giftData.recipientEmail || null
+      body.gift_recipient_name = giftData.recipientName || null
+      body.gift_sender_name = giftData.senderName || null
+      body.gift_note = giftData.note || null
+      body.gift_subject = giftData.subject || "You've been gifted a trip!"
+    }
+  }
   return apiRequest(`/customer/orders/${orderId}`, {
     method: 'PUT',
-    body: JSON.stringify({
-      number_of_people: numberOfPeople,
-      selected_transport_mode: transportMode,
-    }),
+    body: JSON.stringify(body),
   })
 }
 
@@ -209,4 +265,28 @@ export async function confirmOrder(orderId) {
     method: 'POST',
     body: JSON.stringify({}),
   })
+}
+
+export async function listOrders(status) {
+  const params = status ? `?status=${encodeURIComponent(status)}` : ''
+  return apiRequest(`/customer/orders${params}`)
+}
+
+export async function cancelOrder(orderId) {
+  return apiRequest(`/customer/orders/${orderId}/cancel`, {
+    method: 'POST',
+    body: JSON.stringify({}),
+  })
+}
+
+export async function deleteOrder(orderId) {
+  return apiRequest(`/customer/orders/${orderId}`, {
+    method: 'DELETE',
+  })
+}
+
+export async function emptyTrash() {
+  return apiRequest(`/customer/orders/trash`, {
+    method: 'DELETE',
+  });
 }

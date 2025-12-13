@@ -5,12 +5,19 @@
 }
 
 .header-content {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
+  gap: 0;
+}
+
+.header-main-row {
+  display: flex;
+  flex-direction: row;
   align-items: flex-start;
-  gap: 15px;
+  gap: 30px;
+  width: 100%;
 }
 
 .header-left {
@@ -18,7 +25,34 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 15px;
+  flex: 0 0 25%;
+  min-width: 250px;
+}
+
+.header-filters {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+}
+
+.compare-offers-button {
+  padding: 12px 24px;
+  background-color: #d4a017;
+  border: none;
+  border-radius: 8px;
+  color: #000000;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
   width: 100%;
+  margin-top: 10px;
+}
+
+.compare-offers-button:hover {
+  background-color: #b89015;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(212, 160, 23, 0.4);
 }
 
 .logo-button {
@@ -36,13 +70,13 @@
 }
 
 .logo-image {
-  height: 40px;
+  height: 80px;
   width: auto;
   object-fit: contain;
 }
 
 .logo-text-fallback {
-  font-size: 36px;
+  font-size: 72px;
   font-weight: bold;
   color: #4ade80;
   letter-spacing: -0.5px;
@@ -83,13 +117,27 @@
 
 .nav-button-explore {
   background-color: #fb923c;
-  border-radius: 0 25px 25px 0;
+  border-radius: 25px 0 0 25px;
+  border-right: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .nav-button-explore:hover {
   background-color: #f97316;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(251, 146, 60, 0.4);
+}
+
+.nav-button-orders {
+  background-color: #4ade80;
+  border-radius: 0 25px 25px 0;
+  color: #000000;
+  font-weight: bold;
+}
+
+.nav-button-orders:hover {
+  background-color: #3dd070;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 222, 128, 0.4);
 }
 
 .nav-button-admin {
@@ -109,12 +157,12 @@
   z-index: 1;
 }
 
-.nav-button-plan.active {
-  box-shadow: 0 0 20px rgba(74, 222, 128, 0.8);
-}
-
 .nav-button-explore.active {
   box-shadow: 0 0 20px rgba(251, 146, 60, 0.8);
+}
+
+.nav-button-orders.active {
+  box-shadow: 0 0 20px rgba(74, 222, 128, 0.8);
 }
 
 .nav-button-admin.active {
