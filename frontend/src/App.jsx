@@ -6,6 +6,7 @@ import Explore from './pages/Explore'
 import Compare from './pages/Compare'
 import Orders from './pages/Orders'
 import OrderDetail from './pages/Order'
+import Admin from './pages/Admin'
 import './App.css'
 
 function AppContent() {
@@ -43,11 +44,11 @@ function AppContent() {
         // #endregion
         return
       }
-      
+
       // Allow navigation when swiping on filter area, header, or empty space in explore
       const headerFilters = target.closest('.header-filters')
       const header = target.closest('.header')
-      
+
       if (location.pathname === '/explore' && (filterBar || headerFilters || header)) {
         // #region agent log
         fetch('http://127.0.0.1:7242/ingest/c9197bf8-d599-4857-821f-99bbf4911463',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.jsx:onSwipedLeft-navigate',message:'Navigating to orders',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
@@ -58,17 +59,17 @@ function AppContent() {
     onSwipedRight: (e) => {
       // Block navigation if swiping on cards
       const target = e.event.target
-      if (target.closest('.explore-offer-card') || 
+      if (target.closest('.explore-offer-card') ||
           target.closest('.comparison-card')) {
         return
       }
-      
+
       // Allow navigation when swiping on header or orders page area
       const header = target.closest('.header')
       const ordersPage = target.closest('.orders-page')
       const ordersContainer = target.closest('.orders-container')
-      
-      if ((location.pathname === '/orders' || location.pathname.startsWith('/orders/')) && 
+
+      if ((location.pathname === '/orders' || location.pathname.startsWith('/orders/')) &&
           (header || ordersPage || ordersContainer)) {
         navigate('/explore')
       }
@@ -84,22 +85,23 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<Navigate to="/explore" replace />} />
         <Route path="/explore" element={
-          <Explore 
-            filters={filters} 
-            onFiltersChange={setFilters} 
+          <Explore
+            filters={filters}
+            onFiltersChange={setFilters}
             onPriceRangeChange={setPriceRange}
             comparingOffers={comparingOffers}
             setComparingOffers={setComparingOffers}
           />
         } />
         <Route path="/compare" element={
-          <Compare 
-            filters={filters} 
+          <Compare
+            filters={filters}
             comparingOffers={comparingOffers}
           />
         } />
         <Route path="/orders" element={<Orders />} />
         <Route path="/orders/:orderId" element={<OrderDetail />} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
     </div>
   )

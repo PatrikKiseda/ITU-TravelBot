@@ -1,0 +1,78 @@
+/*Created by Shaposhnik Bogdan (xshapo04)*/
+.editable-field {
+    position: relative;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.editable-field:hover {
+    background-color: #979797;
+}
+
+.edit-icon {
+    opacity: 0;
+    position: absolute;
+
+    margin-left: 8px;
+    font-size: 12px;
+    transition: opacity 0.2s;
+}
+
+.editable-field:hover .edit-icon {
+    opacity: 0.6;
+}
+
+.editable-field.editing {
+    padding: 0;
+    cursor: default;
+}
+
+.editable-field.editing:hover {
+    background-color: transparent;
+}
+
+.editable-field input,
+.editable-field textarea {
+    width: 100%;
+    padding: 4px 8px;
+    border: 2px solid #1976d2;
+    border-radius: 4px;
+    font-size: inherit;
+    font-family: inherit;
+    outline: none;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+
+input {
+    background-color: #1a1a1a;
+    color:white;
+}
+
+textarea {
+    background-color: #1a1a1a;
+    color:white;
+}
+
+.editable-field textarea {
+    min-height: 60px;
+    resize: vertical;
+}
+
+
+.saving-indicator {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    animation: pulse 1s infinite;
+}
+
+

@@ -15,6 +15,9 @@ function Header({ filters, onFiltersChange, minPrice, maxPrice, comparingOffers,
   const handleExploreClick = () => {
     navigate('/explore')
   }
+  const handleAdminClick = () => {
+    navigate('/admin')
+  }
 
   const handleOrdersClick = () => {
     navigate('/orders')
@@ -28,9 +31,9 @@ function Header({ filters, onFiltersChange, minPrice, maxPrice, comparingOffers,
         <div className="header-main-row">
           <div className="header-left">
             <button className="logo-button" onClick={handleLogoClick} aria-label="Go to Explore">
-              <img 
-                src="/travelbot-logo.png" 
-                alt="Travelbot" 
+              <img
+                src="/travelbot-logo.png"
+                alt="Travelbot"
                 className="logo-image"
                 onError={(e) => {
                   // Fallback to text if image doesn't exist
@@ -55,8 +58,8 @@ function Header({ filters, onFiltersChange, minPrice, maxPrice, comparingOffers,
               </button>
             </div>
             {showFilters && (
-              <button 
-                className="compare-offers-button" 
+              <button
+                className="compare-offers-button"
                 onClick={onEnterComparison}
               >
                 Compare Offers {comparingOffers && comparingOffers.size > 0 ? `(${comparingOffers.size})` : ''}
@@ -65,8 +68,8 @@ function Header({ filters, onFiltersChange, minPrice, maxPrice, comparingOffers,
           </div>
           {showFilters && (
             <div className="header-filters">
-              <FilterBar 
-                filters={filters} 
+              <FilterBar
+                filters={filters}
                 onFiltersChange={onFiltersChange}
                 minPrice={minPrice}
                 maxPrice={maxPrice}

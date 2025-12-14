@@ -65,8 +65,62 @@ export async function deleteOffer(offerId) {
   })
 }
 
+export async function deleteOfferPermanent(offerId) {
+  return apiRequest(`/agent/offers/${offerId}`, {
+    method: 'DELETE',
+  })
+}
+
+
+export async function updateOffer(offerId, updates) {
+  return apiRequest(`/agent/offers/${offerId}`, {
+    method: 'PUT',
+    body: JSON.stringify(updates)
+  })
+}
+
+export async function fetchOfferById(offerId) {
+  return apiRequest(`/agent/offers/${offerId}`)
+}
+
 export async function fetchAvailableOffers() {
   return apiRequest(`/customer/offers`)
+}
+
+
+export async function fetchAllAvailableTags() {
+  return apiRequest('/tags')
+}
+
+export async function fetchTags(offerId) {
+  return apiRequest(`/offers/${offerId}/tags`)
+}
+
+export async function addTagToOffer(offerId, tagId) {
+  return apiRequest(`/offers/${offerId}/tags/${tagId}`, {
+    method: 'POST',
+    body: JSON.stringify({})
+  })
+}
+
+export async function createTag(tagBody) {
+  return apiRequest(`/tags`, {
+    method: 'POST',
+    body: JSON.stringify(tagBody)
+  })
+}
+
+export async function removeTagFromOffer(offerId, tagId) {
+  return apiRequest(`/offers/${offerId}/tags/${tagId}`, {
+    method: 'DELETE'
+  })
+}
+
+export async function createOffer(offerData) {
+  return apiRequest('/agent/offers', {
+    method: 'POST',
+    body: JSON.stringify(offerData)
+  })
 }
 
 export async function acceptOffer(offerId) {

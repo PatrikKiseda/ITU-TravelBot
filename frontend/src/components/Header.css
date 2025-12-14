@@ -140,6 +140,18 @@
   box-shadow: 0 4px 12px rgba(74, 222, 128, 0.4);
 }
 
+.nav-button-admin {
+  background-color: #e3123c;
+  border-radius: 25px 25px 25px 25px;
+  margin-left: 20px;
+}
+
+.nav-button-admin:hover {
+  background-color: #c91237;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(156, 43, 43, 0.4);
+}
+
 .nav-button.active {
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
   z-index: 1;
@@ -151,4 +163,8 @@
 
 .nav-button-orders.active {
   box-shadow: 0 0 20px rgba(74, 222, 128, 0.8);
+}
+
+.nav-button-admin.active {
+  box-shadow: 0 0 20px rgba(209, 13, 13, 0.8);
 }

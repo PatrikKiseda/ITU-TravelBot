@@ -1,0 +1,137 @@
+/*Created by Shaposhnik Bogdan (xshapo04)*/
+
+.tag-search-selector {
+    position: relative;
+    width: 100%;
+}
+
+/*List of selected tags*/
+.selected-tags-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.selected-tag-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+    background-color: #1e1e1e;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.selected-tag-item:hover {
+    background-color: #2e2e2e;
+}
+
+.remove-tag-btn {
+    background: none;
+    border: none;
+    color: #f44336;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0 4px;
+    margin-left: 8px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.remove-tag-btn:hover {
+    opacity: 1;
+}
+
+/*Add button*/
+.add-tag-btn {
+    width: 100%;
+    padding: 8px 12px;
+    background-color: #1976d2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.add-tag-btn:hover {
+    background-color: #1565c0;
+}
+
+/*Dropdown*/
+.tag-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 4px;
+    background-color: #1e1e1e;
+    border: 2px solid #2c2c2c;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    max-height: 300px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/*Search field*/
+.tag-search-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: none;
+    color:white;
+    background-color: #1e1e1e;
+    border-bottom: 1px solid #1e1e1e;
+    font-size: 14px;
+    outline: none;
+}
+
+.tag-search-input:focus {
+    background-color: #1e1e1e;
+}
+
+/*List of options*/
+.tag-options-list {
+    overflow-y: auto;
+    max-height: 250px;
+}
+
+.tag-option {
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    background-color: #1e1e1e;
+    transition: background-color 0.2s;
+}
+
+.tag-option:hover {
+    background-color: #333333;
+}
+
+.no-tags-message {
+    padding: 20px;
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+}
+
+.create-new-tag {
+    padding:6px;
+}
+.create-new-tag button {
+    width: 100%;
+    background-color: #353535;
+    color: white;
+    box-shadow: none;
+    border: none;
+    border-radius: 5px;
+}
+
+.create-new-tag button:hover {
+    background-color: #474747;
+}
