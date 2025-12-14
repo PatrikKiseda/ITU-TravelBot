@@ -21,11 +21,19 @@ export function useAdminOfferCard(offer, setOnDelete, isExpanded, onToggleExpand
     const [isEditingImage, setIsEditingImage] = useState(false)
     const [imageUrl, setImageUrl] = useState(localOffer.image_url || '')
 
+    const [dateFrom, setDateFrom] = useState(localOffer.date_from || '')
+    const [dateTo, setDateTo] = useState(localOffer.date_to || '')
+
     // Load data on mount
     useEffect(() => {
         loadTags()
         loadAvailableTags()
     }, [])
+
+    useEffect(() => {
+        setDateFrom(localOffer.date_from || '')
+        setDateTo(localOffer.date_to || '')
+    }, [localOffer.date_from, localOffer.date_to])
 
     // Filter tags by type
     useEffect(() => {
@@ -73,6 +81,45 @@ export function useAdminOfferCard(offer, setOnDelete, isExpanded, onToggleExpand
             setIsEditingImage(false)
         } catch (err) {
             console.error('[AdminOfferCard] Failed to update image:', err)
+        }
+    }
+
+    const handleDateFromChange = (value) => {
+        setDateFrom(value)
+    }
+
+    const handleDateToChange = (value) => {
+        setDateTo(value)
+    }
+
+    const handleDateFromBlur = async () => {
+        if (dateFrom !== localOffer.date_from) {
+            try {
+                await updateOffer(localOffer.id, { date_from: dateFrom })
+                setLocalOffer(prev => ({ ...prev, date_from: dateFrom }))
+            } catch (err) {
+                console.error('[AdminOfferCard] Failed to update date_from:', err)
+                setDateFrom(localOffer.date_from || '') // Откатываем при ошибке
+            }
+        }
+    }
+
+    const handleDateToBlur = async () => {
+        if (dateTo !== localOffer.date_to) {
+            // Валидация: date_to должна быть после date_from
+            if (dateFrom && dateTo && new Date(dateTo) <= new Date(dateFrom)) {
+                alert('End date must be after start date')
+                setDateTo(localOffer.date_to || '')
+                return
+            }
+
+            try {
+                await updateOffer(localOffer.id, { date_to: dateTo })
+                setLocalOffer(prev => ({ ...prev, date_to: dateTo }))
+            } catch (err) {
+                console.error('[AdminOfferCard] Failed to update date_to:', err)
+                setDateTo(localOffer.date_to || '') // Откатываем при ошибке
+            }
         }
     }
 
@@ -138,7 +185,7 @@ export function useAdminOfferCard(offer, setOnDelete, isExpanded, onToggleExpand
         const food = localOffer.price_food || 0
         const transport = localOffer.price_transport_amount || 0
         const minPrice = housing + food + transport
-        const maxPrice = minPrice + 200
+        const maxPrice = Math.round(minPrice + minPrice/5.0)
         return { min: minPrice, max: maxPrice }
     }
 
@@ -157,6 +204,8 @@ export function useAdminOfferCard(offer, setOnDelete, isExpanded, onToggleExpand
         whyVisitTags,
         considerTags,
         priceRange,
+        dateFrom,
+        dateTo,
 
         // Handlers
         handleUpdateField,
@@ -166,6 +215,10 @@ export function useAdminOfferCard(offer, setOnDelete, isExpanded, onToggleExpand
         handleAddTag,
         handleRemoveTag,
         handleDelete,
-        toggleExpanded
+        toggleExpanded,
+        handleDateFromChange,
+        handleDateToChange,
+        handleDateFromBlur,
+        handleDateToBlur
     }
 }

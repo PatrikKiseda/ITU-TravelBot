@@ -312,6 +312,61 @@
 
 .price-edit-field {
     max-height: 20px;
-    max-width: 50px;
+    max-width: 80px;
+}
+
+.dates-section {
+    display: flex;
+    gap: 15px;
+    margin: 10px 0;
+    padding: 10px 0;
+    border-top: 1px solid #3a3a3a;
+}
+
+.date-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.date-field label {
+    font-size: 14px;
+    color: #ddd;
+    white-space: nowrap;
+}
+
+.date-input {
+    padding: 6px 10px;
+    background-color: #2a2a2a;
+    color: #fff;
+    border: 1px solid #3a3a3a;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.date-input:hover {
+    border-color: #4a4a4a;
+}
+
+.date-input:focus {
+    outline: none;
+    border-color: #1976d2;
+    box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+}
+
+/* Стили для календаря (зависят от браузера) */
+.date-input::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .dates-section {
+        flex-direction: column;
+        gap: 10px;
+    }
 }
 

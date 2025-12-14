@@ -26,8 +26,8 @@ const getInitialFormData = () => {
         destination_where_to: '',
         capacity_available: 20,
         capacity_total: 20,
-        date_from: formatDate(today),
-        date_to: formatDate(twoWeeksLater),
+        date_from: '',
+        date_to: '',
         season: 'summer',
         origin: 'New Origin',
         short_description: 'Add description here...',
@@ -122,6 +122,23 @@ export function useCreateOffer(onCreate, showConfirm, showAlert)  {
             newErrors.short_description = 'Please add description'
         }
 
+        if (!formData.date_from) {
+            newErrors.date_from = 'Please set start date'
+        }
+
+        if (!formData.date_to) {
+            newErrors.date_to = 'Please set end date'
+        }
+
+        if (formData.date_from && formData.date_to) {
+            const dateFrom = new Date(formData.date_from)
+            const dateTo = new Date(formData.date_to)
+
+            if (dateTo <= dateFrom) {
+                newErrors.date_to = 'End date must be after start date'
+            }
+        }
+
         setErrors(newErrors)
         return Object.keys(newErrors).length === 0
     }
@@ -131,7 +148,7 @@ export function useCreateOffer(onCreate, showConfirm, showAlert)  {
         if (!validateForm()) {
             await showAlert({
                 title: 'Missing Information',
-                message: 'Please fill in all required fields',
+                message: 'Please fill in all required fields:',
                 confirmButtonStyle: 'primary'
             })
             return
@@ -240,7 +257,7 @@ export function useCreateOffer(onCreate, showConfirm, showAlert)  {
         const food = formData.price_food || 0
         const transport = formData.price_transport_amount || 0
         const minPrice = housing + food + transport
-        const maxPrice = minPrice + 200
+        const maxPrice = Math.round(minPrice + minPrice/5.0)
         return { min: minPrice, max: maxPrice }
     }
 

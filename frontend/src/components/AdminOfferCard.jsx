@@ -24,6 +24,8 @@ function AdminOfferCard({ offer, setOnDelete, isExpanded, onToggleExpand }) {
         whyVisitTags,
         considerTags,
         priceRange,
+        dateFrom,
+        dateTo,
 
         // Handlers
         handleUpdateField,
@@ -33,7 +35,11 @@ function AdminOfferCard({ offer, setOnDelete, isExpanded, onToggleExpand }) {
         handleAddTag,
         handleRemoveTag,
         handleDelete,
-        toggleExpanded
+        toggleExpanded,
+        handleDateFromChange,
+        handleDateToChange,
+        handleDateFromBlur,
+        handleDateToBlur
 
     } = useAdminOfferCard(offer, setOnDelete, isExpanded, onToggleExpand, showConfirm)
 
@@ -129,6 +135,29 @@ function AdminOfferCard({ offer, setOnDelete, isExpanded, onToggleExpand }) {
                                         className="price-edit-field"
                                     />
                                 </div>
+                            </div>
+                        </div>
+                        <div className="dates-section">
+                            <div className="date-field">
+                                <label>📅 From:</label>
+                                <input
+                                    type="date"
+                                    value={dateFrom}
+                                    onChange={(e) => handleDateFromChange(e.target.value)}
+                                    onBlur={handleDateFromBlur}
+                                    className="date-input"
+                                />
+                            </div>
+                            <div className="date-field">
+                                <label>📅 To:</label>
+                                <input
+                                    type="date"
+                                    value={dateTo}
+                                    onChange={(e) => handleDateToChange(e.target.value)}
+                                    onBlur={handleDateToBlur}
+                                    min={dateFrom}
+                                    className="date-input"
+                                />
                             </div>
                         </div>
                     </div>

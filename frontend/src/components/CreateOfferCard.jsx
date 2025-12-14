@@ -133,6 +133,27 @@ function CreateOfferCard({ onCreate }) {
                                     </div>
                                 </div>
                             </div>
+                            <div className="dates-section">
+                                <div className={`date-field ${errors.date_from ? 'field-error' : ''}`}>
+                                    <label>📅 From:</label>
+                                    <input
+                                        type="date"
+                                        value={formData.date_from}
+                                        onChange={(e) => handleUpdateField('date_from', e.target.value)}
+                                        className="date-input"
+                                    />
+                                </div>
+                                <div className={`date-field ${errors.date_to ? 'field-error' : ''}`}>
+                                    <label>📅 To:</label>
+                                    <input
+                                        type="date"
+                                        value={formData.date_to}
+                                        onChange={(e) => handleUpdateField('date_to', e.target.value)}
+                                        min={formData.date_from}
+                                        className="date-input"
+                                    />
+                                </div>
+                            </div>
                         </div>
 
                         {/* Actions */}
@@ -141,7 +162,8 @@ function CreateOfferCard({ onCreate }) {
                                 <button onClick={handleCancel} className="cancel-create-btn" title="Cancel">
                                     ✕
                                 </button>
-                                <button onClick={handleSave} className="save-create-btn" disabled={isSaving} title="Save destination">
+                                <button onClick={handleSave} className="save-create-btn" disabled={isSaving}
+                                        title="Save destination">
                                     {isSaving ? '💾' : '✓'}
                                 </button>
                             </div>

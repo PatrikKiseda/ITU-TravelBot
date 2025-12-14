@@ -61,11 +61,13 @@ function Modal({
                             {cancelText}
                         </button>
                     )}
+                    {/*Autofocus causes internal React problem , which shows in the console as a warning*/}
                     <button
                         className={`modal-btn modal-confirm-btn ${confirmButtonStyle}`}
                         onClick={onConfirm}
                         autoFocus
                     >
+
                         {confirmText}
                     </button>
                 </div>

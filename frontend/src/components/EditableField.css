@@ -12,6 +12,8 @@
 
 .edit-icon {
     opacity: 0;
+    position: absolute;
+
     margin-left: 8px;
     font-size: 12px;
     transition: opacity 0.2s;
