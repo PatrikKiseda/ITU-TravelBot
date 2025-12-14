@@ -19,10 +19,7 @@ function OrdersPage() {
   const [highlightId, setHighlightId] = useState(location.state?.highlightOrderId || null)
   const [notify, setNotify] = useState({ message: '', type: '' });
 
-  const confirmedOrders = orders.filter(o => o.order_status === 'CONFIRMED')
-  const unconfirmedOrders = orders.filter(o => o.order_status === 'PENDING')
   const cancelledOrders = orders.filter(o => o.order_status === 'CANCELLED')
-  const deletedOrders = orders.filter(o => o.order_status === 'DELETED')
 
   const emptyTrashHandler = async () => {
     try {
@@ -352,7 +349,7 @@ const renderOrderCard = (order) => {
                     onClick={emptyTrashHandler}
                     disabled={cancelledOrders.length === 0}
                   >
-                    🗑 Empty
+                    🗑 Clear history
                   </button>
                 </div>
 

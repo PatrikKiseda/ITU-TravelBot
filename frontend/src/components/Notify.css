@@ -12,5 +12,6 @@
 }
 
 .notify.success { background-color: #4caf50; }
-.notify.error   { background-color: #f44336; }
+.notify.error   { color: white;
+    background-color: #f44336; }
 .notify.info    { background-color: #2196f3; }

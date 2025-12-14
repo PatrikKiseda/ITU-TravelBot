@@ -242,12 +242,8 @@ function OrderDetailPage() {
     return <div className="order-page"><div className="error">{error || 'Order not found'}</div></div>
   }
 
-  const { order, offer, remaining_capacity, total_price } = orderData
-/*   const availableSlots =
-    order.order_status === 'PENDING'
-      ? remaining_capacity + order.number_of_people
-      : remaining_capacity
-      // recompute dynamically based on selected number of people */
+  const { order, offer, remaining_capacity} = orderData
+
   const computedRemaining =
     order.order_status === 'PENDING'
       ? remaining_capacity + (order.number_of_people - numberOfPeople)
@@ -281,6 +277,9 @@ function OrderDetailPage() {
     ? `${formatDate(offer.date_from)} - ${formatDate(offer.date_to)}`
     : ''
 
+  const isCancelled = order.order_status === 'CANCELLED';
+
+
   return (
     <div className="order-page">
       <Notify message={notify.message} type={notify.type} />
@@ -307,7 +306,7 @@ function OrderDetailPage() {
               <button
                 className={`requirement-button ${isGift ? 'active' : ''}`}
                 onClick={() => setIsGift(prev => !prev)}
-                disabled={isConfirmed}
+                disabled={isConfirmed || isCancelled}
               >
                 <span className="requirement-icon">🎁</span>
                 <span>Give this trip</span>
@@ -370,7 +369,7 @@ function OrderDetailPage() {
                   <button
                     className="picker-button"
                     onClick={() => handlePeopleChange(-1)}
-                    disabled={numberOfPeople <= 1 || isConfirmed}
+                    disabled={numberOfPeople <= 1 || isConfirmed || isCancelled}
                   >
                     −
                   </button>
@@ -382,7 +381,7 @@ function OrderDetailPage() {
                   <button
                     className="picker-button"
                     onClick={() => handlePeopleChange(1)}
-                    disabled={computedRemaining <= 0 || isConfirmed}
+                    disabled={computedRemaining <= 0 || isConfirmed || isCancelled}
                   >
                     +
                   </button>
@@ -394,7 +393,7 @@ function OrderDetailPage() {
                   <button
                     className={`requirement-button ${specialRequirements.includes('allergies') ? 'active' : ''}`}
                     onClick={() => toggleRequirement('allergies')}
-                    disabled={isConfirmed}
+                    disabled={isConfirmed || isCancelled}
                   >
                     <span className="requirement-icon">⚠️</span>
                     <span>Allergies</span>
@@ -402,7 +401,7 @@ function OrderDetailPage() {
                   <button
                     className={`requirement-button ${specialRequirements.includes('disability') ? 'active' : ''}`}
                     onClick={() => toggleRequirement('disability')}
-                    disabled={isConfirmed}
+                    disabled={isConfirmed || isCancelled}
                   >
                     <span className="requirement-icon">♿</span>
                     <span>Disability</span>
@@ -410,7 +409,7 @@ function OrderDetailPage() {
                   <button
                     className={`requirement-button ${specialRequirements.includes('elderly') ? 'active' : ''}`}
                     onClick={() => toggleRequirement('elderly')}
-                    disabled={isConfirmed}
+                    disabled={isConfirmed || isCancelled}
                   >
                     <span className="requirement-icon">👴</span>
                     <span>Elderly</span>
@@ -418,7 +417,7 @@ function OrderDetailPage() {
                   <button
                     className={`requirement-button ${specialRequirements.includes('dietary_restrictions') ? 'active' : ''}`}
                     onClick={() => toggleRequirement('dietary_restrictions')}
-                    disabled={isConfirmed}
+                    disabled={isConfirmed || isCancelled}
                   >
                     <span className="requirement-icon">🥗</span>
                     <span>Dietary</span>
@@ -434,7 +433,7 @@ function OrderDetailPage() {
                           key={allergy}
                           className={`allergy-item ${selectedAllergies.includes(allergy) ? 'active' : ''}`}
                           onClick={() => toggleAllergy(allergy)}
-                          disabled={isConfirmed}
+                          disabled={isConfirmed || isCancelled}
                         >
                           {allergy.replace('_', ' ')}
                         </button>
@@ -452,7 +451,7 @@ function OrderDetailPage() {
                           key={dietary}
                           className={`dietary-item ${selectedDietary.includes(dietary) ? 'active' : ''}`}
                           onClick={() => toggleDietary(dietary)}
-                          disabled={isConfirmed}
+                          disabled={isConfirmed || isCancelled}
                         >
                           {dietary.replace('_', ' ')}
                         </button>
@@ -478,21 +477,21 @@ function OrderDetailPage() {
               <div className="transport-options">
                 <button
                   className={`transport-option ${transportMode === 'car_own' ? 'active' : ''}`}
-                  onClick={() => !isConfirmed && setTransportMode('car_own')}
+                  onClick={() => !isConfirmed && !isCancelled && setTransportMode('car_own')}
                 >
                   <span className="transport-icon">🚗</span>
                   <span>own mode of transportation</span>
                 </button>
                 <button
                   className={`transport-option ${transportMode === 'train_bus' ? 'active' : ''}`}
-                  onClick={() => !isConfirmed && setTransportMode('train_bus')}
+                  onClick={() => !isConfirmed && !isCancelled && setTransportMode('train_bus')}
                 >
                   <span className="transport-icon">🚌</span>
                   <span>train or bus</span>
                 </button>
                 <button
                   className={`transport-option ${transportMode === 'plane' ? 'active' : ''}`}
-                  onClick={() => !isConfirmed && setTransportMode('plane')}
+                  onClick={() => !isConfirmed && !isCancelled && setTransportMode('plane')}
                 >
                   <span className="transport-icon">✈️</span>
                   <span>plane</span>
@@ -507,7 +506,7 @@ function OrderDetailPage() {
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="Your personal note about this trip…"
-                disabled={isConfirmed}
+                disabled={isConfirmed || isCancelled}
               />
             </div>
 
@@ -517,7 +516,7 @@ function OrderDetailPage() {
               <GiftEmail
                 offer={offer}
                 giftData={giftData}
-                onChange={isConfirmed ? null : setGiftData}
+                onChange={(isConfirmed || isCancelled) ? null : setGiftData}
               />
             </div>
           )}
@@ -527,7 +526,7 @@ function OrderDetailPage() {
               className="update-button"
               onClick={handleUpdateOrder}
               disabled={
-                isConfirmed ||
+                isConfirmed || isCancelled ||
                 (updating &&
                   numberOfPeople === order.number_of_people &&
                   note === (orderData.note || '') &&
@@ -550,7 +549,7 @@ function OrderDetailPage() {
             <button
               className="confirm-order-button"
               onClick={handleConfirmOrder}
-              disabled={confirming || order.order_status === 'CONFIRMED'}
+              disabled={confirming || isCancelled || order.order_status === 'CONFIRMED'}
             >
               {confirming
                 ? 'Confirming...'
