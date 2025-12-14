@@ -83,15 +83,12 @@ function FilterBar({ filters, onFiltersChange, minPrice = 0, maxPrice = 10000, s
   }
 
   // season icons component
-  // to replace icons: place svg/png files in frontend/public/icons/ directory
-  // use naming convention: season-summer.svg, season-winter.svg, season-spring.svg, season-autumn.svg
-  // replace inline svg with: <img src="/icons/season-summer.svg" alt="summer" />
   const SeasonIcon = ({ season, active, onClick }) => {
     const icons = {
-      summer: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="5" stroke="currentColor" strokeWidth="2"/><path d="M12 2v4M12 18v4M22 12h-4M6 12H2M19.07 4.93l-2.83 2.83M7.76 16.24l-2.83 2.83M19.07 19.07l-2.83-2.83M7.76 7.76l-2.83-2.83" stroke="currentColor" strokeWidth="2"/></svg>,
-      winter: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2v20M8 6l4-4 4 4M8 18l4 4 4-4M4 12h4M16 12h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>,
-      spring: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="3" fill="currentColor"/><path d="M12 2v4M12 18v4M22 12h-4M6 12H2" stroke="currentColor" strokeWidth="2"/></svg>,
-      autumn: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L8 8l4 6-4 6 4 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M16 2l4 6-4 6 4 6-4 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+      summer: <img src="/icons/summer.svg" alt="summer" />,
+      winter: <img src="/icons/winter.svg" alt="winter" />,
+      spring: <img src="/icons/spring.svg" alt="spring" />,
+      autumn: <img src="/icons/autumn.svg" alt="autumn" />,
     }
     return (
       <button
@@ -104,15 +101,11 @@ function FilterBar({ filters, onFiltersChange, minPrice = 0, maxPrice = 10000, s
     )
   }
 
-  // type icons component
-  // to replace icons: place svg/png files in frontend/public/icons/ directory
-  // use naming convention: type-beach.svg, type-sightseeing.svg, type-camping.svg
-  // replace inline svg with: <img src="/icons/type-beach.svg" alt="beach" />
   const TypeIcon = ({ type, active, onClick }) => {
     const icons = {
-      beach: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 21h18M5 17l2-2M19 17l-2-2M12 3v14" stroke="currentColor" strokeWidth="2"/><circle cx="12" cy="8" r="2" fill="currentColor"/></svg>,
-      sightseeing: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>,
-      camping: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 21l9-18 9 18H3z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M9 21V12h6v9" stroke="currentColor" strokeWidth="2"/></svg>
+      relax: <img src="/icons/relax.svg" alt="relax" />,
+      sightseeing: <img src="/icons/sightseeing.svg" alt="sightseeing" />,
+      camping: <img src="/icons/camping.svg" alt="camping" />,
     }
     return (
       <button
@@ -165,7 +158,7 @@ function FilterBar({ filters, onFiltersChange, minPrice = 0, maxPrice = 10000, s
         <div className="filter-section type-section">
           <label className="filter-label">Type of stay:</label>
           <div className="icon-buttons-group">
-            <TypeIcon type="beach" active={localFilters.typeOfStay === 'beach'} onClick={() => handleTypeChange(localFilters.typeOfStay === 'beach' ? null : 'beach')} />
+            <TypeIcon type="relax" active={localFilters.typeOfStay === 'beach'} onClick={() => handleTypeChange(localFilters.typeOfStay === 'beach' ? null : 'beach')} />
             <TypeIcon type="sightseeing" active={localFilters.typeOfStay === 'sightseeing'} onClick={() => handleTypeChange(localFilters.typeOfStay === 'sightseeing' ? null : 'sightseeing')} />
             <TypeIcon type="camping" active={localFilters.typeOfStay === 'camping'} onClick={() => handleTypeChange(localFilters.typeOfStay === 'camping' ? null : 'camping')} />
           </div>

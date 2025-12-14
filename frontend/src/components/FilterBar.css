@@ -248,6 +248,13 @@
   color: #000000;
 }
 
+.season-icon-btn img,
+.type-icon-btn img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
 .sort-controls-inline {
   display: flex;
   gap: 8px;
