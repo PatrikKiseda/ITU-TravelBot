@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { getOrder, updateOrder, confirmOrder } from '../services/api'
+import { getOrder, updateOrder, confirmOrder, updateOrderNote } from '../services/api'
 import GiftEmail from '../components/GiftEmail'
 import Notify from '../components/Notify';
 import './Order.css'
@@ -18,6 +18,8 @@ function OrderDetailPage() {
   const [selectedAllergies, setSelectedAllergies] = useState([])
   const [selectedDietary, setSelectedDietary] = useState([])
   const [isGift, setIsGift] = useState(false)
+  const [note, setNote] = useState('')
+
   const [giftData, setGiftData] = useState({
     recipientEmail: '',
     recipientName: '',
@@ -56,6 +58,7 @@ function OrderDetailPage() {
       // Only get dietary items (food-related, not overlapping with non-food allergies)
       setSelectedDietary(requirements.filter(r => dietaryItems.includes(r)))
       setIsGift(data.order.is_gift || false)
+      setNote(data.note || '')
       setGiftData({
         recipientEmail: data.order.gift_recipient_email || '',
         recipientName: data.order.gift_recipient_name || '',
@@ -91,13 +94,21 @@ function OrderDetailPage() {
   const handleUpdateOrder = async () => {
     try {
       setUpdating(true)
-      const giftDataToSend = isGift ? {
-        isGift: true,
-        ...giftData
-      } : {
-        isGift: false
-      }
-      await updateOrder(orderId, numberOfPeople, transportMode, specialRequirements, giftDataToSend)
+
+      const giftDataToSend = isGift
+        ? { isGift: true, ...giftData }
+        : { isGift: false }
+
+      await updateOrder(
+        orderId,
+        numberOfPeople,
+        transportMode,
+        specialRequirements,
+        giftDataToSend
+      )
+
+      await updateOrderNote(orderId, note)
+
       await loadOrder()
       showNotification('Order updated successfully!', 'success')
     } catch (err) {
@@ -107,6 +118,7 @@ function OrderDetailPage() {
       setUpdating(false)
     }
   }
+
 
   const toggleRequirement = (requirement) => {
     setSpecialRequirements(prev => {
@@ -488,6 +500,17 @@ function OrderDetailPage() {
               </div>
             </div>
           </div>
+          <div className="form-group">
+              <label className="form-label">Travel note</label>
+              <textarea
+                className="note-textarea"
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                placeholder="Your personal note about this trip…"
+                disabled={isConfirmed}
+              />
+            </div>
+
 
           {isGift && (
             <div className="form-section">
@@ -505,18 +528,22 @@ function OrderDetailPage() {
               onClick={handleUpdateOrder}
               disabled={
                 isConfirmed ||
-                updating &&
-                (numberOfPeople === order.number_of_people && 
-                 transportMode === order.selected_transport_mode &&
-                 JSON.stringify(specialRequirements.sort()) === JSON.stringify((order.special_requirements || []).sort()) &&
-                 isGift === (order.is_gift || false) &&
-                 (!isGift || (
-                   giftData.recipientEmail === (order.gift_recipient_email || '') &&
-                   giftData.recipientName === (order.gift_recipient_name || '') &&
-                   giftData.senderName === (order.gift_sender_name || '') &&
-                   giftData.note === (order.gift_note || '')
-                 )))
+                (updating &&
+                  numberOfPeople === order.number_of_people &&
+                  note === (orderData.note || '') &&
+                  transportMode === order.selected_transport_mode &&
+                  JSON.stringify(specialRequirements.sort()) ===
+                    JSON.stringify((order.special_requirements || []).sort()) &&
+                  isGift === (order.is_gift || false) &&
+                  (!isGift || (
+                    giftData.recipientEmail === (order.gift_recipient_email || '') &&
+                    giftData.recipientName === (order.gift_recipient_name || '') &&
+                    giftData.senderName === (order.gift_sender_name || '') &&
+                    giftData.note === (order.gift_note || '')
+                  ))
+                )
               }
+
             >
               {updating ? 'Updating...' : 'Save Order'}
             </button>

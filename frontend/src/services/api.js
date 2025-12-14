@@ -211,3 +211,13 @@ export async function emptyTrash() {
     method: 'DELETE',
   });
 }
+
+export async function updateOrderNote(orderId, note) {
+  return apiRequest(`/customer/orders/${orderId}/note`, {
+    method: 'PUT',
+    body: JSON.stringify({ note }),
+  })
+}
+
+
+

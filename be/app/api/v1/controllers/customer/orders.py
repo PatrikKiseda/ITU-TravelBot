@@ -9,6 +9,15 @@ from app.core.deps import get_db, get_session_id
 from app.schemas.envelope import ResponseEnvelope
 from app.schemas.customer import UpdateOrderBody
 from app.services.customer_order_service import CustomerOrderService
+from sqlmodel import select
+from app.models.customer_note import CustomerNote
+from app.models.customer_order import CustomerOrder
+from app.schemas.customer_note import UpdateNoteBody
+from datetime import datetime, timezone
+from uuid import uuid4
+
+
+
 
 router = APIRouter()
 order_service = CustomerOrderService()
@@ -62,12 +71,21 @@ async def get_order(
 
         offer_obj = details["offer"]
         offer_dict = offer_obj.model_dump() if hasattr(offer_obj, "model_dump") else dict(offer_obj)
+        
+        note = db.exec(
+            select(CustomerNote)
+            .where(
+                CustomerNote.customer_session_id == customer_session_id,
+                CustomerNote.offer_id == order_obj.offer_id
+            )
+        ).first()
 
         return ResponseEnvelope.ok({
             "order": order_dict,
             "offer": offer_dict,
             "remaining_capacity": details["remaining_capacity"],
             "total_price": details["total_price"],
+            "note": note.note_text if note else ""
         })
     except Exception as e:
         import traceback
@@ -113,6 +131,39 @@ async def update_order(
         import traceback
         traceback.print_exc()
         return ResponseEnvelope.err("SERVER_ERROR", str(e))
+
+@router.put("/orders/{order_id}/note")
+async def update_order_note(
+    order_id: str,
+    body: UpdateNoteBody,
+    db: Session = Depends(get_db),
+    customer_session_id: str = Depends(get_session_id),
+):
+    order = db.get(CustomerOrder, order_id)
+    if not order or order.customer_session_id != customer_session_id:
+        return ResponseEnvelope.err("NOT_FOUND", "Order not found")
+
+    note = db.exec(
+        select(CustomerNote).where(
+            CustomerNote.customer_session_id == customer_session_id,
+            CustomerNote.offer_id == order.offer_id
+        )
+    ).first()
+
+    if note:
+        note.note_text = body.note
+        note.updated_at = datetime.now(timezone.utc)
+    else:
+        note = CustomerNote(
+            id=str(uuid4()),
+            customer_session_id=customer_session_id,
+            offer_id=order.offer_id,
+            note_text=body.note
+        )
+        db.add(note)
+
+    db.commit()
+    return ResponseEnvelope.ok({"note": note.note_text})
 
 
 @router.post("/orders/{order_id}/confirm")
