@@ -1,3 +1,7 @@
+// Author:             Andrej Mikus (xmikus19)
+// File:                   Orders.jsx
+// Functionality :   list of all orders including those unconfirmed and cancelled
+
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import Header from '../components/Header'

@@ -1,3 +1,7 @@
+// Author:             Andrej Mikus (xmikus19)
+// File:                   Order.jsx
+// Functionality :   allows user to set additional requirements for his order
+
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getOrder, updateOrder, confirmOrder, updateOrderNote } from '../services/api'
