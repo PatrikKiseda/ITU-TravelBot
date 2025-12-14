@@ -5,6 +5,7 @@ import GiftEmail from '../components/GiftEmail'
 import Notify from '../components/Notify';
 import './Order.css'
 
+// manages the detailed view and editing of a single travel order
 function OrderDetailPage() {
   const { orderId } = useParams()
   const navigate = useNavigate()
@@ -16,10 +17,13 @@ function OrderDetailPage() {
   const [transportMode, setTransportMode] = useState('plane')
   const [specialRequirements, setSpecialRequirements] = useState([])
   const [selectedAllergies, setSelectedAllergies] = useState([])
+  // tracks specific dietary restriction selections
   const [selectedDietary, setSelectedDietary] = useState([])
+  // toggles the gift section visibility and data
   const [isGift, setIsGift] = useState(false)
   const [note, setNote] = useState('')
 
+  // state for the gift email form
   const [giftData, setGiftData] = useState({
     recipientEmail: '',
     recipientName: '',
@@ -28,14 +32,17 @@ function OrderDetailPage() {
     subject: "You've been gifted a trip!"
   })
   const [updating, setUpdating] = useState(false)
+  // loading state for the confirm button
   const [confirming, setConfirming] = useState(false)
   const [notify, setNotify] = useState({ message: '', type: '' })
 
+  // displays a notification message
   const showNotification = (message, type = 'info') => {
     setNotify({ message, type })
     setTimeout(() => setNotify({ message: '', type: '' }), 3000)
   }
 
+  // fetches order data when the component mounts or orderId changes
   useEffect(() => {
     loadOrder()
   }, [orderId])
@@ -49,13 +56,11 @@ function OrderDetailPage() {
       setTransportMode(data.order.selected_transport_mode)
       const requirements = data.order.special_requirements || []
       setSpecialRequirements(requirements)
-      // Parse allergies and dietary from special_requirements
-      // Non-food allergies (8 items)
       const nonFoodAllergies = ['pollen', 'dust_mites', 'pet_dander', 'mold', 'latex', 'insect_stings', 'medications', 'sunlight']
       setSelectedAllergies(requirements.filter(r => nonFoodAllergies.includes(r)))
-      // Dietary: 12 main food allergies + lactose, gluten, vegetarianism
       const dietaryItems = ['peanuts', 'tree_nuts', 'shellfish', 'fish', 'eggs', 'milk', 'soy', 'wheat', 'sesame', 'mustard', 'celery', 'lupin', 'lactose_intolerance', 'gluten', 'vegetarianism']
-      // Only get dietary items (food-related, not overlapping with non-food allergies)
+      
+
       setSelectedDietary(requirements.filter(r => dietaryItems.includes(r)))
       setIsGift(data.order.is_gift || false)
       setNote(data.note || '')
@@ -75,12 +80,13 @@ function OrderDetailPage() {
     }
   }
 
+  // handles incrementing or decrementing the number of travellers
   const handlePeopleChange = (delta) => {
     if (!orderData) return
     const { order, remaining_capacity } = orderData
 
-    // Remaining capacity excludes the current pending order,
-    // so allow increasing up to current people + remaining when pending.
+    // remaining capacity excludes the current pending order,
+    // calculate the true max capacity based on order status
     const availableSlots =
       order.order_status === 'PENDING'
         ? remaining_capacity + order.number_of_people
@@ -91,6 +97,7 @@ function OrderDetailPage() {
     setNumberOfPeople(newValue)
   }
 
+  // saves the current state of the order to backend
   const handleUpdateOrder = async () => {
     try {
       setUpdating(true)
@@ -99,6 +106,7 @@ function OrderDetailPage() {
         ? { isGift: true, ...giftData }
         : { isGift: false }
 
+        // asynchronous wait for updating order
       await updateOrder(
         orderId,
         numberOfPeople,
@@ -107,6 +115,7 @@ function OrderDetailPage() {
         giftDataToSend
       )
 
+      // asynchr. wait of saving note
       await updateOrderNote(orderId, note)
 
       await loadOrder()
@@ -120,40 +129,40 @@ function OrderDetailPage() {
   }
 
 
+  // toggles main requirement categories
   const toggleRequirement = (requirement) => {
     setSpecialRequirements(prev => {
       const nonFoodAllergies = ['pollen', 'dust_mites', 'pet_dander', 'mold', 'latex', 'insect_stings', 'medications', 'sunlight']
       const allDietaryItems = ['peanuts', 'tree_nuts', 'shellfish', 'fish', 'eggs', 'milk', 'soy', 'wheat', 'sesame', 'mustard', 'celery', 'lupin', 'lactose_intolerance', 'gluten', 'vegetarianism']
       
       if (prev.includes(requirement)) {
-        // Removing requirement - also remove related items
         const newRequirements = prev.filter(r => r !== requirement)
         if (requirement === 'allergies') {
-          // Remove all non-food allergy items
+          // remove all non-food allergy items
           const cleaned = newRequirements.filter(r => !nonFoodAllergies.includes(r))
           setSelectedAllergies([])
           return cleaned
         } else if (requirement === 'dietary_restrictions') {
-          // Remove all dietary items
+          // remove all dietary items from main list
           const cleaned = newRequirements.filter(r => !allDietaryItems.includes(r))
           setSelectedDietary([])
           return cleaned
         }
         return newRequirements
       } else {
-        // Adding requirement - just add the flag
         return [...prev, requirement]
       }
     })
   }
 
+  // toggles a specific non-food allergy
   const toggleAllergy = (allergy) => {
     setSelectedAllergies(prev => {
       const newAllergies = prev.includes(allergy)
         ? prev.filter(a => a !== allergy)
         : [...prev, allergy]
       
-      // Update special requirements
+      // update special requirements
       const nonFoodAllergies = ['pollen', 'dust_mites', 'pet_dander', 'mold', 'latex', 'insect_stings', 'medications', 'sunlight']
       const allDietaryItems = ['peanuts', 'tree_nuts', 'shellfish', 'fish', 'eggs', 'milk', 'soy', 'wheat', 'sesame', 'mustard', 'celery', 'lupin', 'lactose_intolerance', 'gluten', 'vegetarianism']
       const baseRequirements = specialRequirements.filter(r => 
@@ -176,14 +185,15 @@ function OrderDetailPage() {
     })
   }
 
+  // toggles a specific dietary restriction
   const toggleDietary = (dietary) => {
     setSelectedDietary(prev => {
       const newDietary = prev.includes(dietary)
         ? prev.filter(d => d !== dietary)
         : [...prev, dietary]
       
-      // Update special requirements
       const nonFoodAllergies = ['pollen', 'dust_mites', 'pet_dander', 'mold', 'latex', 'insect_stings', 'medications', 'sunlight']
+
       const allDietaryItems = ['peanuts', 'tree_nuts', 'shellfish', 'fish', 'eggs', 'milk', 'soy', 'wheat', 'sesame', 'mustard', 'celery', 'lupin', 'lactose_intolerance', 'gluten', 'vegetarianism']
       const baseRequirements = specialRequirements.filter(r => 
         !nonFoodAllergies.includes(r) && 
@@ -205,6 +215,7 @@ function OrderDetailPage() {
     })
   }
 
+  // finalizes the order by updating and then confirming it
   const handleConfirmOrder = async () => {
     try {
       setConfirming(true)
@@ -223,6 +234,7 @@ function OrderDetailPage() {
 
       await confirmOrder(orderId)
 
+      // navigate to the orders list
       showNotification('Order updated and confirmed successfully!', 'success')
       navigate('/orders', { state: { highlightOrderId: orderId } })
     } catch (err) {
@@ -244,14 +256,17 @@ function OrderDetailPage() {
 
   const { order, offer, remaining_capacity} = orderData
 
+  // calculates the remaining capacity
   const computedRemaining =
     order.order_status === 'PENDING'
       ? remaining_capacity + (order.number_of_people - numberOfPeople)
       : remaining_capacity - (numberOfPeople - order.number_of_people)
 
+  // sets transport price to 0 if user chooses their own car
   const transportPrice =
     transportMode === "car_own" ? 0 : (offer.price_transport_amount || 0)
 
+  // calculates the total price per person based on selections
   const computedTotalPrice =
     offer.price_housing +
     offer.price_food +
@@ -259,6 +274,7 @@ function OrderDetailPage() {
 
   const isConfirmed = order.order_status === 'CONFIRMED'
 
+  // format date strings for display
   const formatDate = (dateString) => {
     if (!dateString) return ''
     try {

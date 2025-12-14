@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import { cancelOrder, getOrder, listOrders, emptyTrash } from '../services/api'
@@ -6,21 +6,28 @@ import './Orders.css'
 import SwipeToCancel from "../components/SwipeToCancel";
 import Notify from '../components/Notify';
 
+// renders the  page
+// orders are categorized by status (Confirmed, Unconfirmed, Cancelled)
 function OrdersPage() {
   const navigate = useNavigate()
   const location = useLocation()
 
   const [orders, setOrders] = useState([])
+  // stores detailed data for each order, keyed by order id
   const [orderDetails, setOrderDetails] = useState({})
+  // tracks the currently expanded order card
   const [expandedOrderId, setExpandedOrderId] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  // id of the order targeted for cancellation
   const [cancelTarget, setCancelTarget] = useState(null)
   const [highlightId, setHighlightId] = useState(location.state?.highlightOrderId || null)
+  // state for showing notifications to the user
   const [notify, setNotify] = useState({ message: '', type: '' });
 
   const cancelledOrders = orders.filter(o => o.order_status === 'CANCELLED')
 
+  // clears history for cancelled orders.
   const emptyTrashHandler = async () => {
     try {
       setLoading(true);
@@ -40,21 +47,23 @@ function OrdersPage() {
 
 
 
-
+  // displays a notification message
   const showNotification = (message, type = 'info') => {
     setNotify({ message, type });
     setTimeout(() => setNotify({ message: '', type: '' }), 3000);
   };
 
 
+  //  handle one-time state passing from navigation
   useEffect(() => {
   if (location.state?.highlightOrderId) {
     setHighlightId(location.state.highlightOrderId)
+    // clear the state from location to prevent re-triggering
     navigate(location.pathname, { replace: true, state: {} })
   }
   }, []);
 
-
+  // expand a highlighted order card
   useEffect(() => {
     if (highlightId) {
       setExpandedOrderId(highlightId)
@@ -63,15 +72,19 @@ function OrdersPage() {
     }
   }, [highlightId])
 
+  // initial data load on component mount
   useEffect(() => {
     loadOrders()
   }, [])
 
+// fetches the list of all orders and then fetches detailed information for each one
+// page can render quickly with basic info
 const loadOrders = async () => {
   try {
     setLoading(true)
+    // first, get the basic list of orders
     const data = await listOrders()
-    console.log('Loaded orders:', data) // <--- check order_status values
+    console.log('Loaded orders:', data)
     setOrders(data || [])
     setError(null)
 
@@ -80,6 +93,7 @@ const loadOrders = async () => {
       return
     }
 
+    // then, fetch detailed data for each order concurrently
     const detailEntries = await Promise.all(
       data.map(async (order) => {
         try {
@@ -92,6 +106,7 @@ const loadOrders = async () => {
       })
     )
 
+    // build a dictionary for easy lookup of order details by id
     const detailsObject = {}
     detailEntries.forEach((entry) => {
       if (entry) {
@@ -108,6 +123,7 @@ const loadOrders = async () => {
 }
 
 
+  // format date for display
   const formatDate = (value) => {
     if (!value) {
       return '—'
@@ -123,36 +139,39 @@ const loadOrders = async () => {
     }
   }
 
+  // toggles the expanded/collapsed state of an order card
   const handleExpand = (orderId) => {
     setExpandedOrderId((prev) => (prev === orderId ? null : orderId))
     setCancelTarget(null)
   }
 
+  // sets the state to show the swipe to cancel ui for a specific order
   const openCancelPanel = (orderId) => {
     setCancelTarget(orderId)
   }
 
+  // hides the swipe-to-cancel ui
   const handleCancelPanelClose = (orderId) => {
     setCancelTarget(null)
   }
 
 
-
+// performs the order cancellation via an api call and reloads the data
 const performCancelOrder = async (orderId) => {
   try {
-    await cancelOrder(orderId);   // delete order on the backend
-    await loadOrders();           // reload orders
+    await cancelOrder(orderId);
+    await loadOrders();           
     showNotification('Order cancelled successfully!', 'success');
   } catch (err) {
     console.error('[Orders] Error cancelling order:', err);
     showNotification('Failed to cancel order', 'error');
   } finally {
-  // Only reset cancelTarget if you want to hide swipe panel after successful cancel
   setCancelTarget(null);
   }
 }
 
 
+// renders a single order card, including its collapsed and expanded views
 const renderOrderCard = (order) => {
   const detail = orderDetails[order.id]
   const offer = detail?.offer
@@ -182,11 +201,10 @@ const renderOrderCard = (order) => {
     `}
   >
 
-      {/* Card main section */}
+
       <div className="order-card-main" onClick={() => handleExpand(order.id)} role="button">        <div className="order-card-info">
           <span className="order-destination">{destinationName}</span>
           <span className="order-dates">{dateRange}</span>
-          {/* Status tag outside date box */}
           <span
             className={`order-status-tag ${
               status === 'CONFIRMED'
@@ -209,7 +227,7 @@ const renderOrderCard = (order) => {
         </button>
       </div>
 
-      {/* Expanded section */}
+
       {expanded && (
         <div className="order-card-details">
           <div className="order-detail-row">
@@ -373,4 +391,3 @@ const renderOrderCard = (order) => {
 }
 
 export default OrdersPage
-
