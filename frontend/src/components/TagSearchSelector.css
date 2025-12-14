@@ -5,7 +5,7 @@
     width: 100%;
 }
 
-/* Список выбранных тегов */
+/*List of selected tags*/
 .selected-tags-list {
     display: flex;
     flex-direction: column;
@@ -44,7 +44,7 @@
     opacity: 1;
 }
 
-/* Кнопка добавления */
+/*Add button*/
 .add-tag-btn {
     width: 100%;
     padding: 8px 12px;
@@ -61,7 +61,7 @@
     background-color: #1565c0;
 }
 
-/* Dropdown */
+/*Dropdown*/
 .tag-dropdown {
     position: absolute;
     top: 100%;
@@ -79,7 +79,7 @@
     flex-direction: column;
 }
 
-/* Поле поиска */
+/*Search field*/
 .tag-search-input {
     width: 100%;
     padding: 10px 12px;
@@ -95,7 +95,7 @@
     background-color: #1e1e1e;
 }
 
-/* Список опций */
+/*List of options*/
 .tag-options-list {
     overflow-y: auto;
     max-height: 250px;

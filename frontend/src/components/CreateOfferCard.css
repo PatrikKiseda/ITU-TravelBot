@@ -47,7 +47,7 @@
     margin: 0;
 }
 
-/* Активная форма создания */
+/*Active create form*/
 .create-offer-card.active {
     background: white;
     border: 2px solid #1976d2;
@@ -93,7 +93,7 @@
     color: #f44336;
 }
 
-/* Секции формы */
+/*Form section*/
 .form-section {
     margin-bottom: 30px;
 }
@@ -105,7 +105,7 @@
     font-weight: 600;
 }
 
-/* Группы полей */
+/*Groups*/
 .form-group {
     margin-bottom: 20px;
 }
@@ -153,22 +153,7 @@
     margin-top: 6px;
 }
 
-/* Превью изображения */
-.image-preview {
-    margin-top: 12px;
-    border-radius: 8px;
-    overflow: hidden;
-    max-width: 100%;
-}
-
-.image-preview img {
-    width: 100%;
-    max-height: 200px;
-    object-fit: cover;
-    display: block;
-}
-
-/* Цены в ряд */
+/*Prices*/
 .price-inputs {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -181,7 +166,7 @@
     }
 }
 
-/* Кнопки действий */
+/*Action buttons*/
 .form-actions {
     display: flex;
     gap: 15px;
@@ -265,7 +250,7 @@
     margin: 0;
 }
 
-/* Карточка в режиме создания */
+/*Card in edit mode*/
 .admin-offer-card.creating {
     border: 3px solid #4caf50;
     box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.2);
@@ -279,7 +264,7 @@
 }
 
 
-/* Поля с ошибками */
+/*Errors*/
 .admin-offer-card.has-errors {
     border-color: #f44336;
 }

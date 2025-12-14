@@ -1,7 +1,8 @@
+// Created by Shaposhnik Bogdan (xshapo04)
 import {useState, useEffect} from 'react'
 import {createOffer, fetchAllAvailableTags, addTagToOffer} from '../services/api'
 
-// Вспомогательные функции
+// Support functions
 const formatDate = (date) => {
     const year = date.getFullYear()
     const month = String(date.getMonth() + 1).padStart(2, '0')

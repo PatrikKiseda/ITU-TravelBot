@@ -12,6 +12,7 @@ function AdminOfferCard({ offer, setOnDelete, isExpanded, onToggleExpand }) {
     const { modalState, showConfirm } = useModal()
 
     const {
+
         // State
         loading,
         expanded,
@@ -137,6 +138,7 @@ function AdminOfferCard({ offer, setOnDelete, isExpanded, onToggleExpand }) {
                                 </div>
                             </div>
                         </div>
+                        {/*Section with all dates*/}
                         <div className="dates-section">
                             <div className="date-field">
                                 <label>📅 From:</label>
@@ -209,7 +211,7 @@ function AdminOfferCard({ offer, setOnDelete, isExpanded, onToggleExpand }) {
                             </div>
 
                             <div className="tags-lists">
-                                {/* Highlights */}
+                                {/*Highlights*/}
                                 <div className="tag-type">
                                     <div className="tag-list-header">
                                         <p>Highlights:</p>
@@ -224,7 +226,7 @@ function AdminOfferCard({ offer, setOnDelete, isExpanded, onToggleExpand }) {
                                     />
                                 </div>
 
-                                {/* Why Visit */}
+                                {/*Why Visit*/}
                                 <div className="tag-type">
                                     <div className="tag-list-header">
                                         <p>Why visit:</p>
@@ -239,7 +241,7 @@ function AdminOfferCard({ offer, setOnDelete, isExpanded, onToggleExpand }) {
                                     />
                                 </div>
 
-                                {/* Things to Consider */}
+                                {/*Things to Consider*/}
                                 <div className="tag-type">
                                     <div className="tag-list-header">
                                         <p>Things to consider:</p>
@@ -258,6 +260,7 @@ function AdminOfferCard({ offer, setOnDelete, isExpanded, onToggleExpand }) {
                     </div>
                 )}
             </div>
+            {/*Pop-up window*/}
             <Modal
                 isOpen={modalState.isOpen}
                 title={modalState.title}

@@ -4,12 +4,12 @@ import './TagSearchSelector.css'
 import {createTag} from "../services/api.js";
 
 function TagSearchSelector({
-                               availableTags,      // Все доступные теги из базы
-                               selectedTags,       // Уже выбранные теги
-                               onAddTag,          // Callback при добавлении тега
-                               onRemoveTag,       // Callback при удалении тега
-                               tagType,           // Тип тега (highlights, why_visit, things_to_consider)
-                               offerId            // ID оффера
+                               availableTags,      // All available tags from the database
+                               selectedTags,       // Tags already selected
+                               onAddTag,           // Callback when adding a tag
+                               onRemoveTag,        // Callback when deleting a tag
+                               tagType,            // Tag type (highlights, why_visit, things_to_consider)
+                               offerId             // Offer ID
                            }) {
     const [isOpen, setIsOpen] = useState(false)
     const [searchQuery, setSearchQuery] = useState('')
@@ -17,7 +17,7 @@ function TagSearchSelector({
     const [isCreating, setIsCreating] = useState(false)
     const dropdownRef = useRef(null)
 
-// Фильтруем теги по типу и поисковому запросу
+    // Filter tags by type and search query
     useEffect(() => {
         const selectedTagIds = selectedTags.map(t => t.id)
 
@@ -31,7 +31,7 @@ function TagSearchSelector({
         setFilteredTags(filtered)
     }, [searchQuery, availableTags, selectedTags, tagType])
 
-// Закрытие при клике вне
+    // Close on click outside
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -68,20 +68,19 @@ function TagSearchSelector({
     const handleCreateNewTag = async () => {
         const trimmedQuery = searchQuery.trim()
 
-        // Проверяем есть ли уже такой тег (case-insensitive)
+        // Check if such a tag already exists (case-insensitive)
         const existingTag = availableTags.find(
             tag => tag.tag_name.toLowerCase() === trimmedQuery.toLowerCase() &&
                 tag.type === tagType
         )
 
         if (existingTag) {
-            // Если тег уже есть - просто добавляем его
-            // await handleAddExistingTag(existingTag)
+            // If the tag already exists, just add it.
             alert("Tag already exists")
             return
         }
 
-        // Иначе создаем новый
+        // Otherwise, create a new one
         setIsCreating(true)
         try {
             const newTag = await createTag({
@@ -100,7 +99,7 @@ function TagSearchSelector({
 
     return (
         <div className="tag-search-selector" ref={dropdownRef}>
-            {/* Список выбранных тегов */}
+            {/*List of selected tags*/}
             <div className="selected-tags-list">
                 {selectedTags.map(tag => (
                     <div key={tag.id} className="selected-tag-item">
@@ -116,7 +115,7 @@ function TagSearchSelector({
                 ))}
             </div>
 
-            {/* Кнопка добавления */}
+            {/*Add button*/}
             <button
                 className="add-tag-btn"
                 onClick={() => setIsOpen(!isOpen)}
@@ -124,7 +123,7 @@ function TagSearchSelector({
                 + Add Tag
             </button>
 
-            {/* Dropdown с поиском */}
+            {/*Dropdown with search*/}
             {isOpen && (
                 <div className="tag-dropdown">
                     <input

@@ -6,7 +6,7 @@ function Modal({
                    isOpen,
                    title,
                    message,
-                   type = 'confirm', // 'confirm' или 'alert'
+                   type = 'confirm', // 'confirm' or 'alert'
                    onConfirm,
                    onCancel,
                    confirmText = 'OK',
@@ -34,6 +34,7 @@ function Modal({
         }
     }
 
+    // if open, subscribes on key strikes
     useEffect(() => {
         if (isOpen) {
             document.addEventListener('keydown', handleKeyDown)
@@ -67,7 +68,6 @@ function Modal({
                         onClick={onConfirm}
                         autoFocus
                     >
-
                         {confirmText}
                     </button>
                 </div>

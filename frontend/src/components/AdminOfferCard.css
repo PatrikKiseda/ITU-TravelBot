@@ -1,5 +1,6 @@
 /*Created by Shaposhnik Bogdan (xshapo04)*/
-/* Карточка */
+
+/*Card*/
 .admin-offer-card {
     background: #1e1e1e;
     color: white;
@@ -44,7 +45,7 @@
     padding: 4px 8px;
 }
 
-/* Верхняя часть */
+/*Upper part*/
 .card-content {
     display: flex;
     flex-direction: row;
@@ -52,7 +53,7 @@
     align-items: center;
 }
 
-/* Фото */
+/*Image*/
 .card-image {
     width: 30%;
     height: 160px;
@@ -102,7 +103,7 @@
 .expand-container {
     padding: 30px 0 0 0;
 }
-/* Стрелка снизу */
+/*Arrow*/
 .expand-row {
     width: 100%;
     padding: 10px 0;
@@ -119,7 +120,7 @@
     opacity: 0.7;
 }
 
-/* Расширенный блок */
+/*Expanded block*/
 .expanded-block {
     background: #272727;
     padding: 14px;
@@ -159,7 +160,7 @@
     font-size: 14px;
 }
 
-/* Кнопка редактирования - появляется при наведении */
+/*Edit button - appears on hover*/
 .edit-image-btn {
     position: absolute;
     top: 8px;
@@ -184,7 +185,7 @@
     transform: scale(1.1);
 }
 
-/* Редактор URL изображения */
+/*URL editor*/
 .image-url-editor {
     margin-top: 10px;
     padding: 12px;
@@ -254,7 +255,7 @@
 
 }
 
-/* Кнопки создания */
+/*Create button*/
 .create-actions {
     display: flex;
     gap: 10px;
@@ -356,13 +357,13 @@
     box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
 }
 
-/* Стили для календаря (зависят от браузера) */
+/*Calendar Styles*/
 .date-input::-webkit-calendar-picker-indicator {
     filter: invert(1);
     cursor: pointer;
 }
 
-/* Адаптивность */
+/*Adaptivity*/
 @media (max-width: 768px) {
     .dates-section {
         flex-direction: column;

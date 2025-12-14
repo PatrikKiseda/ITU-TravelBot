@@ -1,4 +1,4 @@
-// components/SimpleSearch.jsx
+// Created by Shaposhnik Bogdan (xshapo04)
 import React, { useState } from 'react'
 import './SimpleSearch.css'
 
@@ -22,12 +22,12 @@ function SimpleSearch({ onSearch }) {
         }
     }
 
-    // Обработчик потери фокуса - автоматический поиск
+    // Focus loss handler - automatic search
     const handleBlur = () => {
         handleSearch()
     }
 
-    // Проверяем, есть ли текст в полях
+    // Check if there is text in the fields
     const hasSearchText = destination.trim() !== '' || origin.trim() !== ''
 
     return (

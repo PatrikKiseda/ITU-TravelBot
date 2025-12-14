@@ -40,6 +40,8 @@ function EditableField({ value, onSave, type = "text", prefix = "", className = 
         }
     }
 
+
+    // main window while editing
     if (isEditing) {
         return (
             <div className={`editable-field editing ${className}`}>
@@ -70,6 +72,7 @@ function EditableField({ value, onSave, type = "text", prefix = "", className = 
         )
     }
 
+    //if nothing happens (idle mode)
     return (
         <div
             className={`editable-field ${className}`}

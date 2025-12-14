@@ -1,3 +1,4 @@
+// Created by Shaposhnik Bogdan (xshapo04)
 import {useState} from 'react'
 
 export function useModal() {
@@ -13,7 +14,7 @@ export function useModal() {
         cancelText: 'Cancel'
     })
 
-    // Показать confirm диалог (с двумя кнопками)
+    // Show confirmation dialog (with two buttons)
     const showConfirm = ({ title, message, confirmButtonStyle = 'primary', confirmText = 'OK', cancelText = 'Cancel' }) => {
         return new Promise((resolve) => {
             setModalState({
@@ -36,7 +37,7 @@ export function useModal() {
         })
     }
 
-    // Показать alert диалог (с одной кнопкой)
+    // Show alert dialog (with one button)
     const showAlert = ({ title, message, confirmButtonStyle = 'primary', confirmText = 'OK' }) => {
         return new Promise((resolve) => {
             setModalState({

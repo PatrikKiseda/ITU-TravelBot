@@ -1,3 +1,4 @@
+// Created by Shaposhnik Bogdan (xshapo04)
 import {useState, useEffect} from 'react'
 import {
     deleteOfferPermanent,
@@ -9,9 +10,8 @@ import {
 } from '../services/api'
 
 export function useAdminOfferCard(offer, setOnDelete, isExpanded, onToggleExpand, showConfirm) {
-    // State
+    //State
     const [loading, setLoading] = useState(false)
-    // const [expanded, setExpanded] = useState(false)
     const [tags, setTags] = useState([])
     const [highlightTags, setHighlightTags] = useState([])
     const [whyVisitTags, setWhyVisitTags] = useState([])
@@ -20,11 +20,10 @@ export function useAdminOfferCard(offer, setOnDelete, isExpanded, onToggleExpand
     const [availableTags, setAvailableTags] = useState([])
     const [isEditingImage, setIsEditingImage] = useState(false)
     const [imageUrl, setImageUrl] = useState(localOffer.image_url || '')
-
     const [dateFrom, setDateFrom] = useState(localOffer.date_from || '')
     const [dateTo, setDateTo] = useState(localOffer.date_to || '')
 
-    // Load data on mount
+    //Load data on mount
     useEffect(() => {
         loadTags()
         loadAvailableTags()
@@ -42,7 +41,7 @@ export function useAdminOfferCard(offer, setOnDelete, isExpanded, onToggleExpand
         setConsiderTags(tags.filter(t => t.type === "things_to_consider"))
     }, [tags])
 
-    // Data loading functions
+    //Data loading functions
     const loadTags = async () => {
         try {
             const tagData = await fetchTags(offer.id)
@@ -99,14 +98,14 @@ export function useAdminOfferCard(offer, setOnDelete, isExpanded, onToggleExpand
                 setLocalOffer(prev => ({ ...prev, date_from: dateFrom }))
             } catch (err) {
                 console.error('[AdminOfferCard] Failed to update date_from:', err)
-                setDateFrom(localOffer.date_from || '') // Откатываем при ошибке
+                setDateFrom(localOffer.date_from || '') // Roll back in case of error
             }
         }
     }
 
     const handleDateToBlur = async () => {
         if (dateTo !== localOffer.date_to) {
-            // Валидация: date_to должна быть после date_from
+            // Validation: date_to must be after date_from
             if (dateFrom && dateTo && new Date(dateTo) <= new Date(dateFrom)) {
                 alert('End date must be after start date')
                 setDateTo(localOffer.date_to || '')
@@ -118,7 +117,7 @@ export function useAdminOfferCard(offer, setOnDelete, isExpanded, onToggleExpand
                 setLocalOffer(prev => ({ ...prev, date_to: dateTo }))
             } catch (err) {
                 console.error('[AdminOfferCard] Failed to update date_to:', err)
-                setDateTo(localOffer.date_to || '') // Откатываем при ошибке
+                setDateTo(localOffer.date_to || '') // Roll back in case of error
             }
         }
     }
@@ -170,7 +169,6 @@ export function useAdminOfferCard(offer, setOnDelete, isExpanded, onToggleExpand
             setOnDelete(true)
         } catch (err) {
             console.error('[AdminOfferCard] Failed to delete:', err)
-            // Можно показать alert об ошибке
         }
     }
 

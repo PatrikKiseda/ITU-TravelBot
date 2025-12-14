@@ -11,6 +11,8 @@ function CreateOfferCard({ onCreate }) {
 
     const { modalState, showConfirm, showAlert } = useModal()
     const {
+
+        // State
         isCreating,
         expanded,
         isSaving,
@@ -24,6 +26,8 @@ function CreateOfferCard({ onCreate }) {
         tempWhyVisitTags,
         tempConsiderTags,
         priceRange,
+
+        // Handlers
         handleStartCreating,
         handleCancel,
         handleSave,
@@ -95,7 +99,7 @@ function CreateOfferCard({ onCreate }) {
                                     </h2>
                                 </div>
                             </div>
-
+                            {/*Price section with all the prices*/}
                             <div className="price-section">
                                 <div className="price-component">
                                     Price: ${priceRange.min} - ${priceRange.max}
@@ -133,6 +137,7 @@ function CreateOfferCard({ onCreate }) {
                                     </div>
                                 </div>
                             </div>
+                            {/*Dates section with all the dates*/}
                             <div className="dates-section">
                                 <div className={`date-field ${errors.date_from ? 'field-error' : ''}`}>
                                     <label>📅 From:</label>
@@ -156,7 +161,7 @@ function CreateOfferCard({ onCreate }) {
                             </div>
                         </div>
 
-                        {/* Actions */}
+                        {/*Actions*/}
                         <div className="admin-offer-card-actions">
                             <div className="create-actions">
                                 <button onClick={handleCancel} className="cancel-create-btn" title="Cancel">
@@ -170,7 +175,7 @@ function CreateOfferCard({ onCreate }) {
                         </div>
                     </div>
 
-                    {/* Image URL Editor */}
+                    {/*Image URL Editor*/}
                     {isEditingImage && (
                         <div className="image-url-editor">
                             <input
@@ -194,14 +199,14 @@ function CreateOfferCard({ onCreate }) {
                         </div>
                     )}
 
-                    {/* Expand/Collapse */}
+                    {/*Expand/Collapse*/}
                     <div className="expand-container">
                         <div className="expand-row" onClick={toggleExpanded}>
                             {expanded ? "▲" : "▼"}
                         </div>
                     </div>
 
-                    {/* Expanded Content */}
+                    {/*Expanded Content*/}
                     {expanded && (
                         <div className="card-expandable">
                             <div className="expanded-content">
@@ -215,7 +220,7 @@ function CreateOfferCard({ onCreate }) {
                                 </div>
 
                                 <div className="tags-lists">
-                                    {/* Highlights */}
+                                    {/*Highlights*/}
                                     <div className="tag-type">
                                         <div className="tag-list-header">
                                             <p>Highlights:</p>
@@ -229,7 +234,7 @@ function CreateOfferCard({ onCreate }) {
                                         />
                                     </div>
 
-                                    {/* Why Visit */}
+                                    {/*Why Visit*/}
                                     <div className="tag-type">
                                         <div className="tag-list-header">
                                             <p>Why visit:</p>
@@ -243,7 +248,7 @@ function CreateOfferCard({ onCreate }) {
                                         />
                                     </div>
 
-                                    {/* Things to Consider */}
+                                    {/*Things to Consider*/}
                                     <div className="tag-type">
                                         <div className="tag-list-header">
                                             <p>Things to consider:</p>
@@ -262,6 +267,7 @@ function CreateOfferCard({ onCreate }) {
                     )}
                 </div>
             </div>
+            {/*Pop-up window*/}
             <Modal
                 isOpen={modalState.isOpen}
                 title={modalState.title}

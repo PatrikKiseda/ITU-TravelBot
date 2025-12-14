@@ -6,11 +6,11 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.8);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 9999;
+    z-index: 1000;
     animation: fadeIn 0.2s ease;
 }
 
@@ -65,7 +65,7 @@
     color: #ddd;
     font-size: 15px;
     line-height: 1.6;
-    white-space: pre-line; /* Поддержка переносов строк */
+    white-space: pre-line; /*Line-wrapping support*/
 }
 
 .modal-actions {
@@ -99,7 +99,7 @@
     color: white;
 }
 
-/* Стили кнопки подтверждения */
+/*Styles for confirm button*/
 .modal-confirm-btn.primary {
     background-color: #1976d2;
 }
@@ -111,21 +111,21 @@
 }
 
 .modal-confirm-btn.danger {
-    background-color: #f44336;
+    background-color: #f4473b;
 }
 
 .modal-confirm-btn.danger:hover {
-    background-color: #da190b;
+    background-color: #d51d10;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
+    box-shadow: 0 4px 12px rgba(244, 74, 62, 0.4);
 }
 
 .modal-confirm-btn.success {
-    background-color: #4caf50;
+    background-color: #4fae53;
 }
 
 .modal-confirm-btn.success:hover {
-    background-color: #45a049;
+    background-color: #479c4b;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+    box-shadow: 0 4px 12px rgba(84, 175, 88, 0.4);
 }
