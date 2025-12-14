@@ -101,7 +101,7 @@ const loadOrders = async () => {
     })
     setOrderDetails(detailsObject)
   } catch (err) {
-    setError('Failed to load your upcoming travels')
+    setError('Failed to load your travels')
   } finally {
     setLoading(false)
   }
@@ -310,14 +310,14 @@ const renderOrderCard = (order) => {
 
         <div className="orders-container">
           <div className="orders-header">
-            <div className="orders-title">your upcoming travels</div>
+            <div className="orders-title">your travels</div>
             <button className="orders-back-button" onClick={() => navigate('/explore')}>
               Go back
             </button>
           </div>
 
           {loading ? (
-            <div className="orders-state">Loading upcoming travels...</div>
+            <div className="orders-state">Loading travels...</div>
           ) : error ? (
             <div className="orders-state error">{error}</div>
           ) : orders.length === 0 ? (
