@@ -1,3 +1,7 @@
+// Author:             Patrik Kišeda ( xkised00 )
+// File:                   ComparisonCard.jsx
+// Functionality :   card component for displaying offers in comparison view
+
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { fetchExpandedOffer, confirmTravel, updateNote } from '../services/api'
@@ -5,6 +9,7 @@ import InlineNote from './InlineNote'
 import './ComparisonCard.css'
 
 function ComparisonCard({ offer, onStatusChange, onSkip, comparisonOffers, currentIndex }) {
+	// displays offer details with status-based styling
   const navigate = useNavigate()
   const [expandedData, setExpandedData] = useState(null)
   const [loadingExpand, setLoadingExpand] = useState(false)
@@ -27,6 +32,7 @@ function ComparisonCard({ offer, onStatusChange, onSkip, comparisonOffers, curre
   }, [offer.id])
 
   const calculatePriceRange = () => {
+	// calculates price range for display
     const housing = offer.price_housing || 0
     const food = offer.price_food || 0
     const transport = offer.price_transport_amount || 0
@@ -36,6 +42,7 @@ function ComparisonCard({ offer, onStatusChange, onSkip, comparisonOffers, curre
   }
 
   const handleConfirmTravel = async () => {
+	// creates order and navigates to order detail page
     try {
       setLoadingConfirm(true)
       const order = await confirmTravel(offer.id, 1, offer.price_transport_mode || 'plane')
@@ -94,6 +101,7 @@ function ComparisonCard({ offer, onStatusChange, onSkip, comparisonOffers, curre
     : ''
 
   const getStatusColor = () => {
+	// returns background color based on offer status
     const status = offer.status
     if (status === 'ACCEPTED') return '#2a3a2a'  // dark green
     if (status === 'REJECTED') return '#3a2a2a'  // dark red

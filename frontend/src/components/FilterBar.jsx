@@ -1,7 +1,12 @@
+// Author:             Patrik Kišeda ( xkised00 )
+// File:                   FilterBar.jsx
+// Functionality :   filter bar component with price range slider and filter controls
+
 import React, { useState, useEffect } from 'react'
 import './FilterBar.css'
 
 function FilterBar({ filters, onFiltersChange, minPrice = 0, maxPrice = 10000, sortBy, sortOrder, onSortChange }) {
+	// manages filter state and price range slider
   const [localFilters, setLocalFilters] = useState(filters)
   const [priceRange, setPriceRange] = useState(filters.priceRange || [minPrice, maxPrice])
 
@@ -30,6 +35,7 @@ function FilterBar({ filters, onFiltersChange, minPrice = 0, maxPrice = 10000, s
   }, [filters, minPrice, maxPrice])
 
   const handleStatusToggle = (status) => {
+	// toggles status filter
     const newStatusFilter = localFilters.statusFilter === status ? null : status
     const newFilters = { ...localFilters, statusFilter: newStatusFilter }
     setLocalFilters(newFilters)
@@ -37,6 +43,7 @@ function FilterBar({ filters, onFiltersChange, minPrice = 0, maxPrice = 10000, s
   }
 
   const handlePriceChange = (min, max) => {
+	// handles price range changes from slider
     // Round to integers and ensure min < max
     // Don't clamp to minPrice/maxPrice bounds - allow users to set ranges outside current filtered bounds
     const roundedMin = Math.round(min)
@@ -75,7 +82,10 @@ function FilterBar({ filters, onFiltersChange, minPrice = 0, maxPrice = 10000, s
     onFiltersChange(newFilters)
   }
 
-  // Season icons (SVG)
+  // season icons component
+  // to replace icons: place svg/png files in frontend/public/icons/ directory
+  // use naming convention: season-summer.svg, season-winter.svg, season-spring.svg, season-autumn.svg
+  // replace inline svg with: <img src="/icons/season-summer.svg" alt="summer" />
   const SeasonIcon = ({ season, active, onClick }) => {
     const icons = {
       summer: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="5" stroke="currentColor" strokeWidth="2"/><path d="M12 2v4M12 18v4M22 12h-4M6 12H2M19.07 4.93l-2.83 2.83M7.76 16.24l-2.83 2.83M19.07 19.07l-2.83-2.83M7.76 7.76l-2.83-2.83" stroke="currentColor" strokeWidth="2"/></svg>,
@@ -94,7 +104,10 @@ function FilterBar({ filters, onFiltersChange, minPrice = 0, maxPrice = 10000, s
     )
   }
 
-  // Type icons
+  // type icons component
+  // to replace icons: place svg/png files in frontend/public/icons/ directory
+  // use naming convention: type-beach.svg, type-sightseeing.svg, type-camping.svg
+  // replace inline svg with: <img src="/icons/type-beach.svg" alt="beach" />
   const TypeIcon = ({ type, active, onClick }) => {
     const icons = {
       beach: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 21h18M5 17l2-2M19 17l-2-2M12 3v14" stroke="currentColor" strokeWidth="2"/><circle cx="12" cy="8" r="2" fill="currentColor"/></svg>,

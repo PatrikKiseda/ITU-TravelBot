@@ -1,8 +1,13 @@
+// Author:             Patrik Kišeda ( xkised00 )
+// File:                   ComparisonView.jsx
+// Functionality :   side-by-side comparison view with synchronized scrolling
+
 import React, { useState, useEffect, useRef } from 'react'
 import ComparisonCard from './ComparisonCard'
 import './ComparisonView.css'
 
 function ComparisonView({ offers, onStatusChange, onBack }) {
+	// manages two-column comparison layout with skip functionality
   const [leftIndex, setLeftIndex] = useState(0)
   const [rightIndex, setRightIndex] = useState(1)
   const [leftSkipped, setLeftSkipped] = useState(new Set())
@@ -10,8 +15,8 @@ function ComparisonView({ offers, onStatusChange, onBack }) {
   const leftScrollRef = useRef(null)
   const rightScrollRef = useRef(null)
 
-  // Synchronized scrolling
   const handleLeftScroll = (e) => {
+	// synchronizes right column scroll with left
     if (rightScrollRef.current) {
       rightScrollRef.current.scrollTop = e.target.scrollTop
     }
@@ -24,6 +29,7 @@ function ComparisonView({ offers, onStatusChange, onBack }) {
   }
 
   const getNextAvailableIndex = (currentIndex, otherIndex, skippedSet) => {
+	// finds next available offer index for skipping
     // Try next index
     let nextIndex = currentIndex + 1
     while (nextIndex < offers.length) {

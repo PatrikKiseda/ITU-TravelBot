@@ -1,9 +1,14 @@
+// Author:             Patrik Kišeda ( xkised00 )
+// File:                   DestinationList.jsx
+// Functionality :   list component for displaying all accepted destinations
+
 import React, { useState, useEffect } from 'react'
 import DestinationCard from './DestinationCard'
 import { fetchAcceptedOffers, rejectOffer } from '../services/api'
 import './DestinationList.css'
 
 function DestinationList({ sortBy, sortOrder, onSortChange }) {
+	// manages list of accepted destinations with sorting
   const [offers, setOffers] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -13,6 +18,7 @@ function DestinationList({ sortBy, sortOrder, onSortChange }) {
   }, [sortBy, sortOrder])
 
   const loadOffers = async () => {
+	// loads accepted offers from api
     try {
       setLoading(true)
       console.log('[DestinationList] Loading offers with sort:', sortBy, sortOrder)
@@ -29,6 +35,7 @@ function DestinationList({ sortBy, sortOrder, onSortChange }) {
   }
 
   const handleDelete = async (offerId) => {
+	// removes an offer from accepted list
     try {
       await rejectOffer(offerId)
       setOffers((prev) => prev.filter((offer) => offer.id !== offerId))

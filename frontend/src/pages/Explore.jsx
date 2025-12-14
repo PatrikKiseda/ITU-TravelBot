@@ -1,3 +1,7 @@
+// Author:             Patrik Kišeda ( xkised00 )
+// File:                   Explore.jsx
+// Functionality :   explore page with filtering, sorting, and drag-and-drop status management
+
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
@@ -7,6 +11,7 @@ import { fetchAllOffersWithStatus, updateOfferStatus } from '../services/api'
 import './Explore.css'
 
 function Explore({ filters: externalFilters, onFiltersChange, onPriceRangeChange, comparingOffers, setComparingOffers }) {
+	// manages explore view with offers grouped by status
   const navigate = useNavigate()
   const [offers, setOffers] = useState([])
   const [displayedOffers, setDisplayedOffers] = useState([])
@@ -64,6 +69,7 @@ function Explore({ filters: externalFilters, onFiltersChange, onPriceRangeChange
 
   // Load all offers without price filtering to get true min/max bounds
   const loadAllOffersForBounds = async () => {
+	// loads all offers without price filtering to determine slider bounds
     try {
       const filtersWithoutPrice = { ...filters }
       delete filtersWithoutPrice.priceRange
@@ -125,6 +131,7 @@ function Explore({ filters: externalFilters, onFiltersChange, onPriceRangeChange
   }
 
   const handleStatusChange = async (offerId, newStatus) => {
+	// updates offer status and removes from comparison if needed
     try {
       console.log('[Explore] Updating status:', offerId, newStatus)
       await updateOfferStatus(offerId, newStatus)

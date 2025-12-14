@@ -1,7 +1,12 @@
+// Author:             Patrik Kišeda ( xkised00 )
+// File:                   InlineNote.jsx
+// Functionality :   inline note component with auto-save functionality
+
 import React, { useState, useEffect, useRef } from 'react'
 import './InlineNote.css'
 
 function InlineNote({ offerId, initialNote, onSave, onExpandChange }) {
+	// manages inline note editing with debounced auto-save
   const [note, setNote] = useState(initialNote || '')
   const [expanded, setExpanded] = useState(false)
   const textareaRef = useRef(null)

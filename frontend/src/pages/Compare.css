@@ -1,3 +1,7 @@
+/* Author:             Patrik Kišeda ( xkised00 ) */
+/* File:                   Compare.css */
+/* Functionality :   styles for compare page layout */
+
 .compare-page {
   min-height: calc(100vh - 200px);
   padding: 20px;

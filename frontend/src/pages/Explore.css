@@ -1,3 +1,7 @@
+/* Author:             Patrik Kišeda ( xkised00 ) */
+/* File:                   Explore.css */
+/* Functionality :   styles for explore page layout */
+
 .explore-page {
   min-height: calc(100vh - 200px);
   padding: 20px;
