@@ -1,6 +1,6 @@
 # ITU Travel Backend (Explore/Planner)
 
-FastAPI backend for the travel advisor app with travel agent panel and customer flow. Uses SQLModel + SQLite locally, supports OpenAI/Images APIs for exploration mode.
+FastAPI backend for the travel advisor app with travel agent panel and customer flow. Uses SQLModel + SQLite locally.
 
 ## Quickstart
 
