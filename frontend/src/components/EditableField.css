@@ -4,6 +4,8 @@
     cursor: pointer;
     border-radius: 4px;
     transition: background-color 0.2s;
+    min-width: 100px;
+    min-height: 30px;
 }
 
 .editable-field:hover {
@@ -41,6 +43,7 @@
     font-size: inherit;
     font-family: inherit;
     outline: none;
+    min-width: 100px;
 }
 
 input[type=number]::-webkit-inner-spin-button,
