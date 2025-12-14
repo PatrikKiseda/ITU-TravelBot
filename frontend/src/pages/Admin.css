@@ -13,7 +13,55 @@
     text-align: center;
 }
 
-.admin-page-header{
-    border-bottom: 1px solid #3a3a3a;
-    padding: 16px;
+/*.admin-page-header{*/
+/*    border-bottom: 1px solid #3a3a3a;*/
+/*    padding: 16px;*/
+/*}*/
+
+/* pages/Admin.css - обновите стиль хедера */
+
+.admin-page-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    background: #1e1e1e;
+    border-radius: 12px;
+    margin-bottom: 30px;
+}
+
+.logo-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    transition: transform 0.2s;
+}
+
+.logo-button:hover {
+    transform: scale(1.05);
+}
+
+.logo-image {
+    height: 40px;
+    width: auto;
+}
+
+.logo-text-fallback {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1976d2;
+}
+
+@media (max-width: 768px) {
+    .admin-page-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .logo-button {
+        justify-content: center;
+    }
 }

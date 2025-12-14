@@ -1,12 +1,16 @@
+// pages/Admin.jsx
 import "./Admin.css"
 import React, { useState, useEffect } from 'react'
-import {fetchAvailableOffers} from "../services/api.js";
-import { useNavigate, useLocation } from 'react-router-dom'
+import { fetchAvailableOffers } from "../services/api.js"
+import { useNavigate } from 'react-router-dom'
 import AdminOfferCard from "../components/AdminOfferCard.jsx"
 import CreateOfferCard from "../components/CreateOfferCard.jsx"
+import SimpleSearch from "../components/SimpleSearch.jsx"
+
 function Admin() {
     const navigate = useNavigate()
     const [offers, setOffers] = useState([])
+    const [filteredOffers, setFilteredOffers] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
     const [onDelete, setOnDelete] = useState(false)
@@ -14,20 +18,18 @@ function Admin() {
 
     useEffect(() => {
         setOnDelete(false)
-        console.log("test")
         loadOffers()
     }, [onDelete])
 
     const loadOffers = async () => {
         try {
             setLoading(true)
-            console.log('[Explore] Loading available offers')
             const data = await fetchAvailableOffers()
             setOffers(data || [])
-            console.log('[Explore] Received offers:', data)
+            setFilteredOffers(data || [])
             setError(null)
         } catch (err) {
-            console.error('[Explore] Error loading offers:', err)
+            console.error('[Admin] Error loading offers:', err)
             setError('Failed to load destinations: ' + (err.message || 'Unknown error'))
         } finally {
             setLoading(false)
@@ -35,7 +37,7 @@ function Admin() {
     }
 
     const handleCreateOffer = async (newOffer) => {
-        await loadOffers() // Перезагружаем список
+        await loadOffers()
     }
 
     const handleLogoClick = () => {
@@ -46,6 +48,24 @@ function Admin() {
         setExpandedOfferId(prevId => prevId === offerId ? null : offerId)
     }
 
+    const handleSearch = ({ destination, origin }) => {
+        let filtered = [...offers]
+
+        if (destination) {
+            filtered = filtered.filter(offer =>
+                offer.destination_name.toLowerCase().includes(destination.toLowerCase())
+            )
+        }
+
+        if (origin) {
+            filtered = filtered.filter(offer =>
+                offer.origin.toLowerCase().includes(origin.toLowerCase())
+            )
+        }
+
+        setFilteredOffers(filtered)
+    }
+
     if (loading) {
         return <div className="admin-page"><div className="loading-state">Loading...</div></div>
     }
@@ -53,7 +73,6 @@ function Admin() {
     if (error) {
         return <div className="admin-page"><div className="error-state">{error}</div></div>
     }
-
 
     return (
         <div className="admin-page">
@@ -64,28 +83,34 @@ function Admin() {
                         alt="Travelbot"
                         className="logo-image"
                         onError={(e) => {
-                            // Fallback to text if image doesn't exist
                             e.target.style.display = 'none'
                             e.target.nextSibling.style.display = 'block'
                         }}
                     />
                     <span className="logo-text-fallback" style={{display: 'none'}}>Travelbot</span>
                 </button>
+
+                {/* Поиск */}
+                <SimpleSearch onSearch={handleSearch} />
             </div>
+
             <div className="admin-page-content">
                 {/* Карточка создания */}
                 <CreateOfferCard onCreate={handleCreateOffer}/>
 
                 {/* Список карточек */}
                 <div className="admin-page-offers-list">
-                    {offers.length === 0 ? (
+                    {filteredOffers.length === 0 ? (
                         <div className="empty-state">
-                            <h2>No destinations yet</h2>
-                            <p>Create your first destination using the card above!</p>
+                            <h2>{offers.length === 0 ? 'No destinations yet' : 'No destinations found'}</h2>
+                            <p>{offers.length === 0
+                                ? 'Create your first destination using the card above!'
+                                : 'Try adjusting your search terms'}
+                            </p>
                         </div>
                     ) : (
                         <div className="offers-list">
-                            {offers.map((offer) => (
+                            {filteredOffers.map((offer) => (
                                 <AdminOfferCard
                                     key={offer.id}
                                     setOnDelete={setOnDelete}
