@@ -36,10 +36,9 @@ function Compare({ comparingOffers, filters }) {
   const handleStatusChange = async (offerId, newStatus) => {
     try {
       await updateOfferStatus(offerId, newStatus)
+      // Remove offers that are ACCEPTED or REJECTED from the comparison view
       setOffers(prevOffers => 
-        prevOffers.map(offer => 
-          offer.id === offerId ? { ...offer, status: newStatus } : offer
-        )
+        prevOffers.filter(offer => offer.id !== offerId)
       )
     } catch (err) {
       console.error('[Compare] Error updating status:', err)

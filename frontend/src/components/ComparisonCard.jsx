@@ -75,8 +75,35 @@ function ComparisonCard({ offer, onStatusChange, onSkip, comparisonOffers, curre
   const food = offer.price_food || 0
   const transport = offer.price_transport_amount || 0
 
+  const formatDate = (dateString) => {
+    if (!dateString) return ''
+    try {
+      const date = new Date(dateString)
+      return date.toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'numeric',
+        year: 'numeric',
+      })
+    } catch {
+      return dateString
+    }
+  }
+
+  const dateRange = offer.date_from && offer.date_to
+    ? `${formatDate(offer.date_from)} - ${formatDate(offer.date_to)}`
+    : ''
+
+  const getStatusColor = () => {
+    const status = offer.status
+    if (status === 'ACCEPTED') return '#2a3a2a'  // dark green
+    if (status === 'REJECTED') return '#3a2a2a'  // dark red
+    return '#2a2a2a'  // neutral grey (UNDECIDED or null)
+  }
+
+  const bgColor = getStatusColor()
+
   return (
-    <div className="comparison-card">
+    <div className="comparison-card" style={{ backgroundColor: bgColor }}>
       <div className="comparison-actions">
         <button className="comparison-action-btn favorite-btn" onClick={handleFavorite} title="Favorite">
           ✓
@@ -99,6 +126,9 @@ function ComparisonCard({ offer, onStatusChange, onSkip, comparisonOffers, curre
         </div>
 
         <h2 className="comparison-name">{offer.destination_name}</h2>
+        {dateRange && (
+          <div className="comparison-dates">{dateRange}</div>
+        )}
 
         <div className="comparison-price">
           <div className="price-range">${priceRange.min}-${priceRange.max}</div>

@@ -10,6 +10,7 @@ function Explore({ filters: externalFilters, onFiltersChange, onPriceRangeChange
   const navigate = useNavigate()
   const [offers, setOffers] = useState([])
   const [displayedOffers, setDisplayedOffers] = useState([])
+  const [allOffersForBounds, setAllOffersForBounds] = useState([]) // All offers without price filtering for slider bounds
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [filters, setFilters] = useState(externalFilters || {
@@ -55,16 +56,38 @@ function Explore({ filters: externalFilters, onFiltersChange, onPriceRangeChange
     navigate('/explore')
   }
 
-  // Initial load
+  // Initial load - load all offers for bounds, then filtered offers
   useEffect(() => {
+    loadAllOffersForBounds()
     loadOffers(true)
   }, [])
+
+  // Load all offers without price filtering to get true min/max bounds
+  const loadAllOffersForBounds = async () => {
+    try {
+      const filtersWithoutPrice = { ...filters }
+      delete filtersWithoutPrice.priceRange
+      const data = await fetchAllOffersWithStatus({
+        ...filtersWithoutPrice,
+        statusFilter: filters.statusFilter ? filters.statusFilter.toUpperCase() : null,
+        sort: sortBy,
+        order: sortOrder,
+      })
+      setAllOffersForBounds(data || [])
+    } catch (err) {
+      console.error('[Explore] Error loading all offers for bounds:', err)
+    }
+  }
 
   // Debounced filter changes
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (!loading) {
         loadOffers(false)
+        // Reload bounds if non-price filters changed
+        if (filters.origin || filters.destination || filters.season || filters.typeOfStay || filters.statusFilter) {
+          loadAllOffersForBounds()
+        }
       }
     }, 400) // 400ms debounce
 
@@ -180,13 +203,13 @@ function Explore({ filters: externalFilters, onFiltersChange, onPriceRangeChange
   const rejectedOffers = sortOffersByPrice(displayedOffers.filter(o => o.status === 'REJECTED'))
 
 
-  // Calculate actual min/max prices from ALL offers (not just displayed)
-  const allPrices = offers.length > 0 
-    ? offers.map(o => (o.price_housing || 0) + (o.price_food || 0) + (o.price_transport_amount || 0))
+  // Calculate actual min/max prices from ALL offers WITHOUT price filtering (for slider bounds)
+  const allPricesForBounds = allOffersForBounds.length > 0 
+    ? allOffersForBounds.map(o => (o.price_housing || 0) + (o.price_food || 0) + (o.price_transport_amount || 0))
     : []
   
-  const actualMinPrice = allPrices.length > 0 ? Math.min(...allPrices) : 0
-  const actualMaxPrice = allPrices.length > 0 ? Math.max(...allPrices) : 10000
+  const actualMinPrice = allPricesForBounds.length > 0 ? Math.min(...allPricesForBounds) : 0
+  const actualMaxPrice = allPricesForBounds.length > 0 ? Math.max(...allPricesForBounds) : 10000
 
   // Update price range if it's still at default and notify parent
   useEffect(() => {

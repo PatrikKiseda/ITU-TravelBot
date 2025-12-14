@@ -143,6 +143,24 @@ function ExploreOfferCard({ offer, onStatusChange, onCompareToggle, isComparing 
   const transport = offer.price_transport_amount || 0
   const bgColor = getStatusColor()
 
+  const formatDate = (dateString) => {
+    if (!dateString) return ''
+    try {
+      const date = new Date(dateString)
+      return date.toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'numeric',
+        year: 'numeric',
+      })
+    } catch {
+      return dateString
+    }
+  }
+
+  const dateRange = offer.date_from && offer.date_to
+    ? `(${formatDate(offer.date_from)} - ${formatDate(offer.date_to)})`
+    : ''
+
   return (
     <div 
       className={`explore-offer-card ${expanded ? 'expanded' : ''}`}
@@ -160,7 +178,10 @@ function ExploreOfferCard({ offer, onStatusChange, onCompareToggle, isComparing 
         </div>
 
         <div className="card-info">
-          <h2 className="destination-name">{offer.destination_name}</h2>
+          <h2 className="destination-name">
+            {offer.destination_name}
+            {dateRange && <span className="destination-dates">{dateRange}</span>}
+          </h2>
           
           <div className="price-section">
             <div className="price-range">

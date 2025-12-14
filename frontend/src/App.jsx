@@ -24,20 +24,34 @@ function AppContent() {
 
   const swipeHandlers = useSwipeable({
     onSwipedLeft: (e) => {
-      // Block navigation if swiping on cards
+      // #region agent log
       const target = e.event.target
-      if (target.closest('.explore-offer-card') || 
-          target.closest('.comparison-card') ||
-          target.closest('.order-card')) {
+      const isSlider = target.closest('.price-slider') || target.closest('.price-slider-container')
+      const isCard = target.closest('.explore-offer-card') || target.closest('.comparison-card') || target.closest('.order-card')
+      const filterBar = target.closest('.filter-bar')
+      fetch('http://127.0.0.1:7242/ingest/c9197bf8-d599-4857-821f-99bbf4911463',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.jsx:onSwipedLeft',message:'Swipe left detected',data:{isSlider:!!isSlider,isCard:!!isCard,isFilterBar:!!filterBar,pathname:location.pathname,targetClass:target.className},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
+      // Block navigation if swiping on cards
+      if (isCard) {
+        return
+      }
+      
+      // Block navigation if swiping on slider
+      if (isSlider) {
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/c9197bf8-d599-4857-821f-99bbf4911463',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.jsx:onSwipedLeft-blocked',message:'Navigation blocked - slider detected',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+        // #endregion
         return
       }
       
       // Allow navigation when swiping on filter area, header, or empty space in explore
-      const filterBar = target.closest('.filter-bar')
       const headerFilters = target.closest('.header-filters')
       const header = target.closest('.header')
       
       if (location.pathname === '/explore' && (filterBar || headerFilters || header)) {
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/c9197bf8-d599-4857-821f-99bbf4911463',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.jsx:onSwipedLeft-navigate',message:'Navigating to orders',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+        // #endregion
         navigate('/orders')
       }
     },

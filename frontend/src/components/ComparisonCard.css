@@ -92,6 +92,13 @@
   text-align: center;
 }
 
+.comparison-dates {
+  color: #cccccc;
+  font-size: 14px;
+  text-align: center;
+  margin-top: 4px;
+}
+
 .comparison-price {
   display: flex;
   flex-direction: column;
