@@ -588,3 +588,53 @@
     font-size: 0.95rem;
     color: #777;
   }
+
+  .destination-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.order-status-badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.order-status-badge.pending {
+  background-color: #fff4cc;
+  color: #8a6d00;
+}
+
+.order-status-badge.confirmed {
+  background-color: #e6f4ea;
+  color: #1e7f43;
+}
+
+.order-status-badge.cancelled {
+  background-color: #fdecea;
+  color: #b42318;
+}
+
+.order-locked-hint {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.order-locked-hint.confirmed {
+  background-color: #f0f9f4;
+  color: #1e7f43;
+  border: 1px solid #b7e1c1;
+}
+
+.order-locked-hint.cancelled {
+  background-color: #fdecea;
+  color: #b42318;
+  border: 1px solid #f5b5ae;
+}

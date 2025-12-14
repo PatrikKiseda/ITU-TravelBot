@@ -311,7 +311,13 @@ function OrderDetailPage() {
         <div className="order-destination-card">
           <div className="destination-header">
             <div className="destination-title-group">
-              <h1 className="destination-title">{offer.destination_name}</h1>
+              <div className="destination-title-row">
+                <h1 className="destination-title">{offer.destination_name}</h1>
+
+                <span className={`order-status-badge ${order.order_status.toLowerCase()}`}>
+                  {order.order_status}
+                </span>
+              </div>
 
               {travelDates && (
                 <span className="destination-dates">
@@ -319,6 +325,7 @@ function OrderDetailPage() {
                 </span>
               )}
             </div>
+
 
             <div className="destination-header-divider"></div>
 
@@ -333,6 +340,14 @@ function OrderDetailPage() {
               </button>
             </div>
           </div>
+
+          {(isConfirmed || isCancelled) && (
+            <div className={`order-locked-hint ${order.order_status.toLowerCase()}`}>
+              {isConfirmed && '🔒 This order is confirmed and can no longer be modified.'}
+              {isCancelled && '🚫 This order has been cancelled and cannot be edited.'}
+            </div>
+          )}
+
 
 
           <div className="destination-details">
