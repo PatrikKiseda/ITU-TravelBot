@@ -7,7 +7,7 @@ import { useModal } from '../controllers/ModalController.js'
 import Modal from './Modal'
 import './AdminOfferCard.css'
 
-function AdminOfferCard({ offer, setOnDelete, isExpanded, onToggleExpand }) {
+function AdminOfferCard({ offer, setOnDelete, isExpanded, onToggleExpand, onOfferUpdate }) {
 
     const { modalState, showConfirm } = useModal()
 
@@ -42,7 +42,7 @@ function AdminOfferCard({ offer, setOnDelete, isExpanded, onToggleExpand }) {
         handleDateFromBlur,
         handleDateToBlur
 
-    } = useAdminOfferCard(offer, setOnDelete, isExpanded, onToggleExpand, showConfirm)
+    } = useAdminOfferCard(offer, setOnDelete, isExpanded, onToggleExpand, showConfirm, onOfferUpdate)
 
 
     return (

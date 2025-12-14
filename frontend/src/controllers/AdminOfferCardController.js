@@ -9,7 +9,7 @@ import {
     fetchAllAvailableTags
 } from '../services/api'
 
-export function useAdminOfferCard(offer, setOnDelete, isExpanded, onToggleExpand, showConfirm) {
+export function useAdminOfferCard(offer, setOnDelete, isExpanded, onToggleExpand, showConfirm, onOfferUpdate) {
     //State
     const [loading, setLoading] = useState(false)
     const [tags, setTags] = useState([])
@@ -28,6 +28,29 @@ export function useAdminOfferCard(offer, setOnDelete, isExpanded, onToggleExpand
         loadTags()
         loadAvailableTags()
     }, [])
+
+    // Sync localOffer when offer prop changes (e.g., after filtering/search)
+    // This ensures that when the parent filters offers, the card displays the correct data
+    useEffect(() => {
+        // Only sync if it's the same offer (same ID) to avoid overwriting unsaved edits
+        if (offer.id === localOffer.id) {
+            // Check if any key fields have changed in the prop
+            const hasChanged = 
+                offer.destination_name !== localOffer.destination_name ||
+                offer.origin !== localOffer.origin ||
+                offer.image_url !== localOffer.image_url ||
+                offer.date_from !== localOffer.date_from ||
+                offer.date_to !== localOffer.date_to ||
+                offer.price_housing !== localOffer.price_housing ||
+                offer.price_food !== localOffer.price_food ||
+                offer.price_transport_amount !== localOffer.price_transport_amount ||
+                offer.short_description !== localOffer.short_description
+            
+            if (hasChanged) {
+                setLocalOffer(offer)
+            }
+        }
+    }, [offer.id, offer.destination_name, offer.origin, offer.image_url, offer.date_from, offer.date_to, offer.price_housing, offer.price_food, offer.price_transport_amount, offer.short_description, localOffer.id])
 
     useEffect(() => {
         setDateFrom(localOffer.date_from || '')
@@ -65,7 +88,12 @@ export function useAdminOfferCard(offer, setOnDelete, isExpanded, onToggleExpand
         try {
             const updates = { [field]: value }
             await updateOffer(localOffer.id, updates)
-            setLocalOffer(prev => ({ ...prev, ...updates }))
+            const updatedOffer = { ...localOffer, ...updates }
+            setLocalOffer(updatedOffer)
+            // Notify parent to update its offers array
+            if (onOfferUpdate) {
+                onOfferUpdate(updatedOffer)
+            }
         } catch (err) {
             console.error('[AdminOfferCard] Error updating field:', err)
             throw err
@@ -76,8 +104,13 @@ export function useAdminOfferCard(offer, setOnDelete, isExpanded, onToggleExpand
     const handleSaveImageUrl = async () => {
         try {
             await updateOffer(localOffer.id, { image_url: imageUrl })
-            setLocalOffer(prev => ({ ...prev, image_url: imageUrl }))
+            const updatedOffer = { ...localOffer, image_url: imageUrl }
+            setLocalOffer(updatedOffer)
             setIsEditingImage(false)
+            // Notify parent to update its offers array
+            if (onOfferUpdate) {
+                onOfferUpdate(updatedOffer)
+            }
         } catch (err) {
             console.error('[AdminOfferCard] Failed to update image:', err)
         }
@@ -95,7 +128,12 @@ export function useAdminOfferCard(offer, setOnDelete, isExpanded, onToggleExpand
         if (dateFrom !== localOffer.date_from) {
             try {
                 await updateOffer(localOffer.id, { date_from: dateFrom })
-                setLocalOffer(prev => ({ ...prev, date_from: dateFrom }))
+                const updatedOffer = { ...localOffer, date_from: dateFrom }
+                setLocalOffer(updatedOffer)
+                // Notify parent to update its offers array
+                if (onOfferUpdate) {
+                    onOfferUpdate(updatedOffer)
+                }
             } catch (err) {
                 console.error('[AdminOfferCard] Failed to update date_from:', err)
                 setDateFrom(localOffer.date_from || '') // Roll back in case of error
@@ -114,7 +152,12 @@ export function useAdminOfferCard(offer, setOnDelete, isExpanded, onToggleExpand
 
             try {
                 await updateOffer(localOffer.id, { date_to: dateTo })
-                setLocalOffer(prev => ({ ...prev, date_to: dateTo }))
+                const updatedOffer = { ...localOffer, date_to: dateTo }
+                setLocalOffer(updatedOffer)
+                // Notify parent to update its offers array
+                if (onOfferUpdate) {
+                    onOfferUpdate(updatedOffer)
+                }
             } catch (err) {
                 console.error('[AdminOfferCard] Failed to update date_to:', err)
                 setDateTo(localOffer.date_to || '') // Roll back in case of error

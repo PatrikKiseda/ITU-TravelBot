@@ -66,6 +66,21 @@ function Admin() {
         setFilteredOffers(filtered)
     }
 
+    const handleOfferUpdate = (updatedOffer) => {
+        // Update the offer in the offers array to keep it in sync
+        setOffers(prevOffers => 
+            prevOffers.map(offer => 
+                offer.id === updatedOffer.id ? updatedOffer : offer
+            )
+        )
+        // Also update filtered offers if this offer is currently visible
+        setFilteredOffers(prevFiltered => 
+            prevFiltered.map(offer => 
+                offer.id === updatedOffer.id ? updatedOffer : offer
+            )
+        )
+    }
+
     if (loading) {
         return <div className="admin-page"><div className="loading-state">Loading...</div></div>
     }
@@ -117,6 +132,7 @@ function Admin() {
                                     offer={offer}
                                     isExpanded={expandedOfferId === offer.id}
                                     onToggleExpand={() => handleToggleExpand(offer.id)}
+                                    onOfferUpdate={handleOfferUpdate}
                                 />
                             ))}
                         </div>
