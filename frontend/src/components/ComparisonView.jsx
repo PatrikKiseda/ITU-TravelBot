@@ -15,6 +15,96 @@ function ComparisonView({ offers, onStatusChange, onBack }) {
   const leftScrollRef = useRef(null)
   const rightScrollRef = useRef(null)
 
+  // calculates comparison colors based on relative difference
+  const calculateComparisonColors = (leftValue, rightValue, baseColor = '#2a2a2a') => {
+    if (leftValue === rightValue) {
+      return { leftColor: baseColor, rightColor: baseColor }
+    }
+    
+    const higher = Math.max(leftValue, rightValue)
+    const lower = Math.min(leftValue, rightValue)
+    const average = (higher + lower) / 2
+    const diffFromAvg = average - lower
+    const relativeDiff = Math.min(diffFromAvg / average, 0.4) // Cap at 30%
+    
+    const greenShift = Math.round(relativeDiff * 76) // Max 76 (30% of 255)
+    const redShift = Math.round(relativeDiff * 76)
+    
+    const leftColor = leftValue <= rightValue 
+      ? `rgb(${42 + greenShift}, ${42 + greenShift}, ${42})` // Green tint
+      : `rgb(${42 + redShift}, ${42}, ${42})` // Red tint
+      
+    const rightColor = rightValue <= leftValue
+      ? `rgb(${42 + greenShift}, ${42 + greenShift}, ${42})` // Green tint
+      : `rgb(${42 + redShift}, ${42}, ${42})` // Red tint
+      
+    return { leftColor, rightColor }
+  }
+
+  // calculates trip length in days
+  const calculateTripLength = (offer) => {
+    if (!offer.date_from || !offer.date_to) return 0
+    const from = new Date(offer.date_from)
+    const to = new Date(offer.date_to)
+    const diffTime = Math.abs(to - from)
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+  }
+
+  // calculates total price
+  const calculateTotalPrice = (offer) => {
+    return (offer.price_housing || 0) + (offer.price_food || 0) + (offer.price_transport_amount || 0)
+  }
+
+  // calculates comparison data for both offers
+  const calculateComparisonData = () => {
+    const leftOffer = offers[leftIndex] || null
+    const rightOffer = offers[rightIndex] || null
+    
+    if (!leftOffer || !rightOffer) {
+      return null
+    }
+
+    const leftTripLength = calculateTripLength(leftOffer)
+    const rightTripLength = calculateTripLength(rightOffer)
+    const leftTotalPrice = calculateTotalPrice(leftOffer)
+    const rightTotalPrice = calculateTotalPrice(rightOffer)
+    const leftPricePerDay = leftTripLength > 0 ? leftTotalPrice / leftTripLength : 0
+    const rightPricePerDay = rightTripLength > 0 ? rightTotalPrice / rightTripLength : 0
+
+    const leftTransport = leftOffer.price_transport_amount || 0
+    const rightTransport = rightOffer.price_transport_amount || 0
+    const leftHousing = leftOffer.price_housing || 0
+    const rightHousing = rightOffer.price_housing || 0
+    const leftFood = leftOffer.price_food || 0
+    const rightFood = rightOffer.price_food || 0
+
+    // for trip length, longer is better (invert the comparison)
+    const tripLengthColors = calculateComparisonColors(rightTripLength, leftTripLength)
+
+    return {
+      tripLength: tripLengthColors,
+      totalPrice: calculateComparisonColors(leftTotalPrice, rightTotalPrice),
+      pricePerDay: calculateComparisonColors(leftPricePerDay, rightPricePerDay),
+      transport: calculateComparisonColors(leftTransport, rightTransport),
+      housing: calculateComparisonColors(leftHousing, rightHousing),
+      food: calculateComparisonColors(leftFood, rightFood),
+      leftTripLength,
+      rightTripLength,
+      leftTotalPrice,
+      rightTotalPrice,
+      leftPricePerDay,
+      rightPricePerDay,
+      leftTransport,
+      rightTransport,
+      leftHousing,
+      rightHousing,
+      leftFood,
+      rightFood,
+    }
+  }
+
+  const comparisonData = calculateComparisonData()
+
   const handleLeftScroll = (e) => {
 	// synchronizes right column scroll with left
     if (rightScrollRef.current) {
@@ -135,6 +225,8 @@ function ComparisonView({ offers, onStatusChange, onBack }) {
               onSkip={handleLeftSkip}
               comparisonOffers={offers}
               currentIndex={leftIndex}
+              comparisonData={comparisonData}
+              isLeft={true}
             />
           ) : (
             <div className="comparison-empty">No more offers to compare</div>
@@ -153,6 +245,8 @@ function ComparisonView({ offers, onStatusChange, onBack }) {
               onSkip={handleRightSkip}
               comparisonOffers={offers}
               currentIndex={rightIndex}
+              comparisonData={comparisonData}
+              isLeft={false}
             />
           ) : (
             <div className="comparison-empty">No more offers to compare</div>

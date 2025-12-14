@@ -103,6 +103,47 @@
   margin-top: 4px;
 }
 
+.comparison-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  min-height: 40px;
+  transition: background-color 0.3s ease;
+}
+
+.comparison-row-label {
+  color: #cccccc;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.comparison-row-value {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: right;
+  flex: 1;
+}
+
+.comparison-trip-length {
+  margin-top: 8px;
+}
+
+.comparison-total-price {
+  font-weight: 600;
+}
+
+.comparison-price-per-day {
+  font-weight: 500;
+}
+
 .comparison-price {
   display: flex;
   flex-direction: column;
@@ -120,6 +161,7 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  margin-top: 8px;
 }
 
 .price-item {
@@ -128,6 +170,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-bottom: 0;
 }
 
 .comparison-description {
