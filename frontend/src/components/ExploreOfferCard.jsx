@@ -1,3 +1,7 @@
+// Author:             Patrik Kišeda ( xkised00 )
+// File:                   ExploreOfferCard.jsx
+// Functionality :   card component for displaying offers in explore view with swipe gestures
+
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSwipeable } from 'react-swipeable'
@@ -6,6 +10,7 @@ import InlineNote from './InlineNote'
 import './ExploreOfferCard.css'
 
 function ExploreOfferCard({ offer, onStatusChange, onCompareToggle, isComparing }) {
+	// displays offer with status-based styling and swipe gestures
   const navigate = useNavigate()
   const [expanded, setExpanded] = useState(false)
   const [expandedData, setExpandedData] = useState(null)
@@ -22,6 +27,7 @@ function ExploreOfferCard({ offer, onStatusChange, onCompareToggle, isComparing 
   }
 
   const handleExpand = async (e) => {
+	// toggles expanded view and loads detailed data
     // Don't expand if clicking on action buttons or note area
     if (e && (e.target.closest('.card-actions') || e.target.closest('.inline-note') || e.target.closest('.confirm-travel-button'))) {
       return
@@ -71,6 +77,7 @@ function ExploreOfferCard({ offer, onStatusChange, onCompareToggle, isComparing 
   }
 
   const getStatusColor = () => {
+	// returns background color based on offer status
     const status = offer.status
     if (status === 'ACCEPTED') return '#2a3a2a'  // greenish-grey
     if (status === 'REJECTED') return '#3a2a2a'  // reddish-grey
@@ -143,6 +150,24 @@ function ExploreOfferCard({ offer, onStatusChange, onCompareToggle, isComparing 
   const transport = offer.price_transport_amount || 0
   const bgColor = getStatusColor()
 
+  const formatDate = (dateString) => {
+    if (!dateString) return ''
+    try {
+      const date = new Date(dateString)
+      return date.toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'numeric',
+        year: 'numeric',
+      })
+    } catch {
+      return dateString
+    }
+  }
+
+  const dateRange = offer.date_from && offer.date_to
+    ? `(${formatDate(offer.date_from)} - ${formatDate(offer.date_to)})`
+    : ''
+
   return (
     <div 
       className={`explore-offer-card ${expanded ? 'expanded' : ''}`}
@@ -160,7 +185,10 @@ function ExploreOfferCard({ offer, onStatusChange, onCompareToggle, isComparing 
         </div>
 
         <div className="card-info">
-          <h2 className="destination-name">{offer.destination_name}</h2>
+          <h2 className="destination-name">
+            {offer.destination_name}
+            {dateRange && <span className="destination-dates">{dateRange}</span>}
+          </h2>
           
           <div className="price-section">
             <div className="price-range">

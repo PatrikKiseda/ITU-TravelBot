@@ -1,9 +1,14 @@
+// Author:             Patrik Kišeda ( xkised00 )
+// File:                   DestinationCard.jsx
+// Functionality :   card component for displaying accepted destinations
+
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { fetchExpandedOffer, confirmTravel, addNote, getNote } from '../services/api'
 import './DestinationCard.css'
 
 function DestinationCard({ offer, onDelete }) {
+	// displays accepted destination with expandable details and notes
   const navigate = useNavigate()
   const [expanded, setExpanded] = useState(false)
   const [expandedData, setExpandedData] = useState(null)
@@ -42,6 +47,7 @@ function DestinationCard({ offer, onDelete }) {
   }
 
   const handleExpand = async () => {
+	// toggles expanded view and loads detailed data
     if (expanded) {
       setExpanded(false)
       return
@@ -65,6 +71,7 @@ function DestinationCard({ offer, onDelete }) {
   }
 
   const handleConfirmTravel = async () => {
+	// creates order and navigates to order detail page
     try {
       setLoadingConfirm(true)
       // Default values - user will set these in order view

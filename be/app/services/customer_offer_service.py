@@ -1,3 +1,7 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   customer_offer_service.py
+# Functionality :   business logic for customer offer browsing and status management
+
 from datetime import date
 from typing import List, Optional
 from sqlmodel import Session
@@ -8,11 +12,13 @@ from app.models.customer_response import CustomerResponse, ResponseStatus
 
 
 class CustomerOfferService:
+	# handles offer operations including status management
 	def __init__(self):
 		self.offer_repo = AgencyOfferRepository()
 		self.response_repo = CustomerResponseRepository()
 
 	def list_available(
+		# lists available offers excluding rejected and accepted ones
 		self,
 		db: Session,
 		customer_session_id: str,
@@ -49,6 +55,7 @@ class CustomerOfferService:
 		return [o for o in all_offers if o.id not in rejected_ids and o.id not in accepted_ids]
 
 	def accept(self, db: Session, customer_session_id: str, offer_id: str) -> CustomerResponse:
+		# marks an offer as accepted
 		import uuid
 		response = CustomerResponse(
 			id=f"resp_{uuid.uuid4().hex[:12]}",
@@ -59,6 +66,7 @@ class CustomerOfferService:
 		return self.response_repo.create_or_update(db, response)
 
 	def reject(self, db: Session, customer_session_id: str, offer_id: str) -> CustomerResponse:
+		# marks an offer as rejected
 		import uuid
 		response = CustomerResponse(
 			id=f"resp_{uuid.uuid4().hex[:12]}",
@@ -69,6 +77,7 @@ class CustomerOfferService:
 		return self.response_repo.create_or_update(db, response)
 
 	def update_status(self, db: Session, customer_session_id: str, offer_id: str, status: str) -> CustomerResponse:
+		# updates the status of an offer
 		import uuid
 		response = CustomerResponse(
 			id=f"resp_{uuid.uuid4().hex[:12]}",
@@ -79,6 +88,7 @@ class CustomerOfferService:
 		return self.response_repo.create_or_update(db, response)
 
 	def list_all_with_status(
+		# lists all offers with their status for unified view
 		self,
 		db: Session,
 		customer_session_id: str,

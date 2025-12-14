@@ -1,3 +1,7 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   accepted.py
+# Functionality :   api endpoints for managing accepted offers and creating orders
+
 from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlmodel import Session
 from typing import Optional
@@ -11,6 +15,7 @@ router = APIRouter()
 
 @router.get("/accepted")
 async def list_accepted(
+	# lists all accepted offers with sorting
 	sort: Optional[str] = Query("price"),
 	order: Optional[str] = Query("asc"),
 	db: Session = Depends(get_db),
@@ -23,6 +28,7 @@ async def list_accepted(
 
 @router.get("/accepted/{offer_id}/expand")
 async def expand_offer(
+	# gets expanded details for an accepted offer
 	offer_id: str,
 	db: Session = Depends(get_db),
 	customer_session_id: str = Depends(get_session_id),
@@ -36,6 +42,7 @@ async def expand_offer(
 
 @router.post("/accepted/{offer_id}/note")
 async def add_note(
+	# adds a note to an accepted offer
 	offer_id: str,
 	body: CreateNoteBody,
 	db: Session = Depends(get_db),
@@ -48,6 +55,7 @@ async def add_note(
 
 @router.put("/accepted/{offer_id}/note")
 async def update_note(
+	# updates an existing note for an accepted offer
 	offer_id: str,
 	body: CreateNoteBody,
 	db: Session = Depends(get_db),
@@ -60,6 +68,7 @@ async def update_note(
 
 @router.get("/accepted/{offer_id}/note")
 async def get_note(
+	# retrieves a note for an accepted offer
 	offer_id: str,
 	db: Session = Depends(get_db),
 	customer_session_id: str = Depends(get_session_id),
@@ -73,6 +82,7 @@ async def get_note(
 
 @router.post("/accepted/{offer_id}/confirm")
 async def confirm_travel(
+	# creates a new order from an accepted offer
 	offer_id: str,
 	body: CreateOrderBody,
 	db: Session = Depends(get_db),

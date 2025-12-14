@@ -1,3 +1,7 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   tags.py
+# Functionality :   api endpoints for tag management
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session
 from typing import List, Optional
@@ -22,6 +26,7 @@ class UpdateTagBody(BaseModel):
 
 @router.get("/tags")
 async def list_tags(
+	# lists all tags optionally filtered by type
     tag_type: Optional[str] = Query(None),
     db: Session = Depends(get_db),
 ):
@@ -33,6 +38,7 @@ async def list_tags(
 
 @router.post("/tags")
 async def create_tag(
+	# creates a new tag
     body: CreateTagBody,
     db: Session = Depends(get_db),
 ):
@@ -55,6 +61,7 @@ async def create_tag(
 
 @router.get("/tags/{tag_id}")
 async def get_tag(
+	# gets a specific tag by id
     tag_id: int,
     db: Session = Depends(get_db),
 ):
@@ -68,6 +75,7 @@ async def get_tag(
 
 @router.put("/tags/{tag_id}")
 async def update_tag(
+	# updates an existing tag
     tag_id: int,
     body: UpdateTagBody,
     db: Session = Depends(get_db),
@@ -89,6 +97,7 @@ async def update_tag(
 
 @router.delete("/tags/{tag_id}")
 async def delete_tag(
+	# deletes a tag
     tag_id: int,
     db: Session = Depends(get_db),
 ):
@@ -102,6 +111,7 @@ async def delete_tag(
 
 @router.post("/offers/{offer_id}/tags/{tag_id}")
 async def add_tag_to_offer(
+	# associates a tag with an offer
     offer_id: str,
     tag_id: int,
     db: Session = Depends(get_db),
@@ -121,6 +131,7 @@ async def add_tag_to_offer(
 
 @router.delete("/offers/{offer_id}/tags/{tag_id}")
 async def remove_tag_from_offer(
+	# removes a tag from an offer
     offer_id: str,
     tag_id: int,
     db: Session = Depends(get_db),
@@ -135,6 +146,7 @@ async def remove_tag_from_offer(
 
 @router.get("/offers/{offer_id}/tags")
 async def get_offer_tags(
+	# gets all tags for a specific offer
     offer_id: str,
     db: Session = Depends(get_db),
 ):

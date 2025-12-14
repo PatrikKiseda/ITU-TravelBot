@@ -1,9 +1,14 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   llm_service.py
+# Functionality :   service for interacting with llm api
+
 from typing import Any, Dict, List
 from app.clients.openai_client import OpenAIClientStub, OpenAIClient
 from app.core.config import settings
 
 
 class LLMService:
+	# handles llm operations for destination suggestions
 	def __init__(self, client=None):
 		if client:
 			self.client = client
@@ -16,6 +21,7 @@ class LLMService:
 			self.client = OpenAIClientStub()
 
 	def suggest_destinations(self, filters: Dict[str, Any]) -> List[Dict[str, Any]]:
+		# generates destination suggestions from llm
 		res = self.client.suggest_destinations(filters)
 		if not isinstance(res, list) or len(res) != 5:
 			raise ValueError("LLM returned invalid suggestions length")

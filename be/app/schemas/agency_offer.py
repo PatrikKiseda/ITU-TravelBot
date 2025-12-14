@@ -1,9 +1,14 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   agency_offer.py
+# Functionality :   pydantic schemas for agency offer api requests and responses
+
 from datetime import date
 from typing import List, Optional
 from pydantic import BaseModel
 
 
 class AgencyOfferDTO(BaseModel):
+	# response dto for agency offers
 	id: str
 	agent_session_id: str
 	destination_name: str

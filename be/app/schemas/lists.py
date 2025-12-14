@@ -1,8 +1,13 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   lists.py
+# Functionality :   pydantic schemas for legacy list system
+
 from typing import List, Optional
 from pydantic import BaseModel
 
 
 class ListDTO(BaseModel):
+	# list data transfer object
 	id: str
 	name: str
 

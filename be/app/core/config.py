@@ -1,9 +1,14 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   config.py
+# Functionality :   application configuration settings
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import AnyHttpUrl, Field
 from typing import List, Optional
 
 
 class Settings(BaseSettings):
+	# application settings loaded from environment variables
 	model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", case_sensitive=False)
 
 	ENV: str = Field(default="local")

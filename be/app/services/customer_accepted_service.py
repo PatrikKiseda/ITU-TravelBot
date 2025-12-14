@@ -1,3 +1,7 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   customer_accepted_service.py
+# Functionality :   business logic for managing accepted offers and creating orders
+
 from typing import List, Optional
 from sqlmodel import Session
 from app.repositories.agency_offer_repo import AgencyOfferRepository
@@ -11,6 +15,7 @@ from app.models.agency_offer import TransportMode
 
 
 class CustomerAcceptedService:
+	# handles accepted offers operations including notes and order creation
 	def __init__(self):
 		self.offer_repo = AgencyOfferRepository()
 		self.response_repo = CustomerResponseRepository()
@@ -18,6 +23,7 @@ class CustomerAcceptedService:
 		self.order_repo = CustomerOrderRepository()
 
 	def list_accepted(self, db: Session, customer_session_id: str, sort: str, order: str) -> List[AgencyOffer]:
+		# lists accepted offers with sorting
 		accepted_responses = self.response_repo.list_accepted(db, customer_session_id)
 		offer_ids = [r.offer_id for r in accepted_responses]
 		if not offer_ids:
@@ -39,10 +45,12 @@ class CustomerAcceptedService:
 		return offers
 
 	def get_with_details(self, db: Session, customer_session_id: str, offer_id: str) -> Optional[AgencyOffer]:
+		# gets expanded offer details
 		# Allow expansion for any offer, not just accepted ones
 		return self.offer_repo.get_by_id(db, None, offer_id)
 
 	def add_note(self, db: Session, customer_session_id: str, offer_id: str, note_text: str) -> CustomerNote:
+		# creates or updates a note for an offer
 		import uuid
 		note = CustomerNote(
 			id=f"note_{uuid.uuid4().hex[:12]}",
@@ -53,9 +61,11 @@ class CustomerAcceptedService:
 		return self.note_repo.create_or_update(db, note)
 
 	def get_note(self, db: Session, customer_session_id: str, offer_id: str) -> Optional[CustomerNote]:
+		# retrieves a note for an offer
 		return self.note_repo.get_by_offer(db, customer_session_id, offer_id)
 
 	def confirm_travel(self, db: Session, customer_session_id: str, offer_id: str, number_of_people: int, selected_transport_mode: str) -> Optional[CustomerOrder]:
+		# creates a new pending order from an accepted offer
 		offer = self.offer_repo.get_by_id(db, None, offer_id)
 		if not offer:
 			return None

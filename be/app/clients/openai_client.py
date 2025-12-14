@@ -1,9 +1,14 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   openai_client.py
+# Functionality :   clients for interacting with openai api
+
 from typing import Any, Dict, List
 import random
 from app.core.config import settings
 
 
 class OpenAIClientStub:
+	# stub client for testing without api key
 	def __init__(self, seed: int = 42) -> None:
 		random.seed(seed)
 
@@ -51,6 +56,7 @@ class OpenAIClientStub:
 
 
 class OpenAIClient:
+	# client for openai api
 	def __init__(self, api_key: str | None = None, model: str = "gpt-4o-mini"):
 		self.api_key = api_key or settings.OPENAI_API_KEY
 		self.model = model or settings.OPENAI_MODEL

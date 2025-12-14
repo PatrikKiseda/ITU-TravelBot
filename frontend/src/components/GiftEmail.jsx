@@ -1,7 +1,12 @@
+// Author:             Andrej Mikus (xmikus19)
+// File:                   GiftEmail.jsx
+// Functionality :   a form based component to store email data
+
 import React from 'react'
 import './GiftEmail.css'
 
 function GiftEmail({ offer, giftData, onChange }) {
+  // update data only on change
   const handleChange = (field, value) => {
     onChange({
       ...giftData,

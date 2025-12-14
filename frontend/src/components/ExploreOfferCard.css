@@ -1,3 +1,7 @@
+/* Author:             Patrik Kišeda ( xkised00 ) */
+/* File:                   ExploreOfferCard.css */
+/* Functionality :   styles for explore offer card component */
+
 .explore-offer-card {
   background-color: #2a2a2a;
   border-radius: 12px;
@@ -77,6 +81,16 @@
   font-size: 28.8px;
   margin: 0;
   font-weight: bold;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.destination-dates {
+  color: #cccccc;
+  font-size: 16px;
+  font-weight: normal;
 }
 
 .price-section {

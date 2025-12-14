@@ -1,10 +1,15 @@
+// Author:             Andrej Mikus (xmikus19)
+// File:                   Order.jsx
+// Functionality :   allows user to set additional requirements for his order
+
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { getOrder, updateOrder, confirmOrder } from '../services/api'
+import { getOrder, updateOrder, confirmOrder, updateOrderNote } from '../services/api'
 import GiftEmail from '../components/GiftEmail'
 import Notify from '../components/Notify';
 import './Order.css'
 
+// manages the detailed view and editing of a single travel order
 function OrderDetailPage() {
   const { orderId } = useParams()
   const navigate = useNavigate()
@@ -16,8 +21,13 @@ function OrderDetailPage() {
   const [transportMode, setTransportMode] = useState('plane')
   const [specialRequirements, setSpecialRequirements] = useState([])
   const [selectedAllergies, setSelectedAllergies] = useState([])
+  // tracks specific dietary restriction selections
   const [selectedDietary, setSelectedDietary] = useState([])
+  // toggles the gift section visibility and data
   const [isGift, setIsGift] = useState(false)
+  const [note, setNote] = useState('')
+
+  // state for the gift email form
   const [giftData, setGiftData] = useState({
     recipientEmail: '',
     recipientName: '',
@@ -26,14 +36,17 @@ function OrderDetailPage() {
     subject: "You've been gifted a trip!"
   })
   const [updating, setUpdating] = useState(false)
+  // loading state for the confirm button
   const [confirming, setConfirming] = useState(false)
   const [notify, setNotify] = useState({ message: '', type: '' })
 
+  // displays a notification message
   const showNotification = (message, type = 'info') => {
     setNotify({ message, type })
     setTimeout(() => setNotify({ message: '', type: '' }), 3000)
   }
 
+  // fetches order data when the component mounts or orderId changes
   useEffect(() => {
     loadOrder()
   }, [orderId])
@@ -47,15 +60,14 @@ function OrderDetailPage() {
       setTransportMode(data.order.selected_transport_mode)
       const requirements = data.order.special_requirements || []
       setSpecialRequirements(requirements)
-      // Parse allergies and dietary from special_requirements
-      // Non-food allergies (8 items)
       const nonFoodAllergies = ['pollen', 'dust_mites', 'pet_dander', 'mold', 'latex', 'insect_stings', 'medications', 'sunlight']
       setSelectedAllergies(requirements.filter(r => nonFoodAllergies.includes(r)))
-      // Dietary: 12 main food allergies + lactose, gluten, vegetarianism
       const dietaryItems = ['peanuts', 'tree_nuts', 'shellfish', 'fish', 'eggs', 'milk', 'soy', 'wheat', 'sesame', 'mustard', 'celery', 'lupin', 'lactose_intolerance', 'gluten', 'vegetarianism']
-      // Only get dietary items (food-related, not overlapping with non-food allergies)
+      
+
       setSelectedDietary(requirements.filter(r => dietaryItems.includes(r)))
       setIsGift(data.order.is_gift || false)
+      setNote(data.note || '')
       setGiftData({
         recipientEmail: data.order.gift_recipient_email || '',
         recipientName: data.order.gift_recipient_name || '',
@@ -72,12 +84,13 @@ function OrderDetailPage() {
     }
   }
 
+  // handles incrementing or decrementing the number of travellers
   const handlePeopleChange = (delta) => {
     if (!orderData) return
     const { order, remaining_capacity } = orderData
 
-    // Remaining capacity excludes the current pending order,
-    // so allow increasing up to current people + remaining when pending.
+    // remaining capacity excludes the current pending order,
+    // calculate the true max capacity based on order status
     const availableSlots =
       order.order_status === 'PENDING'
         ? remaining_capacity + order.number_of_people
@@ -88,16 +101,27 @@ function OrderDetailPage() {
     setNumberOfPeople(newValue)
   }
 
+  // saves the current state of the order to backend
   const handleUpdateOrder = async () => {
     try {
       setUpdating(true)
-      const giftDataToSend = isGift ? {
-        isGift: true,
-        ...giftData
-      } : {
-        isGift: false
-      }
-      await updateOrder(orderId, numberOfPeople, transportMode, specialRequirements, giftDataToSend)
+
+      const giftDataToSend = isGift
+        ? { isGift: true, ...giftData }
+        : { isGift: false }
+
+        // asynchronous wait for updating order
+      await updateOrder(
+        orderId,
+        numberOfPeople,
+        transportMode,
+        specialRequirements,
+        giftDataToSend
+      )
+
+      // asynchr. wait of saving note
+      await updateOrderNote(orderId, note)
+
       await loadOrder()
       showNotification('Order updated successfully!', 'success')
     } catch (err) {
@@ -108,40 +132,41 @@ function OrderDetailPage() {
     }
   }
 
+
+  // toggles main requirement categories
   const toggleRequirement = (requirement) => {
     setSpecialRequirements(prev => {
       const nonFoodAllergies = ['pollen', 'dust_mites', 'pet_dander', 'mold', 'latex', 'insect_stings', 'medications', 'sunlight']
       const allDietaryItems = ['peanuts', 'tree_nuts', 'shellfish', 'fish', 'eggs', 'milk', 'soy', 'wheat', 'sesame', 'mustard', 'celery', 'lupin', 'lactose_intolerance', 'gluten', 'vegetarianism']
       
       if (prev.includes(requirement)) {
-        // Removing requirement - also remove related items
         const newRequirements = prev.filter(r => r !== requirement)
         if (requirement === 'allergies') {
-          // Remove all non-food allergy items
+          // remove all non-food allergy items
           const cleaned = newRequirements.filter(r => !nonFoodAllergies.includes(r))
           setSelectedAllergies([])
           return cleaned
         } else if (requirement === 'dietary_restrictions') {
-          // Remove all dietary items
+          // remove all dietary items from main list
           const cleaned = newRequirements.filter(r => !allDietaryItems.includes(r))
           setSelectedDietary([])
           return cleaned
         }
         return newRequirements
       } else {
-        // Adding requirement - just add the flag
         return [...prev, requirement]
       }
     })
   }
 
+  // toggles a specific non-food allergy
   const toggleAllergy = (allergy) => {
     setSelectedAllergies(prev => {
       const newAllergies = prev.includes(allergy)
         ? prev.filter(a => a !== allergy)
         : [...prev, allergy]
       
-      // Update special requirements
+      // update special requirements
       const nonFoodAllergies = ['pollen', 'dust_mites', 'pet_dander', 'mold', 'latex', 'insect_stings', 'medications', 'sunlight']
       const allDietaryItems = ['peanuts', 'tree_nuts', 'shellfish', 'fish', 'eggs', 'milk', 'soy', 'wheat', 'sesame', 'mustard', 'celery', 'lupin', 'lactose_intolerance', 'gluten', 'vegetarianism']
       const baseRequirements = specialRequirements.filter(r => 
@@ -164,14 +189,15 @@ function OrderDetailPage() {
     })
   }
 
+  // toggles a specific dietary restriction
   const toggleDietary = (dietary) => {
     setSelectedDietary(prev => {
       const newDietary = prev.includes(dietary)
         ? prev.filter(d => d !== dietary)
         : [...prev, dietary]
       
-      // Update special requirements
       const nonFoodAllergies = ['pollen', 'dust_mites', 'pet_dander', 'mold', 'latex', 'insect_stings', 'medications', 'sunlight']
+
       const allDietaryItems = ['peanuts', 'tree_nuts', 'shellfish', 'fish', 'eggs', 'milk', 'soy', 'wheat', 'sesame', 'mustard', 'celery', 'lupin', 'lactose_intolerance', 'gluten', 'vegetarianism']
       const baseRequirements = specialRequirements.filter(r => 
         !nonFoodAllergies.includes(r) && 
@@ -193,6 +219,7 @@ function OrderDetailPage() {
     })
   }
 
+  // finalizes the order by updating and then confirming it
   const handleConfirmOrder = async () => {
     try {
       setConfirming(true)
@@ -211,6 +238,7 @@ function OrderDetailPage() {
 
       await confirmOrder(orderId)
 
+      // navigate to the orders list
       showNotification('Order updated and confirmed successfully!', 'success')
       navigate('/orders', { state: { highlightOrderId: orderId } })
     } catch (err) {
@@ -230,20 +258,19 @@ function OrderDetailPage() {
     return <div className="order-page"><div className="error">{error || 'Order not found'}</div></div>
   }
 
-  const { order, offer, remaining_capacity, total_price } = orderData
-/*   const availableSlots =
-    order.order_status === 'PENDING'
-      ? remaining_capacity + order.number_of_people
-      : remaining_capacity
-      // recompute dynamically based on selected number of people */
+  const { order, offer, remaining_capacity} = orderData
+
+  // calculates the remaining capacity
   const computedRemaining =
     order.order_status === 'PENDING'
       ? remaining_capacity + (order.number_of_people - numberOfPeople)
       : remaining_capacity - (numberOfPeople - order.number_of_people)
 
+  // sets transport price to 0 if user chooses their own car
   const transportPrice =
     transportMode === "car_own" ? 0 : (offer.price_transport_amount || 0)
 
+  // calculates the total price per person based on selections
   const computedTotalPrice =
     offer.price_housing +
     offer.price_food +
@@ -251,6 +278,7 @@ function OrderDetailPage() {
 
   const isConfirmed = order.order_status === 'CONFIRMED'
 
+  // format date strings for display
   const formatDate = (dateString) => {
     if (!dateString) return ''
     try {
@@ -268,6 +296,9 @@ function OrderDetailPage() {
   const travelDates = offer.date_from && offer.date_to
     ? `${formatDate(offer.date_from)} - ${formatDate(offer.date_to)}`
     : ''
+
+  const isCancelled = order.order_status === 'CANCELLED';
+
 
   return (
     <div className="order-page">
@@ -295,7 +326,7 @@ function OrderDetailPage() {
               <button
                 className={`requirement-button ${isGift ? 'active' : ''}`}
                 onClick={() => setIsGift(prev => !prev)}
-                disabled={isConfirmed}
+                disabled={isConfirmed || isCancelled}
               >
                 <span className="requirement-icon">🎁</span>
                 <span>Give this trip</span>
@@ -358,7 +389,7 @@ function OrderDetailPage() {
                   <button
                     className="picker-button"
                     onClick={() => handlePeopleChange(-1)}
-                    disabled={numberOfPeople <= 1 || isConfirmed}
+                    disabled={numberOfPeople <= 1 || isConfirmed || isCancelled}
                   >
                     −
                   </button>
@@ -370,7 +401,7 @@ function OrderDetailPage() {
                   <button
                     className="picker-button"
                     onClick={() => handlePeopleChange(1)}
-                    disabled={computedRemaining <= 0 || isConfirmed}
+                    disabled={computedRemaining <= 0 || isConfirmed || isCancelled}
                   >
                     +
                   </button>
@@ -382,7 +413,7 @@ function OrderDetailPage() {
                   <button
                     className={`requirement-button ${specialRequirements.includes('allergies') ? 'active' : ''}`}
                     onClick={() => toggleRequirement('allergies')}
-                    disabled={isConfirmed}
+                    disabled={isConfirmed || isCancelled}
                   >
                     <span className="requirement-icon">⚠️</span>
                     <span>Allergies</span>
@@ -390,7 +421,7 @@ function OrderDetailPage() {
                   <button
                     className={`requirement-button ${specialRequirements.includes('disability') ? 'active' : ''}`}
                     onClick={() => toggleRequirement('disability')}
-                    disabled={isConfirmed}
+                    disabled={isConfirmed || isCancelled}
                   >
                     <span className="requirement-icon">♿</span>
                     <span>Disability</span>
@@ -398,7 +429,7 @@ function OrderDetailPage() {
                   <button
                     className={`requirement-button ${specialRequirements.includes('elderly') ? 'active' : ''}`}
                     onClick={() => toggleRequirement('elderly')}
-                    disabled={isConfirmed}
+                    disabled={isConfirmed || isCancelled}
                   >
                     <span className="requirement-icon">👴</span>
                     <span>Elderly</span>
@@ -406,7 +437,7 @@ function OrderDetailPage() {
                   <button
                     className={`requirement-button ${specialRequirements.includes('dietary_restrictions') ? 'active' : ''}`}
                     onClick={() => toggleRequirement('dietary_restrictions')}
-                    disabled={isConfirmed}
+                    disabled={isConfirmed || isCancelled}
                   >
                     <span className="requirement-icon">🥗</span>
                     <span>Dietary</span>
@@ -422,7 +453,7 @@ function OrderDetailPage() {
                           key={allergy}
                           className={`allergy-item ${selectedAllergies.includes(allergy) ? 'active' : ''}`}
                           onClick={() => toggleAllergy(allergy)}
-                          disabled={isConfirmed}
+                          disabled={isConfirmed || isCancelled}
                         >
                           {allergy.replace('_', ' ')}
                         </button>
@@ -440,7 +471,7 @@ function OrderDetailPage() {
                           key={dietary}
                           className={`dietary-item ${selectedDietary.includes(dietary) ? 'active' : ''}`}
                           onClick={() => toggleDietary(dietary)}
-                          disabled={isConfirmed}
+                          disabled={isConfirmed || isCancelled}
                         >
                           {dietary.replace('_', ' ')}
                         </button>
@@ -466,21 +497,21 @@ function OrderDetailPage() {
               <div className="transport-options">
                 <button
                   className={`transport-option ${transportMode === 'car_own' ? 'active' : ''}`}
-                  onClick={() => !isConfirmed && setTransportMode('car_own')}
+                  onClick={() => !isConfirmed && !isCancelled && setTransportMode('car_own')}
                 >
                   <span className="transport-icon">🚗</span>
                   <span>own mode of transportation</span>
                 </button>
                 <button
                   className={`transport-option ${transportMode === 'train_bus' ? 'active' : ''}`}
-                  onClick={() => !isConfirmed && setTransportMode('train_bus')}
+                  onClick={() => !isConfirmed && !isCancelled && setTransportMode('train_bus')}
                 >
                   <span className="transport-icon">🚌</span>
                   <span>train or bus</span>
                 </button>
                 <button
                   className={`transport-option ${transportMode === 'plane' ? 'active' : ''}`}
-                  onClick={() => !isConfirmed && setTransportMode('plane')}
+                  onClick={() => !isConfirmed && !isCancelled && setTransportMode('plane')}
                 >
                   <span className="transport-icon">✈️</span>
                   <span>plane</span>
@@ -488,13 +519,24 @@ function OrderDetailPage() {
               </div>
             </div>
           </div>
+          <div className="form-group">
+              <label className="form-label">Travel note</label>
+              <textarea
+                className="note-textarea"
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                placeholder="Your personal note about this trip…"
+                disabled={isConfirmed || isCancelled}
+              />
+            </div>
+
 
           {isGift && (
             <div className="form-section">
               <GiftEmail
                 offer={offer}
                 giftData={giftData}
-                onChange={isConfirmed ? null : setGiftData}
+                onChange={(isConfirmed || isCancelled) ? null : setGiftData}
               />
             </div>
           )}
@@ -504,26 +546,30 @@ function OrderDetailPage() {
               className="update-button"
               onClick={handleUpdateOrder}
               disabled={
-                isConfirmed ||
-                updating &&
-                (numberOfPeople === order.number_of_people && 
-                 transportMode === order.selected_transport_mode &&
-                 JSON.stringify(specialRequirements.sort()) === JSON.stringify((order.special_requirements || []).sort()) &&
-                 isGift === (order.is_gift || false) &&
-                 (!isGift || (
-                   giftData.recipientEmail === (order.gift_recipient_email || '') &&
-                   giftData.recipientName === (order.gift_recipient_name || '') &&
-                   giftData.senderName === (order.gift_sender_name || '') &&
-                   giftData.note === (order.gift_note || '')
-                 )))
+                isConfirmed || isCancelled ||
+                (updating &&
+                  numberOfPeople === order.number_of_people &&
+                  note === (orderData.note || '') &&
+                  transportMode === order.selected_transport_mode &&
+                  JSON.stringify(specialRequirements.sort()) ===
+                    JSON.stringify((order.special_requirements || []).sort()) &&
+                  isGift === (order.is_gift || false) &&
+                  (!isGift || (
+                    giftData.recipientEmail === (order.gift_recipient_email || '') &&
+                    giftData.recipientName === (order.gift_recipient_name || '') &&
+                    giftData.senderName === (order.gift_sender_name || '') &&
+                    giftData.note === (order.gift_note || '')
+                  ))
+                )
               }
+
             >
-              {updating ? 'Updating...' : 'Update Order'}
+              {updating ? 'Updating...' : 'Save Order'}
             </button>
             <button
               className="confirm-order-button"
               onClick={handleConfirmOrder}
-              disabled={confirming || order.order_status === 'CONFIRMED'}
+              disabled={confirming || isCancelled || order.order_status === 'CONFIRMED'}
             >
               {confirming
                 ? 'Confirming...'

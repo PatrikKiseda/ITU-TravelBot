@@ -1,8 +1,13 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   suggestions.py
+# Functionality :   pydantic schemas for suggestion and exploration requests
+
 from typing import List, Optional
 from pydantic import BaseModel
 
 
 class PriceBand(BaseModel):
+	# price range structure
 	min: Optional[int] = None
 	max: Optional[int] = None
 
@@ -14,6 +19,7 @@ class PriceBreakdown(BaseModel):
 
 
 class SuggestFilters(BaseModel):
+	# filters for generating destination suggestions
 	regions: Optional[List[str]] = None
 	origin: Optional[str] = None
 	partySize: Optional[int] = None

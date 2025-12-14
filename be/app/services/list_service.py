@@ -1,9 +1,14 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   list_service.py
+# Functionality :   legacy service for list management
+
 from typing import List, Optional
 from sqlmodel import Session
 from app.repositories.list_repo import ListRepository
 
 
 class ListService:
+	# handles legacy list operations
 	def __init__(self):
 		self.repo = ListRepository()
 

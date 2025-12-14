@@ -1,3 +1,7 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   destinations.py
+# Functionality :   legacy api endpoints for destination management
+
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
 from typing import Optional
@@ -11,6 +15,7 @@ router = APIRouter()
 
 @router.get("/destinations")
 async def list_destinations(sort: Optional[str] = None, order: Optional[str] = None, type: Optional[str] = None, db: Session = Depends(get_db), session_id: str = Depends(get_session_id)):
+	# lists saved destinations with sorting
 	service = DestinationService()
 	types = type.split(",") if type else None
 	rows = service.list_saved(db, session_id, sort or "title", order or "asc", types)

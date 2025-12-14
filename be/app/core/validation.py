@@ -1,13 +1,19 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   validation.py
+# Functionality :   validation functions for offer data
+
 from datetime import date
 from typing import Dict, Any
 from app.models.agency_offer import TransportMode
 
 
 class ValidationError(Exception):
+	# custom validation error exception
 	pass
 
 
 def validate_offer_data(data: Dict[str, Any]) -> None:
+	# validates offer data before creation or update
 	if data.get("date_to") and data.get("date_from"):
 		if data["date_to"] < data["date_from"]:
 			raise ValidationError("date_to must be after date_from")

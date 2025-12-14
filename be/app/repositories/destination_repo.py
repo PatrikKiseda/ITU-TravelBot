@@ -1,9 +1,14 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   destination_repo.py
+# Functionality :   data access layer for legacy destination system
+
 from typing import List, Optional
 from sqlmodel import Session, select
 from app.models.destination import Destination
 
 
 class DestinationRepository:
+	# handles database operations for legacy destinations
 	def create(self, db: Session, dest: Destination) -> Destination:
 		db.add(dest)
 		db.commit()

@@ -1,3 +1,7 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   offers.py
+# Functionality :   api endpoints for customer offer browsing and status management
+
 from fastapi import APIRouter, Depends, Query
 from sqlmodel import Session
 from typing import Optional, List
@@ -12,6 +16,7 @@ router = APIRouter()
 
 @router.get("/offers")
 async def list_offers(
+	# lists available offers with filtering options
 	origin: Optional[str] = Query(None),
 	destination: Optional[str] = Query(None),
 	capacity_min: Optional[int] = Query(None),
@@ -48,6 +53,7 @@ async def list_offers(
 
 @router.post("/offers/{offer_id}/accept")
 async def accept_offer(
+	# accepts an offer and marks it as favorite
 	offer_id: str,
 	body: AcceptOfferBody,
 	db: Session = Depends(get_db),
@@ -60,6 +66,7 @@ async def accept_offer(
 
 @router.post("/offers/{offer_id}/reject")
 async def reject_offer(
+	# rejects an offer
 	offer_id: str,
 	body: RejectOfferBody,
 	db: Session = Depends(get_db),
@@ -72,6 +79,7 @@ async def reject_offer(
 
 @router.get("/offers/all")
 async def list_all_offers_with_status(
+	# lists all offers with their status for unified view
 	origin: Optional[str] = Query(None),
 	destination: Optional[str] = Query(None),
 	season: Optional[str] = Query(None),
@@ -104,6 +112,7 @@ async def list_all_offers_with_status(
 
 @router.put("/offers/{offer_id}/status")
 async def update_offer_status(
+	# updates the status of an offer
 	offer_id: str,
 	body: UpdateStatusBody,
 	db: Session = Depends(get_db),

@@ -1,3 +1,7 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   offers.py
+# Functionality :   api endpoints for agent offer management
+
 from fastapi import APIRouter, Depends, Query
 from sqlmodel import Session
 from typing import Optional
@@ -12,6 +16,7 @@ router = APIRouter()
 
 @router.get("/offers")
 async def list_offers(
+	# lists offers for the agent with filtering
 	origin: Optional[str] = Query(None),
 	destination: Optional[str] = Query(None),
 	capacity_min: Optional[int] = Query(None),
@@ -48,6 +53,7 @@ async def list_offers(
 
 @router.post("/offers")
 async def create_offer(
+	# creates a new offer
 	body: CreateAgencyOfferBody,
 	db: Session = Depends(get_db),
 	agent_session_id: str = Depends(get_session_id),
@@ -59,6 +65,7 @@ async def create_offer(
 
 @router.get("/offers/{offer_id}")
 async def get_offer(
+	# gets a specific offer by id
 	offer_id: str,
 	db: Session = Depends(get_db),
 	agent_session_id: str = Depends(get_session_id),
@@ -72,6 +79,7 @@ async def get_offer(
 
 @router.put("/offers/{offer_id}")
 async def update_offer(
+	# updates an existing offer
 	offer_id: str,
 	body: UpdateAgencyOfferBody,
 	db: Session = Depends(get_db),
@@ -86,6 +94,7 @@ async def update_offer(
 
 @router.delete("/offers/{offer_id}")
 async def delete_offer(
+	# deletes an offer
 	offer_id: str,
 	db: Session = Depends(get_db),
 	agent_session_id: str = Depends(get_session_id),

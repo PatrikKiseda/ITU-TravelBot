@@ -1,3 +1,7 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   suggestion_service.py
+# Functionality :   legacy service for suggestion system
+
 import json
 import uuid
 from typing import Any, Dict, List
@@ -11,6 +15,7 @@ from app.services.image_service import ImageService
 
 
 class SuggestionService:
+	# handles legacy proposal generation
 	def __init__(self, llm: LLMService | None = None, images: ImageService | None = None):
 		self.llm = llm or LLMService()
 		self.images = images or ImageService()

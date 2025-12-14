@@ -1,3 +1,7 @@
+// Author:             Patrik Kišeda ( xkised00 )
+// File:                   Compare.jsx
+// Functionality :   compare page for side-by-side offer comparison
+
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import Header from '../components/Header'
@@ -6,6 +10,7 @@ import { fetchAllOffersWithStatus, updateOfferStatus } from '../services/api'
 import './Compare.css'
 
 function Compare({ comparingOffers, filters }) {
+	// manages comparison view and filters out accepted/rejected offers
   const navigate = useNavigate()
   const [offers, setOffers] = useState([])
   const [loading, setLoading] = useState(true)
@@ -34,12 +39,12 @@ function Compare({ comparingOffers, filters }) {
   }
 
   const handleStatusChange = async (offerId, newStatus) => {
+	// updates offer status and removes from comparison view
     try {
       await updateOfferStatus(offerId, newStatus)
+      // Remove offers that are ACCEPTED or REJECTED from the comparison view
       setOffers(prevOffers => 
-        prevOffers.map(offer => 
-          offer.id === offerId ? { ...offer, status: newStatus } : offer
-        )
+        prevOffers.filter(offer => offer.id !== offerId)
       )
     } catch (err) {
       console.error('[Compare] Error updating status:', err)
@@ -51,8 +56,8 @@ function Compare({ comparingOffers, filters }) {
     navigate('/explore')
   }
 
-  // Get comparison offers
   const getComparisonOffers = () => {
+	// filters offers for comparison based on selection
     const undecidedOffers = offers.filter(o => !o.status || o.status === 'UNDECIDED')
     
     if (!comparingOffers || comparingOffers.size === 0) {

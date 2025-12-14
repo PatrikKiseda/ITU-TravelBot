@@ -1,10 +1,16 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   customer_response_repo.py
+# Functionality :   data access layer for customer responses
+
 from typing import List, Optional
 from sqlmodel import Session, select
 from app.models.customer_response import CustomerResponse, ResponseStatus
 
 
 class CustomerResponseRepository:
+	# handles database operations for customer responses
 	def create_or_update(self, db: Session, response: CustomerResponse) -> CustomerResponse:
+		# creates or updates a response for an offer
 		existing = self.get_by_offer(db, response.customer_session_id, response.offer_id)
 		if existing:
 			existing.response_status = response.response_status
@@ -18,6 +24,7 @@ class CustomerResponseRepository:
 		return response
 
 	def get_by_offer(self, db: Session, customer_session_id: str, offer_id: str) -> Optional[CustomerResponse]:
+		# gets response for a specific offer
 		stmt = select(CustomerResponse).where(
 			CustomerResponse.customer_session_id == customer_session_id,
 			CustomerResponse.offer_id == offer_id
@@ -25,6 +32,7 @@ class CustomerResponseRepository:
 		return db.exec(stmt).first()
 
 	def list_accepted(self, db: Session, customer_session_id: str) -> List[CustomerResponse]:
+		# lists all accepted responses
 		stmt = select(CustomerResponse).where(
 			CustomerResponse.customer_session_id == customer_session_id,
 			CustomerResponse.response_status == ResponseStatus.ACCEPTED
@@ -32,6 +40,7 @@ class CustomerResponseRepository:
 		return list(db.exec(stmt))
 
 	def list_rejected(self, db: Session, customer_session_id: str) -> List[CustomerResponse]:
+		# lists all rejected responses
 		stmt = select(CustomerResponse).where(
 			CustomerResponse.customer_session_id == customer_session_id,
 			CustomerResponse.response_status == ResponseStatus.REJECTED
@@ -39,10 +48,12 @@ class CustomerResponseRepository:
 		return list(db.exec(stmt))
 
 	def get_rejected_offer_ids(self, db: Session, customer_session_id: str) -> List[str]:
+		# gets list of rejected offer ids
 		rejected = self.list_rejected(db, customer_session_id)
 		return [r.offer_id for r in rejected]
 
 	def list_all(self, db: Session, customer_session_id: str) -> List[CustomerResponse]:
+		# lists all responses for a customer session
 		stmt = select(CustomerResponse).where(
 			CustomerResponse.customer_session_id == customer_session_id
 		)

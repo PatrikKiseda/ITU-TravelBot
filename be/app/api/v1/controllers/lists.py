@@ -1,3 +1,7 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   lists.py
+# Functionality :   legacy api endpoints for list management
+
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
 from app.core.deps import get_db, get_session_id
@@ -10,6 +14,7 @@ router = APIRouter()
 
 @router.get("/lists")
 async def all_lists(db: Session = Depends(get_db), session_id: str = Depends(get_session_id)):
+	# lists all lists for the session
 	service = ListService()
 	rows = service.all_with_stats(db, session_id)
 	return ResponseEnvelope.ok(rows)

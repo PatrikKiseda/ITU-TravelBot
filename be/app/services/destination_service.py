@@ -1,3 +1,7 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   destination_service.py
+# Functionality :   legacy service for destination management
+
 import json
 from typing import List, Optional
 from sqlmodel import Session
@@ -7,6 +11,7 @@ from app.services.llm_service import LLMService
 
 
 class DestinationService:
+	# handles legacy destination operations
 	def __init__(self, llm: LLMService | None = None):
 		self.repo = DestinationRepository()
 		self.llm = llm or LLMService()

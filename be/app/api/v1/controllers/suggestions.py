@@ -1,3 +1,7 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   suggestions.py
+# Functionality :   legacy api endpoints for suggestion system
+
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
 from app.core.deps import get_db, get_session_id
@@ -10,6 +14,7 @@ router = APIRouter()
 
 @router.post("/suggest")
 async def suggest(filters: SuggestFilters, db: Session = Depends(get_db), session_id: str = Depends(get_session_id)):
+	# generates suggestions using legacy service
 	service = SuggestionService()
 	proposals = service.generate(db, session_id, filters.model_dump(exclude_none=True))
 	# Return list of dicts

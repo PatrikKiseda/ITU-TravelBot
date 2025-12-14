@@ -1,3 +1,7 @@
+// Author:             Andrej Mikus (xmikus19)
+// File:                   Notify.jsx
+// Functionality :   a simple notify rectangle
+
 import React from 'react';
 import './Notify.css';
 

@@ -1,9 +1,14 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   proposal_repo.py
+# Functionality :   data access layer for legacy proposal system
+
 from typing import List, Optional
 from sqlmodel import Session, select
 from app.models.proposal import Proposal, ProposalStatus
 
 
 class ProposalRepository:
+	# handles database operations for legacy proposals
 	def create_many(self, db: Session, proposals: List[Proposal]) -> List[Proposal]:
 		for p in proposals:
 			db.add(p)

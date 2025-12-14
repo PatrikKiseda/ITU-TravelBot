@@ -1,3 +1,7 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   proposal.py
+# Functionality :   database model for legacy proposal system
+
 from datetime import datetime, timezone
 from typing import Optional
 from sqlmodel import SQLModel, Field
@@ -9,6 +13,7 @@ class ProposalStatus(str):
 
 
 class Proposal(SQLModel, table=True):
+	# legacy proposal model for backward compatibility
 	__tablename__ = "proposal"
 	id: str = Field(primary_key=True, index=True)
 	session_id: str = Field(index=True, nullable=False)

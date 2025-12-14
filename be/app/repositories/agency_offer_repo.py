@@ -7,17 +7,20 @@ from app.models.tag import OfferTag
 
 class AgencyOfferRepository:
 	def create(self, db: Session, offer: AgencyOffer) -> AgencyOffer:
+		# creates a new offer in the database
 		db.add(offer)
 		db.commit()
 		db.refresh(offer)
 		return offer
 
 	def get_by_id(self, db: Session, agent_session_id: Optional[str], offer_id: str) -> Optional[AgencyOffer]:
+		# retrieves an offer by id
 		# Since there's only one agent, we don't need to filter by agent_session_id
 		stmt = select(AgencyOffer).where(AgencyOffer.id == offer_id)
 		return db.exec(stmt).first()
 
 	def update(self, db: Session, offer: AgencyOffer) -> AgencyOffer:
+		# updates an existing offer
 		from datetime import datetime, timezone
 		offer.updated_at = datetime.now(timezone.utc)
 		db.add(offer)
@@ -26,6 +29,7 @@ class AgencyOfferRepository:
 		return offer
 
 	def delete(self, db: Session, agent_session_id: Optional[str], offer_id: str) -> None:
+		# deletes an offer
 		offer = self.get_by_id(db, agent_session_id, offer_id)
 		if not offer:
 			return
@@ -33,6 +37,7 @@ class AgencyOfferRepository:
 		db.commit()
 
 	def list_filtered(
+		# lists offers with various filters applied
 		self,
 		db: Session,
 		agent_session_id: Optional[str] = None,

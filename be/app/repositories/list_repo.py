@@ -1,3 +1,7 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   list_repo.py
+# Functionality :   data access layer for legacy list system
+
 from typing import List, Optional, Tuple
 from sqlmodel import Session, select, func
 from app.models.list import ListModel, ListItem
@@ -5,6 +9,7 @@ from app.models.destination import Destination
 
 
 class ListRepository:
+	# handles database operations for legacy lists
 	def create_list(self, db: Session, session_id: str, name: str) -> ListModel:
 		lst = ListModel(id=name.lower().replace(" ", "-")+f"-{session_id[:6]}", session_id=session_id, name=name)
 		db.add(lst)

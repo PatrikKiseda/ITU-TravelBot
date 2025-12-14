@@ -1,3 +1,7 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   routes.py
+# Functionality :   api route registration for all endpoints
+
 from fastapi import APIRouter
 from app.api.v1.controllers import suggestions as suggestions_ctrl
 from app.api.v1.controllers import destinations as destinations_ctrl

@@ -1,3 +1,7 @@
+// Author:             Andrej Mikus (xmikus19)
+// File:                   SwipeToCancel.jsx
+// Functionality :   a smart tool that allows user to cancel his order
+
 import React, { useRef, useState } from "react";
 import "./SwipeToCancel.css";
 
@@ -8,6 +12,7 @@ export default function SwipeToCancel({ onCancel, onBack, stopSwipePropagation =
 
   const startXRef = useRef(0);
 
+  // enables user to start dragging
   const startDrag = (e) => {
     e.preventDefault();
     if (stopSwipePropagation) e.stopPropagation();
@@ -29,7 +34,7 @@ export default function SwipeToCancel({ onCancel, onBack, stopSwipePropagation =
     const thumb = track.querySelector(".swipe-thumb");
 
     let newDragX = clientX - startXRef.current;
-    // Keep thumb within track bounds
+    // keep thumb within track bounds
     newDragX = Math.max(0, Math.min(newDragX, track.offsetWidth - thumb.offsetWidth));
 
     setDragX(newDragX);
@@ -45,18 +50,18 @@ export default function SwipeToCancel({ onCancel, onBack, stopSwipePropagation =
     const trackRect = track.getBoundingClientRect();
     const thumbRect = thumb.getBoundingClientRect();
 
-    // Thumb's right edge relative to track's left
+    // thumb's right edge relative to track's left
     const swipePercent = (thumbRect.right - trackRect.left) / trackRect.width;
 
-    // Only trigger cancel if threshold crossed
+    // only trigger cancel if threshold crossed
     if (swipePercent >= 0.3) {
       if (onCancel) onCancel();
     }
 
-    // Reset thumb back to start regardless of threshold
+    // reset thumb back to start regardless of threshold
     setDragX(0);
 
-    // Clean up event listeners
+    // clean up event listeners
     document.removeEventListener("mousemove", onDrag);
     document.removeEventListener("mouseup", stopDrag);
     document.removeEventListener("touchmove", onDrag);
