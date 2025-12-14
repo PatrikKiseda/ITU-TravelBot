@@ -1,8 +1,13 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   customer.py
+# Functionality :   pydantic schemas for customer api requests and responses
+
 from typing import Optional, List
 from pydantic import BaseModel
 
 
 class AcceptOfferBody(BaseModel):
+	# empty body for accepting offers
 	pass  # No body needed, just offer_id in path
 
 
@@ -37,6 +42,7 @@ class CreateOrderBody(BaseModel):
 
 
 class UpdateOrderBody(BaseModel):
+	# request body for updating orders with special requirements and gift options
 	number_of_people: Optional[int] = None
 	selected_transport_mode: Optional[str] = None
 	special_requirements: Optional[List[str]] = None
@@ -49,6 +55,7 @@ class UpdateOrderBody(BaseModel):
 
 
 class CustomerOrderDTO(BaseModel):
+	# response dto for customer orders
 	id: str
 	customer_session_id: str
 	offer_id: str

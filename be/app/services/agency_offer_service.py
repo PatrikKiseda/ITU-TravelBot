@@ -1,3 +1,7 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   agency_offer_service.py
+# Functionality :   business logic for agency offer management
+
 import json
 import uuid
 from datetime import date, datetime
@@ -9,10 +13,12 @@ from app.core.validation import validate_offer_data, ValidationError
 
 
 class AgencyOfferService:
+	# handles offer crud operations for agents
 	def __init__(self):
 		self.repo = AgencyOfferRepository()
 
 	def list_filtered(
+		# lists offers with various filters
 		self,
 		db: Session,
 		agent_session_id: str,
@@ -45,6 +51,7 @@ class AgencyOfferService:
 		)
 
 	def create(self, db: Session, agent_session_id: str, data: Dict[str, Any]) -> AgencyOffer:
+		# creates a new offer with validation
 		validate_offer_data(data)
 		offer_id = f"offer_{uuid.uuid4().hex[:12]}"
 		type_of_stay_str = json.dumps(data.get("type_of_stay", [])) if data.get("type_of_stay") else None
@@ -85,6 +92,7 @@ class AgencyOfferService:
 		return self.repo.create(db, offer)
 
 	def update(self, db: Session, agent_session_id: str, offer_id: str, data: Dict[str, Any]) -> Optional[AgencyOffer]:
+		# updates an existing offer
 		# agent_session_id is kept for API consistency but not used in lookup (single agent)
 		offer = self.repo.get_by_id(db, None, offer_id)
 		if not offer:
@@ -151,10 +159,12 @@ class AgencyOfferService:
 		return self.repo.update(db, offer)
 
 	def delete(self, db: Session, agent_session_id: str, offer_id: str) -> None:
+		# deletes an offer
 		# agent_session_id is kept for API consistency but not used (single agent)
 		self.repo.delete(db, None, offer_id)
 
 	def get_by_id(self, db: Session, agent_session_id: str, offer_id: str) -> Optional[AgencyOffer]:
+		# gets an offer by id
 		# agent_session_id is kept for API consistency but not used in lookup (single agent)
 		return self.repo.get_by_id(db, None, offer_id)
 

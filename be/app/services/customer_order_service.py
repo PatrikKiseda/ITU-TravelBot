@@ -1,3 +1,7 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   customer_order_service.py
+# Functionality :   business logic for customer order management
+
 from typing import List, Optional, Dict, Any
 from sqlmodel import Session
 from app.repositories.customer_order_repo import CustomerOrderRepository
@@ -6,11 +10,13 @@ from app.models.customer_order import CustomerOrder, OrderStatus
 
 
 class CustomerOrderService:
+	# handles order operations including special requirements and gift options
 	def __init__(self):
 		self.order_repo = CustomerOrderRepository()
 		self.offer_repo = AgencyOfferRepository()
 
 	def get_order_details(self, db: Session, customer_session_id: str, order_id: str) -> Optional[Dict[str, Any]]:
+		# retrieves order details with price calculation
 		order = self.order_repo.get_by_id(db, customer_session_id, order_id)
 		if not order:
 			return None
@@ -37,6 +43,7 @@ class CustomerOrderService:
 		}
 
 	def update_order(self, db: Session, customer_session_id: str, order_id: str, number_of_people: Optional[int], selected_transport_mode: Optional[str], special_requirements: Optional[List[str]] = None, is_gift: Optional[bool] = None, gift_recipient_email: Optional[str] = None, gift_recipient_name: Optional[str] = None, gift_sender_name: Optional[str] = None, gift_note: Optional[str] = None, gift_subject: Optional[str] = None) -> Optional[CustomerOrder]:
+		# updates order with validation for special requirements and gift fields
 		order = self.order_repo.get_by_id(db, customer_session_id, order_id)
 		if not order or order.order_status != OrderStatus.PENDING:
 			return None
@@ -87,6 +94,7 @@ class CustomerOrderService:
 		return self.order_repo.update(db, order)
 
 	def confirm_order(self, db: Session, customer_session_id: str, order_id: str) -> Optional[CustomerOrder]:
+		# confirms a pending order and updates capacity
 		order = self.order_repo.get_by_id(db, customer_session_id, order_id)
 		if not order or order.order_status != OrderStatus.PENDING:
 			return None
@@ -106,9 +114,11 @@ class CustomerOrderService:
 		return confirmed
 
 	def list_orders(self, db: Session, customer_session_id: str, status: Optional[str] = None) -> List[CustomerOrder]:
+		# lists orders for a customer session
 		return self.order_repo.list_for_customer(db, customer_session_id, status)
 
 	def cancel_order(self, db: Session, customer_session_id: str, order_id: str) -> Optional[CustomerOrder]:
+		# cancels an order and restores capacity if confirmed
 		order = self.order_repo.get_by_id(db, customer_session_id, order_id)
 		if not order:
 			return None

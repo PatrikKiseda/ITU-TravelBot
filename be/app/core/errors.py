@@ -1,3 +1,7 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   errors.py
+# Functionality :   exception handlers for api error responses
+
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
@@ -6,6 +10,7 @@ from app.core.validation import ValidationError
 
 
 def _code_for_status(status_code: int) -> str:
+	# maps http status codes to error codes
 	if status_code == 400:
 		return "VALIDATION_ERROR"
 	if status_code == 404:
@@ -18,6 +23,7 @@ def _code_for_status(status_code: int) -> str:
 
 
 def add_exception_handlers(app: FastAPI) -> None:
+	# registers exception handlers for the application
 	@app.exception_handler(ValidationError)
 	async def custom_validation_error_handler(request: Request, exc: ValidationError):
 		return JSONResponse(status_code=400, content={"data": None, "error": {"code": "VALIDATION_ERROR", "message": str(exc)}})

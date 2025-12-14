@@ -1,3 +1,7 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   orders.py
+# Functionality :   api endpoints for customer order management
+
 from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlmodel import Session
 from typing import Optional
@@ -12,6 +16,7 @@ order_service = CustomerOrderService()
 
 @router.get("/orders")
 async def list_orders(
+	# lists all orders for the current customer session
     status: Optional[str] = Query(None),
     db: Session = Depends(get_db),
     customer_session_id: str = Depends(get_session_id),
@@ -37,6 +42,7 @@ async def list_orders(
 
 @router.get("/orders/{order_id}")
 async def get_order(
+	# gets detailed information about a specific order
     order_id: str,
     db: Session = Depends(get_db),
     customer_session_id: str = Depends(get_session_id),
@@ -71,6 +77,7 @@ async def get_order(
 
 @router.put("/orders/{order_id}")
 async def update_order(
+	# updates an existing pending order
     order_id: str,
     body: UpdateOrderBody,
     db: Session = Depends(get_db),
@@ -110,6 +117,7 @@ async def update_order(
 
 @router.post("/orders/{order_id}/confirm")
 async def confirm_order(
+	# confirms a pending order
     order_id: str,
     db: Session = Depends(get_db),
     customer_session_id: str = Depends(get_session_id),
@@ -138,6 +146,7 @@ async def confirm_order(
 
 @router.post("/orders/{order_id}/cancel")
 async def cancel_order(
+	# cancels an existing order
     order_id: str,
     db: Session = Depends(get_db),
     customer_session_id: str = Depends(get_session_id),
@@ -162,6 +171,7 @@ async def cancel_order(
 
 @router.delete("/orders/trash")
 async def empty_trash(
+	# deletes all cancelled orders for the session
     db: Session = Depends(get_db),
     customer_session_id: str = Depends(get_session_id),
 ):

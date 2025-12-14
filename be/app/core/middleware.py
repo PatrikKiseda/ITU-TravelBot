@@ -1,3 +1,7 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   middleware.py
+# Functionality :   custom middleware for session management and rate limiting
+
 import time
 import uuid
 from typing import Callable
@@ -7,6 +11,7 @@ from app.core.config import settings
 
 
 class SessionCookieMiddleware(BaseHTTPMiddleware):
+	# middleware for managing session cookies
 	COOKIE_NAME = "sessionId"
 
 	async def dispatch(self, request: Request, call_next: Callable):
@@ -30,7 +35,7 @@ class SessionCookieMiddleware(BaseHTTPMiddleware):
 
 
 class SimpleRateLimiter(BaseHTTPMiddleware):
-	"""Naive in-memory token bucket keyed by sessionId and path key."""
+	# rate limiting middleware using token bucket algorithm
 
 	WINDOW = 60
 

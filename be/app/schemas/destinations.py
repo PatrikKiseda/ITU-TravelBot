@@ -1,8 +1,13 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   destinations.py
+# Functionality :   pydantic schemas for legacy destination system
+
 from typing import List, Optional
 from pydantic import BaseModel
 
 
 class DestinationDTO(BaseModel):
+	# destination data transfer object
 	id: str
 	title: str
 	country: str

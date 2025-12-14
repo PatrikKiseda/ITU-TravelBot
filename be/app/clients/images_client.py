@@ -14,6 +14,7 @@ class ImagesClientStub:
 
 
 class UnsplashClient:
+	# client for unsplash image api
 	def __init__(self, access_key: str | None = None):
 		self.access_key = access_key or settings.UNSPLASH_KEY
 		if not self.access_key:
@@ -57,6 +58,7 @@ class UnsplashClient:
 
 
 class PexelsClient:
+	# client for pexels image api
 	def __init__(self, api_key: str | None = None):
 		self.api_key = api_key or settings.PEXELS_API_KEY
 		if not self.api_key:

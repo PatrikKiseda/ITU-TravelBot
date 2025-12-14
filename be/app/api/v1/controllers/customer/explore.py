@@ -1,3 +1,7 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   explore.py
+# Functionality :   api endpoint for llm-generated destination exploration
+
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
 from app.core.deps import get_db, get_session_id
@@ -10,6 +14,7 @@ router = APIRouter()
 
 @router.post("/explore")
 async def explore(
+	# generates destination suggestions using llm
 	filters: SuggestFilters,
 	db: Session = Depends(get_db),
 	customer_session_id: str = Depends(get_session_id),

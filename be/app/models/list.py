@@ -1,8 +1,13 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   list.py
+# Functionality :   database models for legacy list system
+
 from datetime import datetime, timezone
 from sqlmodel import SQLModel, Field
 
 
 class ListModel(SQLModel, table=True):
+	# legacy list model for backward compatibility
 	__tablename__ = "list"
 	id: str = Field(primary_key=True, index=True)
 	session_id: str = Field(index=True, nullable=False)
@@ -11,6 +16,7 @@ class ListModel(SQLModel, table=True):
 
 
 class ListItem(SQLModel, table=True):
+	# association table for list items
 	__tablename__ = "list_item"
 	list_id: str = Field(foreign_key="list.id", primary_key=True)
 	destination_id: str = Field(foreign_key="destination.id", primary_key=True)

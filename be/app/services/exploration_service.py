@@ -9,6 +9,7 @@ class ExplorationService:
 		self.images = images or ImageService()
 
 	def generate_suggestions(self, filters: Dict[str, Any]) -> List[Dict[str, Any]]:
+		# generates destination suggestions using llm and enriches with images
 		suggestions = self.llm.suggest_destinations(filters)
 		enriched = []
 		for suggestion in suggestions:

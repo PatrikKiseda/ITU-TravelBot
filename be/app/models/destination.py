@@ -1,9 +1,14 @@
+# Author:             Patrik Kišeda ( xkised00 )
+# File:                   destination.py
+# Functionality :   database model for legacy destination system
+
 from datetime import datetime, timezone
 from typing import Optional
 from sqlmodel import SQLModel, Field
 
 
 class Destination(SQLModel, table=True):
+	# legacy destination model for backward compatibility
 	__tablename__ = "destination"
 	id: str = Field(primary_key=True, index=True)
 	session_id: str = Field(index=True, nullable=False)
