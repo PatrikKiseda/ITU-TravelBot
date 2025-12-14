@@ -518,7 +518,7 @@ function OrderDetailPage() {
                  )))
               }
             >
-              {updating ? 'Updating...' : 'Update Order'}
+              {updating ? 'Updating...' : 'Save Order'}
             </button>
             <button
               className="confirm-order-button"
