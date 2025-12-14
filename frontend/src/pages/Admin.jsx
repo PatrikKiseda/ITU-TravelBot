@@ -1,9 +1,11 @@
 import "./Admin.css"
 import React, { useState, useEffect } from 'react'
 import {fetchAvailableOffers} from "../services/api.js";
+import { useNavigate, useLocation } from 'react-router-dom'
 import AdminOfferCard from "../components/AdminOfferCard.jsx"
 import CreateOfferCard from "../components/CreateOfferCard.jsx"
 function Admin() {
+    const navigate = useNavigate()
     const [offers, setOffers] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
@@ -36,6 +38,10 @@ function Admin() {
         await loadOffers() // Перезагружаем список
     }
 
+    const handleLogoClick = () => {
+        navigate('/explore')
+    }
+
     const handleToggleExpand = (offerId) => {
         setExpandedOfferId(prevId => prevId === offerId ? null : offerId)
     }
@@ -51,10 +57,24 @@ function Admin() {
 
     return (
         <div className="admin-page">
-
+            <div className="admin-page-header">
+                <button className="logo-button" onClick={handleLogoClick} aria-label="Go to Explore">
+                    <img
+                        src="/travelbot-logo.png"
+                        alt="Travelbot"
+                        className="logo-image"
+                        onError={(e) => {
+                            // Fallback to text if image doesn't exist
+                            e.target.style.display = 'none'
+                            e.target.nextSibling.style.display = 'block'
+                        }}
+                    />
+                    <span className="logo-text-fallback" style={{display: 'none'}}>Travelbot</span>
+                </button>
+            </div>
             <div className="admin-page-content">
                 {/* Карточка создания */}
-                <CreateOfferCard onCreate={handleCreateOffer} />
+                <CreateOfferCard onCreate={handleCreateOffer}/>
 
                 {/* Список карточек */}
                 <div className="admin-page-offers-list">

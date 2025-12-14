@@ -2,3 +2,18 @@
     width: 80%;
     margin: 0 auto;
 }
+
+.results-count {
+    padding: 12px 16px;
+    background: #2a2a2a;
+    border-radius: 8px;
+    color: #ddd;
+    font-size: 14px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.admin-page-header{
+    border-bottom: 1px solid #3a3a3a;
+    padding: 16px;
+}

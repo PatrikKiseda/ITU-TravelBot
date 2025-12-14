@@ -106,28 +106,40 @@ export function useCreateOffer(onCreate, showConfirm, showAlert)  {
         setErrors({})
     }
 
+    let lastError = ''
+    const updateLastError = (newError) => {
+        if (!lastError) {
+            lastError = (newError)
+        }
+    }
     // Validate form
     const validateForm = () => {
         const newErrors = {}
+        lastError = ''
 
         if (!formData.destination_name || formData.destination_name === 'New Destination') {
             newErrors.destination_name = 'Please set destination name'
+            updateLastError(newErrors.destination_name)
         }
 
         if (!formData.origin || formData.origin === 'New Origin') {
-            newErrors.origin = 'Please set origin'
+            newErrors.origin = 'Please set departure city name'
+            updateLastError(newErrors.origin)
         }
 
         if (!formData.short_description || formData.short_description === 'Add description here...') {
             newErrors.short_description = 'Please add description'
+            updateLastError(newErrors.short_description)
         }
 
         if (!formData.date_from) {
             newErrors.date_from = 'Please set start date'
+            updateLastError(newErrors.date_from)
         }
 
         if (!formData.date_to) {
             newErrors.date_to = 'Please set end date'
+            updateLastError(newErrors.date_to)
         }
 
         if (formData.date_from && formData.date_to) {
@@ -136,6 +148,7 @@ export function useCreateOffer(onCreate, showConfirm, showAlert)  {
 
             if (dateTo <= dateFrom) {
                 newErrors.date_to = 'End date must be after start date'
+                updateLastError(newErrors.date_to)
             }
         }
 
@@ -148,7 +161,7 @@ export function useCreateOffer(onCreate, showConfirm, showAlert)  {
         if (!validateForm()) {
             await showAlert({
                 title: 'Missing Information',
-                message: 'Please fill in all required fields:',
+                message: `Fill required information : ${lastError}`,
                 confirmButtonStyle: 'primary'
             })
             return
